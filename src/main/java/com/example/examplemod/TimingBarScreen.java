@@ -12,7 +12,7 @@ public class TimingBarScreen extends Screen {
     // ==================== EASY TUNING VALUES ====================
     private static final int BAR_WIDTH = 300;
     private static final int BAR_HEIGHT = 24;
-    private static final int CURSOR_WIDTH = 2;
+    private static final int CURSOR_WIDTH = 3;
     private static final int TOTAL_ROUNDS = 10;
 
     // WHITE LINE RANDOM SPEED RANGE. A new speed is picked after every hit.
