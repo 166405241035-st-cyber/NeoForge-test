@@ -39,10 +39,9 @@ public class ExampleMod {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    // Prototype block that will become the entry point for the forging minigames.
-    public static final DeferredBlock<Block> FORGING_BLOCK = BLOCKS.registerSimpleBlock(
+    public static final DeferredBlock<Block> FORGING_BLOCK = BLOCKS.register(
             "forging_block",
-            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5F));
+            registryName -> new ForgingBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
     public static final DeferredItem<BlockItem> FORGING_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("forging_block", FORGING_BLOCK);
 
     // Keep the MDK example item for now so we change as little unrelated code as possible.
@@ -53,9 +52,8 @@ public class ExampleMod {
             .title(Component.translatable("itemGroup.examplemod"))
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> FORGING_BLOCK_ITEM.get().getDefaultInstance())
-            .displayItems((parameters, output) -> {
-                output.accept(FORGING_BLOCK_ITEM.get());
-            }).build());
+            .displayItems((parameters, output) -> output.accept(FORGING_BLOCK_ITEM.get()))
+            .build());
 
     public ExampleMod(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
@@ -80,7 +78,6 @@ public class ExampleMod {
         Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
     }
 
-    // Make the prototype block easy to find while testing.
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
             event.accept(FORGING_BLOCK_ITEM);
