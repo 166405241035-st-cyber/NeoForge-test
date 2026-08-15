@@ -16,8 +16,8 @@ public class TimingBarScreen extends Screen {
     private static final int TOTAL_ROUNDS = 10;
 
     // WHITE LINE RANDOM SPEED RANGE. A new speed is picked after every hit.
-    private static final float CURSOR_MIN_SPEED = 4.0F;
-    private static final float CURSOR_MAX_SPEED = 8.0F;
+    private static final float CURSOR_MIN_SPEED = 6.0F;
+    private static final float CURSOR_MAX_SPEED = 10.0F;
 
     private static final int GREEN_MIN_WIDTH = 45;
     private static final int GREEN_MAX_WIDTH = 100;
