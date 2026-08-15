@@ -20,7 +20,6 @@ public class RhythmForgingScreen extends Screen {
     private static final int GOOD_SCORE = 50;
     private static final int COMBO_BONUS_PER_STEP = 5;
 
-    // Timing windows are based on how far the shrinking ring is from the target circle.
     private static final float PERFECT_WINDOW = 5.0F;
     private static final float GREAT_WINDOW = 12.0F;
     private static final float GOOD_WINDOW = 22.0F;
@@ -52,7 +51,6 @@ public class RhythmForgingScreen extends Screen {
     }
 
     private void spawnTarget() {
-        // Keep targets away from screen edges and HUD text.
         int marginX = 90;
         int topMargin = 80;
         int bottomMargin = 80;
@@ -68,7 +66,6 @@ public class RhythmForgingScreen extends Screen {
 
     @Override
     protected void init() {
-        // Constructor runs before the Screen knows its real width/height, so respawn once here.
         spawnTarget();
     }
 
@@ -80,7 +77,6 @@ public class RhythmForgingScreen extends Screen {
 
         approachRadius -= APPROACH_SPEED;
 
-        // If the ring has passed too far through the target, count it as an automatic miss.
         if (approachRadius < TARGET_RADIUS - GOOD_WINDOW) {
             registerMiss("TOO LATE!");
         }
@@ -176,12 +172,16 @@ public class RhythmForgingScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // No Minecraft menu blur: this is a real-time minigame.
+        // Intentionally empty. We draw our own solid background in render().
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.fill(12, 12, 220, 68, 0xB0000000);
+        // SOLID BLACK MINIGAME BACKGROUND.
+        // Change 0xFF000000 if a different full-screen background color is wanted later.
+        guiGraphics.fill(0, 0, this.width, this.height, 0xFF000000);
+
+        guiGraphics.fill(12, 12, 220, 68, 0xFF111111);
         guiGraphics.drawString(this.font, "RHYTHM FORGING", 22, 22, 0xFFFFFF);
         guiGraphics.drawString(this.font, "Round: " + Math.min(round + 1, TOTAL_ROUNDS) + "/" + TOTAL_ROUNDS, 22, 36, 0xDDDDDD);
         guiGraphics.drawString(this.font, "Score: " + score + "   Combo: x" + currentCombo, 22, 50, 0xDDDDDD);
@@ -197,13 +197,11 @@ public class RhythmForgingScreen extends Screen {
     }
 
     private void drawTarget(GuiGraphics guiGraphics) {
-        // Target circle approximation using layered squares/crosses so no texture asset is required yet.
         int r = TARGET_RADIUS;
         guiGraphics.fill(targetX - r, targetY - r, targetX + r, targetY + r, 0xCC222222);
         guiGraphics.fill(targetX - r + 3, targetY - r + 3, targetX + r - 3, targetY + r - 3, 0xCCEEEEEE);
         guiGraphics.fill(targetX - r + 6, targetY - r + 6, targetX + r - 6, targetY + r - 6, 0xCC333333);
 
-        // Shrinking approach ring approximation.
         int ar = Math.max(1, Math.round(approachRadius));
         int thickness = 2;
         int color = 0xFFFFFFFF;
