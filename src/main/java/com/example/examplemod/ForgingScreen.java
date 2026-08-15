@@ -22,7 +22,9 @@ public class ForgingScreen extends Screen {
         }).bounds(centerX - 100, startY, 200, 20).build());
 
         this.addRenderableWidget(Button.builder(Component.literal("Minigame 2 - Rhythm Forging"), button -> {
-            // Minigame 2 will be implemented after the timing prototype is verified.
+            if (this.minecraft != null) {
+                this.minecraft.setScreen(new RhythmForgingScreen());
+            }
         }).bounds(centerX - 100, startY + 30, 200, 20).build());
 
         this.addRenderableWidget(Button.builder(Component.literal("Close"), button -> this.onClose())
