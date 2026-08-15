@@ -172,16 +172,14 @@ public class RhythmForgingScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Intentionally empty. We draw our own solid background in render().
+        // Intentionally empty so the world behind the minigame stays visible and sharp.
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // SOLID BLACK MINIGAME BACKGROUND.
-        // Change 0xFF000000 if a different full-screen background color is wanted later.
-        guiGraphics.fill(0, 0, this.width, this.height, 0xFF000000);
-
-        guiGraphics.fill(12, 12, 220, 68, 0xFF111111);
+        // No full-screen fill here: keep the Minecraft world visible behind the HUD.
+        // Only the info box is dark and translucent for readability.
+        guiGraphics.fill(12, 12, 220, 68, 0xB0000000);
         guiGraphics.drawString(this.font, "RHYTHM FORGING", 22, 22, 0xFFFFFF);
         guiGraphics.drawString(this.font, "Round: " + Math.min(round + 1, TOTAL_ROUNDS) + "/" + TOTAL_ROUNDS, 22, 36, 0xDDDDDD);
         guiGraphics.drawString(this.font, "Score: " + score + "   Combo: x" + currentCombo, 22, 50, 0xDDDDDD);
