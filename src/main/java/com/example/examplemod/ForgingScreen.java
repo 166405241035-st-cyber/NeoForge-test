@@ -16,11 +16,13 @@ public class ForgingScreen extends Screen {
         int startY = this.height / 2 - 45;
 
         this.addRenderableWidget(Button.builder(Component.literal("Minigame 1 - Timing Bar"), button -> {
-            // Minigame logic will be added after the menu itself is verified.
+            if (this.minecraft != null) {
+                this.minecraft.setScreen(new TimingBarScreen());
+            }
         }).bounds(centerX - 100, startY, 200, 20).build());
 
         this.addRenderableWidget(Button.builder(Component.literal("Minigame 2 - Rhythm Forging"), button -> {
-            // Minigame logic will be added later.
+            // Minigame 2 will be implemented after the timing prototype is verified.
         }).bounds(centerX - 100, startY + 30, 200, 20).build());
 
         this.addRenderableWidget(Button.builder(Component.literal("Close"), button -> this.onClose())
