@@ -10,40 +10,49 @@ import net.minecraft.network.chat.Component;
 
 public class TimingBarScreen extends Screen {
     // ==================== EASY TUNING VALUES ====================
-    // These values are grouped here so the minigame can be balanced later.
-    private static final int BAR_WIDTH = 300;       // Total red timing bar width in pixels.
-    private static final int BAR_HEIGHT = 24;       // Timing bar height in pixels.
-    private static final int CURSOR_WIDTH = 2;      // WIDTH/THICKNESS OF THE WHITE MOVING LINE. Change this to make the white line thicker/thinner.
-    private static final int TOTAL_ROUNDS = 10;     // Number of hits before the result screen opens.
+    private static final int BAR_WIDTH = 300;
+    private static final int BAR_HEIGHT = 24;
+    private static final int CURSOR_WIDTH = 2;
+    private static final int TOTAL_ROUNDS = 10;
 
-    private static final float CURSOR_SPEED = 6.0F; // Speed of the white moving line. Higher = faster/harder.
+    // WHITE LINE RANDOM SPEED RANGE. A new speed is picked after every hit.
+    private static final float CURSOR_MIN_SPEED = 4.0F;
+    private static final float CURSOR_MAX_SPEED = 8.0F;
 
-    private static final int GREEN_MIN_WIDTH = 45;  // Smallest possible green target width.
-    private static final int GREEN_MAX_WIDTH = 100; // Largest possible green target width.
+    private static final int GREEN_MIN_WIDTH = 45;
+    private static final int GREEN_MAX_WIDTH = 100;
 
-    // Base score awarded for each hit grade.
+    // Base score awarded for each visible colored zone.
     private static final int PERFECT_SCORE = 100;
     private static final int GREAT_SCORE = 75;
     private static final int GOOD_SCORE = 50;
     private static final int MISS_SCORE = 0;
 
-    // Accuracy contribution for each grade. These are percentages before averaging all rounds.
     private static final int PERFECT_ACCURACY = 100;
     private static final int GREAT_ACCURACY = 75;
     private static final int GOOD_ACCURACY = 50;
     private static final int MISS_ACCURACY = 0;
 
-    // Every successful combo step after the first adds this many bonus points.
-    // Example: COMBO_BONUS_PER_STEP = 5 -> combo x2 gives +5, x3 gives +10, etc.
     private static final int COMBO_BONUS_PER_STEP = 5;
+
+    // How much of the target is used for each grade.
+    // PERFECT_RATIO = center 20%, GREAT_RATIO = area up to 55%, remaining target = GOOD.
+    private static final float PERFECT_RATIO = 0.20F;
+    private static final float GREAT_RATIO = 0.55F;
+
+    // Visible grade colors.
+    private static final int GOOD_ZONE_COLOR = 0xFFFFCC33;    // Yellow = GOOD
+    private static final int GREAT_ZONE_COLOR = 0xFF22AA44;   // Green = GREAT
+    private static final int PERFECT_ZONE_COLOR = 0xFF66FF66; // Bright green = PERFECT
     // ============================================================
 
     private final Random random = new Random();
     private int greenStart;
     private int greenWidth;
     private float cursorPosition;
+    private float cursorSpeed;
     private boolean movingRight = true;
-    private String resultText = "Press SPACE when the marker is in the green zone";
+    private String resultText = "Press SPACE on the best colored zone";
     private int resultColor = 0xFFFFFF;
 
     private int round;
@@ -59,13 +68,15 @@ public class TimingBarScreen extends Screen {
 
     public TimingBarScreen() {
         super(Component.literal("Timing Bar"));
-        randomizeGreenZone();
+        randomizeRound();
     }
 
-    private void randomizeGreenZone() {
-        // Random target size between GREEN_MIN_WIDTH and GREEN_MAX_WIDTH.
+    private void randomizeRound() {
         greenWidth = GREEN_MIN_WIDTH + random.nextInt(GREEN_MAX_WIDTH - GREEN_MIN_WIDTH + 1);
         greenStart = random.nextInt(BAR_WIDTH - greenWidth + 1);
+
+        // Random decimal speed between CURSOR_MIN_SPEED and CURSOR_MAX_SPEED.
+        cursorSpeed = CURSOR_MIN_SPEED + random.nextFloat() * (CURSOR_MAX_SPEED - CURSOR_MIN_SPEED);
     }
 
     @Override
@@ -74,8 +85,7 @@ public class TimingBarScreen extends Screen {
             return;
         }
 
-        // CURSOR_SPEED controls how fast the WHITE LINE moves across the bar.
-        cursorPosition += movingRight ? CURSOR_SPEED : -CURSOR_SPEED;
+        cursorPosition += movingRight ? cursorSpeed : -cursorSpeed;
 
         if (cursorPosition >= BAR_WIDTH - CURSOR_WIDTH) {
             cursorPosition = BAR_WIDTH - CURSOR_WIDTH;
@@ -101,23 +111,21 @@ public class TimingBarScreen extends Screen {
             float distance = Math.abs(cursorCenter - greenCenter);
             float normalizedDistance = distance / (greenWidth / 2.0F);
 
-            // Hit grade boundaries inside the green zone:
-            // center 20% -> PERFECT, center-ish 55% -> GREAT, remaining green area -> GOOD.
-            if (normalizedDistance <= 0.20F) {
-                resultText = "PERFECT!";
-                resultColor = 0x55FF55;
+            if (normalizedDistance <= PERFECT_RATIO) {
+                resultText = "PERFECT! +" + PERFECT_SCORE;
+                resultColor = PERFECT_ZONE_COLOR;
                 perfectCount++;
                 baseScore = PERFECT_SCORE;
                 accuracyPoints = PERFECT_ACCURACY;
-            } else if (normalizedDistance <= 0.55F) {
-                resultText = "GREAT!";
-                resultColor = 0xAAFF55;
+            } else if (normalizedDistance <= GREAT_RATIO) {
+                resultText = "GREAT! +" + GREAT_SCORE;
+                resultColor = GREAT_ZONE_COLOR;
                 greatCount++;
                 baseScore = GREAT_SCORE;
                 accuracyPoints = GREAT_ACCURACY;
             } else {
-                resultText = "GOOD!";
-                resultColor = 0xFFFF55;
+                resultText = "GOOD! +" + GOOD_SCORE;
+                resultColor = GOOD_ZONE_COLOR;
                 goodCount++;
                 baseScore = GOOD_SCORE;
                 accuracyPoints = GOOD_ACCURACY;
@@ -126,7 +134,7 @@ public class TimingBarScreen extends Screen {
             currentCombo++;
             maxCombo = Math.max(maxCombo, currentCombo);
         } else {
-            resultText = "MISS!";
+            resultText = "MISS! +" + MISS_SCORE;
             resultColor = 0xFF5555;
             missCount++;
             baseScore = MISS_SCORE;
@@ -134,7 +142,6 @@ public class TimingBarScreen extends Screen {
             currentCombo = 0;
         }
 
-        // FINAL SCORE FOR THIS HIT = base grade score + combo bonus.
         int comboBonus = baseScore > 0 ? Math.max(0, currentCombo - 1) * COMBO_BONUS_PER_STEP : 0;
         score += baseScore + comboBonus;
         weightedAccuracyPoints += accuracyPoints;
@@ -144,7 +151,7 @@ public class TimingBarScreen extends Screen {
             finished = true;
             openResultScreen();
         } else {
-            randomizeGreenZone();
+            randomizeRound();
         }
     }
 
@@ -176,7 +183,7 @@ public class TimingBarScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Intentionally empty so the world behind the real-time minigame stays sharp.
+        // Keep the world behind the minigame sharp.
     }
 
     @Override
@@ -197,22 +204,39 @@ public class TimingBarScreen extends Screen {
         guiGraphics.fill(panelRight - 1, panelTop, panelRight, panelBottom, 0xFFAAAAAA);
 
         guiGraphics.drawCenteredString(this.font, "TIMING FORGING", this.width / 2, barY - 72, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, "ROUND " + (Math.min(round + 1, TOTAL_ROUNDS)) + " / " + TOTAL_ROUNDS,
+        guiGraphics.drawCenteredString(this.font, "ROUND " + Math.min(round + 1, TOTAL_ROUNDS) + " / " + TOTAL_ROUNDS,
                 this.width / 2, barY - 56, 0xDDDDDD);
         guiGraphics.drawCenteredString(this.font, resultText, this.width / 2, barY - 38, resultColor);
 
+        // Red = MISS area outside the target.
         guiGraphics.fill(barX - 2, barY - 2, barX + BAR_WIDTH + 2, barY + BAR_HEIGHT + 2, 0xFF111111);
         guiGraphics.fill(barX, barY, barX + BAR_WIDTH, barY + BAR_HEIGHT, 0xFFAA2222);
-        guiGraphics.fill(barX + greenStart, barY, barX + greenStart + greenWidth, barY + BAR_HEIGHT, 0xFF22AA44);
 
-        // This draws the WHITE MOVING LINE. CURSOR_WIDTH above controls its thickness.
+        // Draw the target from outside -> inside so players can SEE the score grade before pressing SPACE.
+        // Yellow outer target = GOOD.
+        guiGraphics.fill(barX + greenStart, barY, barX + greenStart + greenWidth, barY + BAR_HEIGHT, GOOD_ZONE_COLOR);
+
+        float halfWidth = greenWidth / 2.0F;
+        float center = greenStart + halfWidth;
+
+        // Green middle target = GREAT. normalizedDistance <= GREAT_RATIO.
+        int greatLeft = barX + Math.round(center - halfWidth * GREAT_RATIO);
+        int greatRight = barX + Math.round(center + halfWidth * GREAT_RATIO);
+        guiGraphics.fill(greatLeft, barY, greatRight, barY + BAR_HEIGHT, GREAT_ZONE_COLOR);
+
+        // Bright green center target = PERFECT. normalizedDistance <= PERFECT_RATIO.
+        int perfectLeft = barX + Math.round(center - halfWidth * PERFECT_RATIO);
+        int perfectRight = barX + Math.round(center + halfWidth * PERFECT_RATIO);
+        guiGraphics.fill(perfectLeft, barY, perfectRight, barY + BAR_HEIGHT, PERFECT_ZONE_COLOR);
+
         int cursorX = barX + Math.round(cursorPosition);
         guiGraphics.fill(cursorX, barY - 5, cursorX + CURSOR_WIDTH, barY + BAR_HEIGHT + 5, 0xFFFFFFFF);
 
         guiGraphics.drawString(this.font, "Score: " + score, barX, barY + 38, 0xFFFFFF);
         guiGraphics.drawString(this.font, "Combo: x" + currentCombo, barX + 115, barY + 38, 0xFFFFFF);
         guiGraphics.drawString(this.font, "Max: x" + maxCombo, barX + 225, barY + 38, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, "SPACE = HIT   |   ESC = BACK", this.width / 2, barY + 60, 0xDDDDDD);
+        guiGraphics.drawCenteredString(this.font, "YELLOW=GOOD  GREEN=GREAT  BRIGHT=PERFECT", this.width / 2, barY + 54, 0xDDDDDD);
+        guiGraphics.drawCenteredString(this.font, "SPACE = HIT   |   ESC = BACK", this.width / 2, barY + 68, 0xDDDDDD);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
