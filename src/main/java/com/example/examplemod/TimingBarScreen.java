@@ -13,10 +13,10 @@ public class TimingBarScreen extends Screen {
     // These values are grouped here so the minigame can be balanced later.
     private static final int BAR_WIDTH = 300;       // Total red timing bar width in pixels.
     private static final int BAR_HEIGHT = 24;       // Timing bar height in pixels.
-    private static final int CURSOR_WIDTH = 4;      // WIDTH/THICKNESS OF THE WHITE MOVING LINE. Change this to make the white line thicker/thinner.
+    private static final int CURSOR_WIDTH = 2;      // WIDTH/THICKNESS OF THE WHITE MOVING LINE. Change this to make the white line thicker/thinner.
     private static final int TOTAL_ROUNDS = 10;     // Number of hits before the result screen opens.
 
-    private static final float CURSOR_SPEED = 4.0F; // Speed of the white moving line. Higher = faster/harder.
+    private static final float CURSOR_SPEED = 6.0F; // Speed of the white moving line. Higher = faster/harder.
 
     private static final int GREEN_MIN_WIDTH = 45;  // Smallest possible green target width.
     private static final int GREEN_MAX_WIDTH = 100; // Largest possible green target width.
