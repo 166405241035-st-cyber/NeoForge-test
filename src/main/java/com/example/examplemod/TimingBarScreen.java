@@ -9,10 +9,34 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class TimingBarScreen extends Screen {
-    private static final int BAR_WIDTH = 300;
-    private static final int BAR_HEIGHT = 24;
-    private static final int CURSOR_WIDTH = 4;
-    private static final int TOTAL_ROUNDS = 10;
+    // ==================== EASY TUNING VALUES ====================
+    // These values are grouped here so the minigame can be balanced later.
+    private static final int BAR_WIDTH = 300;       // Total red timing bar width in pixels.
+    private static final int BAR_HEIGHT = 24;       // Timing bar height in pixels.
+    private static final int CURSOR_WIDTH = 4;      // WIDTH/THICKNESS OF THE WHITE MOVING LINE. Change this to make the white line thicker/thinner.
+    private static final int TOTAL_ROUNDS = 10;     // Number of hits before the result screen opens.
+
+    private static final float CURSOR_SPEED = 4.0F; // Speed of the white moving line. Higher = faster/harder.
+
+    private static final int GREEN_MIN_WIDTH = 45;  // Smallest possible green target width.
+    private static final int GREEN_MAX_WIDTH = 100; // Largest possible green target width.
+
+    // Base score awarded for each hit grade.
+    private static final int PERFECT_SCORE = 100;
+    private static final int GREAT_SCORE = 75;
+    private static final int GOOD_SCORE = 50;
+    private static final int MISS_SCORE = 0;
+
+    // Accuracy contribution for each grade. These are percentages before averaging all rounds.
+    private static final int PERFECT_ACCURACY = 100;
+    private static final int GREAT_ACCURACY = 75;
+    private static final int GOOD_ACCURACY = 50;
+    private static final int MISS_ACCURACY = 0;
+
+    // Every successful combo step after the first adds this many bonus points.
+    // Example: COMBO_BONUS_PER_STEP = 5 -> combo x2 gives +5, x3 gives +10, etc.
+    private static final int COMBO_BONUS_PER_STEP = 5;
+    // ============================================================
 
     private final Random random = new Random();
     private int greenStart;
@@ -39,7 +63,8 @@ public class TimingBarScreen extends Screen {
     }
 
     private void randomizeGreenZone() {
-        greenWidth = 45 + random.nextInt(56);
+        // Random target size between GREEN_MIN_WIDTH and GREEN_MAX_WIDTH.
+        greenWidth = GREEN_MIN_WIDTH + random.nextInt(GREEN_MAX_WIDTH - GREEN_MIN_WIDTH + 1);
         greenStart = random.nextInt(BAR_WIDTH - greenWidth + 1);
     }
 
@@ -49,8 +74,8 @@ public class TimingBarScreen extends Screen {
             return;
         }
 
-        float speed = 4.0F;
-        cursorPosition += movingRight ? speed : -speed;
+        // CURSOR_SPEED controls how fast the WHITE LINE moves across the bar.
+        cursorPosition += movingRight ? CURSOR_SPEED : -CURSOR_SPEED;
 
         if (cursorPosition >= BAR_WIDTH - CURSOR_WIDTH) {
             cursorPosition = BAR_WIDTH - CURSOR_WIDTH;
@@ -76,24 +101,26 @@ public class TimingBarScreen extends Screen {
             float distance = Math.abs(cursorCenter - greenCenter);
             float normalizedDistance = distance / (greenWidth / 2.0F);
 
+            // Hit grade boundaries inside the green zone:
+            // center 20% -> PERFECT, center-ish 55% -> GREAT, remaining green area -> GOOD.
             if (normalizedDistance <= 0.20F) {
                 resultText = "PERFECT!";
                 resultColor = 0x55FF55;
                 perfectCount++;
-                baseScore = 100;
-                accuracyPoints = 100;
+                baseScore = PERFECT_SCORE;
+                accuracyPoints = PERFECT_ACCURACY;
             } else if (normalizedDistance <= 0.55F) {
                 resultText = "GREAT!";
                 resultColor = 0xAAFF55;
                 greatCount++;
-                baseScore = 75;
-                accuracyPoints = 75;
+                baseScore = GREAT_SCORE;
+                accuracyPoints = GREAT_ACCURACY;
             } else {
                 resultText = "GOOD!";
                 resultColor = 0xFFFF55;
                 goodCount++;
-                baseScore = 50;
-                accuracyPoints = 50;
+                baseScore = GOOD_SCORE;
+                accuracyPoints = GOOD_ACCURACY;
             }
 
             currentCombo++;
@@ -102,13 +129,13 @@ public class TimingBarScreen extends Screen {
             resultText = "MISS!";
             resultColor = 0xFF5555;
             missCount++;
-            baseScore = 0;
-            accuracyPoints = 0;
+            baseScore = MISS_SCORE;
+            accuracyPoints = MISS_ACCURACY;
             currentCombo = 0;
         }
 
-        // Small combo bonus keeps the prototype easy to explain during the demo.
-        int comboBonus = baseScore > 0 ? Math.max(0, currentCombo - 1) * 5 : 0;
+        // FINAL SCORE FOR THIS HIT = base grade score + combo bonus.
+        int comboBonus = baseScore > 0 ? Math.max(0, currentCombo - 1) * COMBO_BONUS_PER_STEP : 0;
         score += baseScore + comboBonus;
         weightedAccuracyPoints += accuracyPoints;
         round++;
@@ -178,6 +205,7 @@ public class TimingBarScreen extends Screen {
         guiGraphics.fill(barX, barY, barX + BAR_WIDTH, barY + BAR_HEIGHT, 0xFFAA2222);
         guiGraphics.fill(barX + greenStart, barY, barX + greenStart + greenWidth, barY + BAR_HEIGHT, 0xFF22AA44);
 
+        // This draws the WHITE MOVING LINE. CURSOR_WIDTH above controls its thickness.
         int cursorX = barX + Math.round(cursorPosition);
         guiGraphics.fill(cursorX, barY - 5, cursorX + CURSOR_WIDTH, barY + BAR_HEIGHT + 5, 0xFFFFFFFF);
 
