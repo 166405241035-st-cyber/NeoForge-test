@@ -23,6 +23,10 @@ public class RhythmForgingScreen extends Screen {
     private static final float PERFECT_WINDOW = 5.0F;
     private static final float GREAT_WINDOW = 12.0F;
     private static final float GOOD_WINDOW = 22.0F;
+
+    // Full-screen translucent black overlay.
+    // 0x00 = invisible, 0xFF = fully opaque. 0x88 is medium transparency.
+    private static final int SCREEN_OVERLAY_COLOR = 0x88000000;
     // ============================================================
 
     private final Random random = new Random();
@@ -172,13 +176,16 @@ public class RhythmForgingScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Intentionally empty so the world behind the minigame stays visible and sharp.
+        // Intentionally empty so Minecraft does not apply its menu blur.
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // No full-screen fill here: keep the Minecraft world visible behind the HUD.
-        // Only the info box is dark and translucent for readability.
+        // Dark translucent layer over the whole minigame.
+        // The world remains visible underneath, like Minigame 1.
+        guiGraphics.fill(0, 0, this.width, this.height, SCREEN_OVERLAY_COLOR);
+
+        // Slightly darker HUD box for readability.
         guiGraphics.fill(12, 12, 220, 68, 0xB0000000);
         guiGraphics.drawString(this.font, "RHYTHM FORGING", 22, 22, 0xFFFFFF);
         guiGraphics.drawString(this.font, "Round: " + Math.min(round + 1, TOTAL_ROUNDS) + "/" + TOTAL_ROUNDS, 22, 36, 0xDDDDDD);
