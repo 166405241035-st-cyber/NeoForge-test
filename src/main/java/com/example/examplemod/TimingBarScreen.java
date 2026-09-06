@@ -15,14 +15,17 @@ public class TimingBarScreen extends Screen {
     private static final int CURSOR_WIDTH = 3;
     private static final int TOTAL_ROUNDS = 10;
 
-    // WHITE LINE RANDOM SPEED RANGE. A new speed is picked after every hit.
+    // Base values for Difficulty 1. Higher metal difficulty is applied below.
     private static final float CURSOR_MIN_SPEED = 6.0F;
     private static final float CURSOR_MAX_SPEED = 10.0F;
-
     private static final int GREEN_MIN_WIDTH = 45;
     private static final int GREEN_MAX_WIDTH = 100;
 
-    // Base score awarded for each visible colored zone.
+    // TEMPORARY METAL DIFFICULTY TUNING.
+    // Difficulty 2/3 makes the cursor faster and target smaller.
+    private static final float SPEED_PER_DIFFICULTY_STEP = 1.5F;
+    private static final int TARGET_SHRINK_PER_DIFFICULTY_STEP = 10;
+
     private static final int PERFECT_SCORE = 100;
     private static final int GREAT_SCORE = 75;
     private static final int GOOD_SCORE = 50;
@@ -32,21 +35,18 @@ public class TimingBarScreen extends Screen {
     private static final int GREAT_ACCURACY = 75;
     private static final int GOOD_ACCURACY = 50;
     private static final int MISS_ACCURACY = 0;
-
     private static final int COMBO_BONUS_PER_STEP = 5;
 
-    // How much of the target is used for each grade.
-    // PERFECT_RATIO = center 20%, GREAT_RATIO = area up to 55%, remaining target = GOOD.
     private static final float PERFECT_RATIO = 0.20F;
     private static final float GREAT_RATIO = 0.55F;
 
-    // Visible grade colors.
-    private static final int GOOD_ZONE_COLOR = 0xFFFFCC33;    // Yellow = GOOD
-    private static final int GREAT_ZONE_COLOR = 0xFF22AA44;   // Green = GREAT
-    private static final int PERFECT_ZONE_COLOR = 0xFF66FF66; // Bright green = PERFECT
+    private static final int GOOD_ZONE_COLOR = 0xFFFFCC33;
+    private static final int GREAT_ZONE_COLOR = 0xFF22AA44;
+    private static final int PERFECT_ZONE_COLOR = 0xFF66FF66;
     // ============================================================
 
     private final Random random = new Random();
+    private final ForgingMetal metal;
     private int greenStart;
     private int greenWidth;
     private float cursorPosition;
@@ -67,26 +67,33 @@ public class TimingBarScreen extends Screen {
     private boolean finished;
 
     public TimingBarScreen() {
+        this(ForgingMetal.IRON);
+    }
+
+    public TimingBarScreen(ForgingMetal metal) {
         super(Component.literal("Timing Bar"));
+        this.metal = metal;
         randomizeRound();
     }
 
     private void randomizeRound() {
-        greenWidth = GREEN_MIN_WIDTH + random.nextInt(GREEN_MAX_WIDTH - GREEN_MIN_WIDTH + 1);
+        int difficultySteps = metal.difficulty() - 1;
+        int minWidth = Math.max(20, GREEN_MIN_WIDTH - difficultySteps * TARGET_SHRINK_PER_DIFFICULTY_STEP);
+        int maxWidth = Math.max(minWidth, GREEN_MAX_WIDTH - difficultySteps * TARGET_SHRINK_PER_DIFFICULTY_STEP);
+        greenWidth = minWidth + random.nextInt(maxWidth - minWidth + 1);
         greenStart = random.nextInt(BAR_WIDTH - greenWidth + 1);
 
-        // Random decimal speed between CURSOR_MIN_SPEED and CURSOR_MAX_SPEED.
-        cursorSpeed = CURSOR_MIN_SPEED + random.nextFloat() * (CURSOR_MAX_SPEED - CURSOR_MIN_SPEED);
+        float speedBonus = difficultySteps * SPEED_PER_DIFFICULTY_STEP;
+        float minSpeed = CURSOR_MIN_SPEED + speedBonus;
+        float maxSpeed = CURSOR_MAX_SPEED + speedBonus;
+        cursorSpeed = minSpeed + random.nextFloat() * (maxSpeed - minSpeed);
     }
 
     @Override
     public void tick() {
-        if (finished) {
-            return;
-        }
+        if (finished) return;
 
         cursorPosition += movingRight ? cursorSpeed : -cursorSpeed;
-
         if (cursorPosition >= BAR_WIDTH - CURSOR_WIDTH) {
             cursorPosition = BAR_WIDTH - CURSOR_WIDTH;
             movingRight = false;
@@ -97,9 +104,7 @@ public class TimingBarScreen extends Screen {
     }
 
     private void attemptHit() {
-        if (finished) {
-            return;
-        }
+        if (finished) return;
 
         float cursorCenter = cursorPosition + CURSOR_WIDTH / 2.0F;
         float greenEnd = greenStart + greenWidth;
@@ -130,7 +135,6 @@ public class TimingBarScreen extends Screen {
                 baseScore = GOOD_SCORE;
                 accuracyPoints = GOOD_ACCURACY;
             }
-
             currentCombo++;
             maxCombo = Math.max(maxCombo, currentCombo);
         } else {
@@ -156,19 +160,10 @@ public class TimingBarScreen extends Screen {
     }
 
     private void openResultScreen() {
-        if (this.minecraft == null) {
-            return;
-        }
+        if (this.minecraft == null) return;
 
         double accuracy = weightedAccuracyPoints / (double) TOTAL_ROUNDS;
-        ForgingResult result = new ForgingResult(
-                score,
-                accuracy,
-                maxCombo,
-                perfectCount,
-                greatCount,
-                goodCount,
-                missCount);
+        ForgingResult result = new ForgingResult(score, accuracy, maxCombo, perfectCount, greatCount, goodCount, missCount);
         this.minecraft.setScreen(new ForgingResultScreen(result));
     }
 
@@ -183,14 +178,12 @@ public class TimingBarScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Keep the world behind the minigame sharp.
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         int barX = (this.width - BAR_WIDTH) / 2;
         int barY = this.height / 2 - BAR_HEIGHT / 2;
-
         int panelPaddingX = 28;
         int panelTop = barY - 92;
         int panelBottom = barY + 82;
@@ -203,28 +196,20 @@ public class TimingBarScreen extends Screen {
         guiGraphics.fill(panelLeft, panelTop, panelLeft + 1, panelBottom, 0xFFAAAAAA);
         guiGraphics.fill(panelRight - 1, panelTop, panelRight, panelBottom, 0xFFAAAAAA);
 
-        guiGraphics.drawCenteredString(this.font, "TIMING FORGING", this.width / 2, barY - 72, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, "ROUND " + Math.min(round + 1, TOTAL_ROUNDS) + " / " + TOTAL_ROUNDS,
-                this.width / 2, barY - 56, 0xDDDDDD);
+        guiGraphics.drawCenteredString(this.font, "TIMING FORGING - " + metal.displayName() + " [Difficulty " + metal.difficulty() + "/3]", this.width / 2, barY - 72, 0xFFFFFF);
+        guiGraphics.drawCenteredString(this.font, "ROUND " + Math.min(round + 1, TOTAL_ROUNDS) + " / " + TOTAL_ROUNDS, this.width / 2, barY - 56, 0xDDDDDD);
         guiGraphics.drawCenteredString(this.font, resultText, this.width / 2, barY - 38, resultColor);
 
-        // Red = MISS area outside the target.
         guiGraphics.fill(barX - 2, barY - 2, barX + BAR_WIDTH + 2, barY + BAR_HEIGHT + 2, 0xFF111111);
         guiGraphics.fill(barX, barY, barX + BAR_WIDTH, barY + BAR_HEIGHT, 0xFFAA2222);
-
-        // Draw the target from outside -> inside so players can SEE the score grade before pressing SPACE.
-        // Yellow outer target = GOOD.
         guiGraphics.fill(barX + greenStart, barY, barX + greenStart + greenWidth, barY + BAR_HEIGHT, GOOD_ZONE_COLOR);
 
         float halfWidth = greenWidth / 2.0F;
         float center = greenStart + halfWidth;
-
-        // Green middle target = GREAT. normalizedDistance <= GREAT_RATIO.
         int greatLeft = barX + Math.round(center - halfWidth * GREAT_RATIO);
         int greatRight = barX + Math.round(center + halfWidth * GREAT_RATIO);
         guiGraphics.fill(greatLeft, barY, greatRight, barY + BAR_HEIGHT, GREAT_ZONE_COLOR);
 
-        // Bright green center target = PERFECT. normalizedDistance <= PERFECT_RATIO.
         int perfectLeft = barX + Math.round(center - halfWidth * PERFECT_RATIO);
         int perfectRight = barX + Math.round(center + halfWidth * PERFECT_RATIO);
         guiGraphics.fill(perfectLeft, barY, perfectRight, barY + BAR_HEIGHT, PERFECT_ZONE_COLOR);
@@ -237,15 +222,12 @@ public class TimingBarScreen extends Screen {
         guiGraphics.drawString(this.font, "Max: x" + maxCombo, barX + 225, barY + 38, 0xFFFFFF);
         guiGraphics.drawCenteredString(this.font, "YELLOW=GOOD  GREEN=GREAT  BRIGHT=PERFECT", this.width / 2, barY + 54, 0xDDDDDD);
         guiGraphics.drawCenteredString(this.font, "SPACE = HIT   |   ESC = BACK", this.width / 2, barY + 68, 0xDDDDDD);
-
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
     public void onClose() {
-        if (this.minecraft != null) {
-            this.minecraft.setScreen(new ForgingScreen());
-        }
+        if (this.minecraft != null) this.minecraft.setScreen(new ForgingScreen());
     }
 
     @Override
