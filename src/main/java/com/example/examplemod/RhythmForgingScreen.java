@@ -15,6 +15,10 @@ public class RhythmForgingScreen extends Screen {
     private static final int APPROACH_START_RADIUS = 70;
     private static final float APPROACH_SPEED = 2.2F;
 
+    // TEMPORARY METAL DIFFICULTY TUNING.
+    private static final float SPEED_PER_DIFFICULTY_STEP = 0.45F;
+    private static final float WINDOW_SHRINK_PER_DIFFICULTY_STEP = 2.0F;
+
     private static final int PERFECT_SCORE = 100;
     private static final int GREAT_SCORE = 75;
     private static final int GOOD_SCORE = 50;
@@ -23,14 +27,11 @@ public class RhythmForgingScreen extends Screen {
     private static final float PERFECT_WINDOW = 5.0F;
     private static final float GREAT_WINDOW = 12.0F;
     private static final float GOOD_WINDOW = 22.0F;
-
-    // Full-screen translucent black overlay.
-    // 0x00 = invisible, 0xFF = fully opaque. 0x88 is medium transparency.
     private static final int SCREEN_OVERLAY_COLOR = 0x88000000;
     // ============================================================
 
     private final Random random = new Random();
-
+    private final ForgingMetal metal;
     private int targetX;
     private int targetY;
     private Direction direction;
@@ -50,18 +51,37 @@ public class RhythmForgingScreen extends Screen {
     private boolean finished;
 
     public RhythmForgingScreen() {
+        this(ForgingMetal.IRON);
+    }
+
+    public RhythmForgingScreen(ForgingMetal metal) {
         super(Component.literal("Rhythm Forging"));
+        this.metal = metal;
         spawnTarget();
+    }
+
+    private float currentApproachSpeed() {
+        return APPROACH_SPEED + (metal.difficulty() - 1) * SPEED_PER_DIFFICULTY_STEP;
+    }
+
+    private float currentPerfectWindow() {
+        return Math.max(2.0F, PERFECT_WINDOW - (metal.difficulty() - 1) * 0.75F);
+    }
+
+    private float currentGreatWindow() {
+        return Math.max(currentPerfectWindow() + 1.0F, GREAT_WINDOW - (metal.difficulty() - 1) * WINDOW_SHRINK_PER_DIFFICULTY_STEP);
+    }
+
+    private float currentGoodWindow() {
+        return Math.max(currentGreatWindow() + 1.0F, GOOD_WINDOW - (metal.difficulty() - 1) * WINDOW_SHRINK_PER_DIFFICULTY_STEP);
     }
 
     private void spawnTarget() {
         int marginX = 90;
         int topMargin = 80;
         int bottomMargin = 80;
-
         int usableWidth = Math.max(1, this.width - marginX * 2);
         int usableHeight = Math.max(1, this.height - topMargin - bottomMargin);
-
         targetX = marginX + random.nextInt(usableWidth);
         targetY = topMargin + random.nextInt(usableHeight);
         direction = Direction.values()[random.nextInt(Direction.values().length)];
@@ -75,39 +95,26 @@ public class RhythmForgingScreen extends Screen {
 
     @Override
     public void tick() {
-        if (finished) {
-            return;
-        }
-
-        approachRadius -= APPROACH_SPEED;
-
-        if (approachRadius < TARGET_RADIUS - GOOD_WINDOW) {
-            registerMiss("TOO LATE!");
-        }
+        if (finished) return;
+        approachRadius -= currentApproachSpeed();
+        if (approachRadius < TARGET_RADIUS - currentGoodWindow()) registerMiss("TOO LATE!");
     }
 
     private void attemptHit(int keyCode) {
-        if (finished) {
-            return;
-        }
-
+        if (finished) return;
         Direction pressedDirection = Direction.fromKey(keyCode);
-        if (pressedDirection == null) {
-            return;
-        }
-
+        if (pressedDirection == null) return;
         if (pressedDirection != direction) {
             registerMiss("WRONG KEY!");
             return;
         }
 
         float timingDistance = Math.abs(approachRadius - TARGET_RADIUS);
-
-        if (timingDistance <= PERFECT_WINDOW) {
+        if (timingDistance <= currentPerfectWindow()) {
             registerHit("PERFECT!", 0xFF66FF66, PERFECT_SCORE, 100, HitGrade.PERFECT);
-        } else if (timingDistance <= GREAT_WINDOW) {
+        } else if (timingDistance <= currentGreatWindow()) {
             registerHit("GREAT!", 0xFF22CC55, GREAT_SCORE, 75, HitGrade.GREAT);
-        } else if (timingDistance <= GOOD_WINDOW) {
+        } else if (timingDistance <= currentGoodWindow()) {
             registerHit("GOOD!", 0xFFFFCC33, GOOD_SCORE, 50, HitGrade.GOOD);
         } else {
             registerMiss("TOO EARLY!");
@@ -117,15 +124,12 @@ public class RhythmForgingScreen extends Screen {
     private void registerHit(String text, int color, int baseScore, int accuracyPoints, HitGrade grade) {
         resultText = text + " +" + baseScore;
         resultColor = color;
-
         if (grade == HitGrade.PERFECT) perfectCount++;
         if (grade == HitGrade.GREAT) greatCount++;
         if (grade == HitGrade.GOOD) goodCount++;
-
         currentCombo++;
         maxCombo = Math.max(maxCombo, currentCombo);
-        int comboBonus = Math.max(0, currentCombo - 1) * COMBO_BONUS_PER_STEP;
-        score += baseScore + comboBonus;
+        score += baseScore + Math.max(0, currentCombo - 1) * COMBO_BONUS_PER_STEP;
         weightedAccuracyPoints += accuracyPoints;
         finishRound();
     }
@@ -149,19 +153,9 @@ public class RhythmForgingScreen extends Screen {
     }
 
     private void openResultScreen() {
-        if (this.minecraft == null) {
-            return;
-        }
-
+        if (this.minecraft == null) return;
         double accuracy = weightedAccuracyPoints / (double) TOTAL_ROUNDS;
-        ForgingResult result = new ForgingResult(
-                score,
-                accuracy,
-                maxCombo,
-                perfectCount,
-                greatCount,
-                goodCount,
-                missCount);
+        ForgingResult result = new ForgingResult(score, accuracy, maxCombo, perfectCount, greatCount, goodCount, missCount);
         this.minecraft.setScreen(new ForgingResultScreen(result));
     }
 
@@ -176,28 +170,19 @@ public class RhythmForgingScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Intentionally empty so Minecraft does not apply its menu blur.
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Dark translucent layer over the whole minigame.
-        // The world remains visible underneath, like Minigame 1.
         guiGraphics.fill(0, 0, this.width, this.height, SCREEN_OVERLAY_COLOR);
-
-        // Slightly darker HUD box for readability.
-        guiGraphics.fill(12, 12, 220, 68, 0xB0000000);
-        guiGraphics.drawString(this.font, "RHYTHM FORGING", 22, 22, 0xFFFFFF);
-        guiGraphics.drawString(this.font, "Round: " + Math.min(round + 1, TOTAL_ROUNDS) + "/" + TOTAL_ROUNDS, 22, 36, 0xDDDDDD);
-        guiGraphics.drawString(this.font, "Score: " + score + "   Combo: x" + currentCombo, 22, 50, 0xDDDDDD);
-
+        guiGraphics.fill(12, 12, 260, 80, 0xB0000000);
+        guiGraphics.drawString(this.font, "RHYTHM FORGING - " + metal.displayName(), 22, 22, 0xFFFFFF);
+        guiGraphics.drawString(this.font, "Difficulty: " + metal.difficulty() + "/3", 22, 36, 0xDDDDDD);
+        guiGraphics.drawString(this.font, "Round: " + Math.min(round + 1, TOTAL_ROUNDS) + "/" + TOTAL_ROUNDS, 22, 50, 0xDDDDDD);
+        guiGraphics.drawString(this.font, "Score: " + score + "   Combo: x" + currentCombo, 22, 64, 0xDDDDDD);
         guiGraphics.drawCenteredString(this.font, resultText, this.width / 2, 22, resultColor);
-
         drawTarget(guiGraphics);
-
-        guiGraphics.drawCenteredString(this.font, "W=UP   A=LEFT   S=DOWN   D=RIGHT   |   ESC=BACK",
-                this.width / 2, this.height - 24, 0xFFFFFF);
-
+        guiGraphics.drawCenteredString(this.font, "W=UP   A=LEFT   S=DOWN   D=RIGHT   |   ESC=BACK", this.width / 2, this.height - 24, 0xFFFFFF);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
@@ -206,7 +191,6 @@ public class RhythmForgingScreen extends Screen {
         guiGraphics.fill(targetX - r, targetY - r, targetX + r, targetY + r, 0xCC222222);
         guiGraphics.fill(targetX - r + 3, targetY - r + 3, targetX + r - 3, targetY + r - 3, 0xCCEEEEEE);
         guiGraphics.fill(targetX - r + 6, targetY - r + 6, targetX + r - 6, targetY + r - 6, 0xCC333333);
-
         int ar = Math.max(1, Math.round(approachRadius));
         int thickness = 2;
         int color = 0xFFFFFFFF;
@@ -214,15 +198,12 @@ public class RhythmForgingScreen extends Screen {
         guiGraphics.fill(targetX - ar, targetY + ar - thickness, targetX + ar, targetY + ar, color);
         guiGraphics.fill(targetX - ar, targetY - ar, targetX - ar + thickness, targetY + ar, color);
         guiGraphics.fill(targetX + ar - thickness, targetY - ar, targetX + ar, targetY + ar, color);
-
         guiGraphics.drawCenteredString(this.font, direction.symbol + "  " + direction.keyName, targetX, targetY - 4, 0xFFFFFF);
     }
 
     @Override
     public void onClose() {
-        if (this.minecraft != null) {
-            this.minecraft.setScreen(new ForgingScreen());
-        }
+        if (this.minecraft != null) this.minecraft.setScreen(new ForgingScreen());
     }
 
     @Override
@@ -230,9 +211,7 @@ public class RhythmForgingScreen extends Screen {
         return false;
     }
 
-    private enum HitGrade {
-        PERFECT, GREAT, GOOD
-    }
+    private enum HitGrade { PERFECT, GREAT, GOOD }
 
     private enum Direction {
         UP(GLFW.GLFW_KEY_W, "W", "^"),
@@ -251,11 +230,7 @@ public class RhythmForgingScreen extends Screen {
         }
 
         private static Direction fromKey(int keyCode) {
-            for (Direction direction : values()) {
-                if (direction.keyCode == keyCode) {
-                    return direction;
-                }
-            }
+            for (Direction direction : values()) if (direction.keyCode == keyCode) return direction;
             return null;
         }
     }
