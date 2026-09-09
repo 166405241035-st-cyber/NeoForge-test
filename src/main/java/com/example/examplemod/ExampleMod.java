@@ -44,12 +44,14 @@ public class ExampleMod {
             registryName -> new ForgingBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
     public static final DeferredItem<BlockItem> FORGING_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("forging_block", FORGING_BLOCK);
 
-    // Generic result item. Each ItemStack stores its own metal/blueprint/material/effect/tier data.
     public static final DeferredItem<ForgedHeadItem> FORGED_HEAD_ITEM = ITEMS.register(
             "forged_head",
             registryName -> new ForgedHeadItem(new Item.Properties().stacksTo(1)));
 
-    // Keep the MDK example item for now so we change as little unrelated code as possible.
+    public static final DeferredItem<ForgedCoreItem> FORGED_CORE_ITEM = ITEMS.register(
+            "forged_core",
+            registryName -> new ForgedCoreItem(new Item.Properties().stacksTo(1)));
+
     public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item", new Item.Properties().food(new FoodProperties.Builder()
             .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
 
@@ -60,16 +62,15 @@ public class ExampleMod {
             .displayItems((parameters, output) -> {
                 output.accept(FORGING_BLOCK_ITEM.get());
                 output.accept(FORGED_HEAD_ITEM.get());
+                output.accept(FORGED_CORE_ITEM.get());
             })
             .build());
 
     public ExampleMod(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
-
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
-
         NeoForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -77,19 +78,13 @@ public class ExampleMod {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("HELLO FROM COMMON SETUP");
-
-        if (Config.LOG_DIRT_BLOCK.getAsBoolean()) {
-            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-        }
-
+        if (Config.LOG_DIRT_BLOCK.getAsBoolean()) LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
         LOGGER.info("{}{}", Config.MAGIC_NUMBER_INTRODUCTION.get(), Config.MAGIC_NUMBER.getAsInt());
         Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            event.accept(FORGING_BLOCK_ITEM);
-        }
+        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) event.accept(FORGING_BLOCK_ITEM);
     }
 
     @SubscribeEvent
