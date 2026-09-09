@@ -1,9 +1,11 @@
 package com.example.examplemod;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.SimpleMenuProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,8 +19,11 @@ public class ForgingBlock extends Block {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
             BlockHitResult hitResult) {
-        if (level.isClientSide()) {
-            ForgingClientHooks.openForgingScreen();
+        if (!level.isClientSide()) {
+            SimpleContainer inventory = new SimpleContainer(ForgeMenu.FORGE_SLOT_COUNT);
+            player.openMenu(new SimpleMenuProvider(
+                    (containerId, playerInventory, openingPlayer) -> new ForgeMenu(containerId, playerInventory, inventory),
+                    Component.literal("Forge")));
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
