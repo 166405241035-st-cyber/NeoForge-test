@@ -18,7 +18,7 @@ public class CoreForgingResultScreen extends Screen {
     @Override
     protected void init() {
         addRenderableWidget(Button.builder(Component.literal("Continue"), button -> {
-            if (minecraft != null) minecraft.setScreen(new ForgingScreen());
+            if (minecraft != null) minecraft.setScreen(null);
         }).bounds(width / 2 - 50, height / 2 + 95, 100, 20).build());
     }
 
