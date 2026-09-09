@@ -200,7 +200,7 @@ public class CoreTimingBarScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (minecraft != null) minecraft.setScreen(new ForgingScreen());
+        if (minecraft != null) minecraft.setScreen(null);
     }
 
     @Override
