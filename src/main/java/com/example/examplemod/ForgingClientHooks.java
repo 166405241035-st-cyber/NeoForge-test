@@ -9,4 +9,8 @@ public final class ForgingClientHooks {
     public static void openForgingScreen() {
         Minecraft.getInstance().setScreen(new ForgingScreen());
     }
+
+    public static void openAnvilScreen() {
+        Minecraft.getInstance().setScreen(new ForgingAnvilScreen());
+    }
 }
