@@ -1,43 +1,53 @@
 package com.example.examplemod;
 
+import java.util.Random;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
-/**
- * Separate Anvil screen foundation.
- * The final Head/Core/Rod combination rules are intentionally not implemented yet.
- */
-public class ForgingAnvilScreen extends Screen {
-    public ForgingAnvilScreen() {
-        super(Component.literal("Forging Anvil"));
+/** Simple Head + Core + Rod GUI matching the approved mockup. */
+public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
+    private String status = "Insert Head + Core + Rod";
+
+    public ForgingAnvilScreen(AnvilMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
+        imageWidth=176;
+        imageHeight=178;
+        inventoryLabelY=85;
     }
 
-    @Override
-    protected void init() {
-        int centerX = width / 2;
-        addRenderableWidget(Button.builder(Component.literal("Rhythm Forging"), button -> {
-            if (minecraft != null) minecraft.setScreen(new RhythmForgingScreen(ForgingMetal.IRON));
-        }).bounds(centerX - 70, height / 2 + 35, 140, 20).build());
+    @Override protected void init() {
+        super.init();
+        addRenderableWidget(Button.builder(Component.literal("FORGE"), b -> startForge())
+                .bounds(leftPos+63,topPos+66,50,20).build());
     }
 
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        renderBackground(graphics, mouseX, mouseY, partialTick);
-        int left = width / 2 - 100;
-        int top = height / 2 - 75;
-        graphics.fill(left, top, left + 200, top + 150, 0xEE4A4A4A);
-        graphics.drawCenteredString(font, "FORGING ANVIL", width / 2, top + 12, 0xFFFFFF);
-        graphics.drawCenteredString(font, "HEAD", width / 2 - 55, top + 48, 0xDDDDDD);
-        graphics.drawCenteredString(font, "CORE", width / 2, top + 48, 0xDDDDDD);
-        graphics.drawCenteredString(font, "ROD", width / 2 + 55, top + 48, 0xDDDDDD);
-        graphics.drawCenteredString(font, "Final combination rules: not locked yet", width / 2, top + 105, 0xBBBBBB);
-        super.render(graphics, mouseX, mouseY, partialTick);
+    private void startForge() {
+        if (!menu.hasValidAssembly()) { status="Need Head + Core + Rod"; return; }
+        ForgedHeadResult head=menu.headResult();
+        ForgedCoreResult core=menu.coreResult();
+        ForgedRodResult rod=menu.rodResult();
+        if (head==null||core==null||rod==null) return;
+        AnvilAssemblyResult assembly=AnvilAssemblyResult.roll(head,core,rod,new Random());
+        if (minecraft==null || minecraft.gameMode==null) return;
+        minecraft.gameMode.handleInventoryButtonClick(menu.containerId,0);
+        minecraft.setScreen(new AnvilRhythmForgingScreen(head.metal(),assembly));
     }
 
-    @Override
-    public boolean isPauseScreen() {
-        return false;
+    @Override protected void renderBg(GuiGraphics g,float p,int mx,int my) {
+        int x=leftPos,y=topPos;
+        g.fill(x,y,x+imageWidth,y+imageHeight,0xFFE0E0E0);
+        g.fill(x+3,y+3,x+imageWidth-3,y+imageHeight-3,0xFFC8C8C8);
+        drawSlot(g,x+49,y+41); drawSlot(g,x+87,y+41); drawSlot(g,x+125,y+41);
+        g.drawCenteredString(font,"+",x+78,y+47,0xFF666666);
+        g.drawCenteredString(font,"+",x+116,y+47,0xFF666666);
+        for(int row=0;row<3;row++)for(int col=0;col<9;col++)drawSlot(g,x+7+col*18,y+95+row*18);
+        for(int col=0;col<9;col++)drawSlot(g,x+7+col*18,y+153);
     }
+    private void drawSlot(GuiGraphics g,int x,int y){g.fill(x,y,x+20,y+20,0xFF666666);g.fill(x+1,y+1,x+19,y+19,0xFFEEEEEE);g.fill(x+3,y+3,x+17,y+17,0xFF999999);}
+
+    @Override protected void renderLabels(GuiGraphics g,int mx,int my){g.drawString(font,"FORGING ANVIL",8,8,0xFF333333,false);g.drawCenteredString(font,status,imageWidth/2,28,menu.hasValidAssembly()?0xFF228822:0xFF555555);g.drawString(font,playerInventoryTitle,inventoryLabelX,inventoryLabelY,0xFF333333,false);}
+    @Override public void render(GuiGraphics g,int mx,int my,float p){renderBackground(g,mx,my,p);super.render(g,mx,my,p);renderTooltip(g,mx,my);}
 }
