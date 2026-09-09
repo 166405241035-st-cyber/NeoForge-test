@@ -7,7 +7,13 @@ import java.util.Map;
 import java.util.Random;
 
 /** Final effect roll from Head + Core + Rod. Duplicate effects add tiers, capped at III. */
-public record AnvilAssemblyResult(HeadBlueprintType blueprint, ForgingMetal metal, List<FinalEffect> effects) {
+public record AnvilAssemblyResult(
+        HeadBlueprintType blueprint,
+        ForgingMetal metal,
+        MonsterMaterial headMaterial,
+        MonsterMaterial coreMaterial,
+        MonsterMaterial rodMaterial,
+        List<FinalEffect> effects) {
     public record FinalEffect(ForgingEffect effect, EffectTier tier) {}
 
     public static AnvilAssemblyResult roll(ForgedHeadResult head, ForgedCoreResult core, ForgedRodResult rod, Random random) {
@@ -18,7 +24,9 @@ public record AnvilAssemblyResult(HeadBlueprintType blueprint, ForgingMetal meta
 
         List<FinalEffect> finalEffects = new ArrayList<>();
         combined.forEach((effect, level) -> finalEffects.add(new FinalEffect(effect, tierOf(Math.min(3, level)))));
-        return new AnvilAssemblyResult(head.blueprint(), head.metal(), List.copyOf(finalEffects));
+        return new AnvilAssemblyResult(
+                head.blueprint(), head.metal(), head.monsterMaterial(), core.monsterMaterial(), rod.monsterMaterial(),
+                List.copyOf(finalEffects));
     }
 
     private static void add(Map<ForgingEffect, Integer> effects, ForgingEffect effect, int tier) {
