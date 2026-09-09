@@ -50,6 +50,7 @@ public class ExampleMod {
     public static final DeferredItem<ForgedHeadItem> FORGED_HEAD_ITEM = ITEMS.register("forged_head", registryName -> new ForgedHeadItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<ForgedCoreItem> FORGED_CORE_ITEM = ITEMS.register("forged_core", registryName -> new ForgedCoreItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<ForgedRodItem> FORGED_ROD_ITEM = ITEMS.register("forged_rod", registryName -> new ForgedRodItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<ForgedEquipmentItem> FORGED_EQUIPMENT_ITEM = ITEMS.register("forged_equipment", registryName -> new ForgedEquipmentItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
             .title(Component.literal("Smelting & Forging")).withTabsBefore(CreativeModeTabs.COMBAT)
@@ -57,7 +58,7 @@ public class ExampleMod {
                 output.accept(FORGING_BLOCK_ITEM.get()); output.accept(FORGING_ANVIL_ITEM.get());
                 output.accept(SWORD_HEAD_BLUEPRINT.get()); output.accept(AXE_HEAD_BLUEPRINT.get()); output.accept(PICKAXE_HEAD_BLUEPRINT.get()); output.accept(SHOVEL_HEAD_BLUEPRINT.get()); output.accept(HOE_HEAD_BLUEPRINT.get());
                 output.accept(CORE_BLUEPRINT.get()); output.accept(ROD_BLUEPRINT.get());
-                output.accept(FORGED_HEAD_ITEM.get()); output.accept(FORGED_CORE_ITEM.get()); output.accept(FORGED_ROD_ITEM.get());
+                output.accept(FORGED_HEAD_ITEM.get()); output.accept(FORGED_CORE_ITEM.get()); output.accept(FORGED_ROD_ITEM.get()); output.accept(FORGED_EQUIPMENT_ITEM.get());
             }).build());
 
     public ExampleMod(IEventBus modEventBus, ModContainer modContainer) {
