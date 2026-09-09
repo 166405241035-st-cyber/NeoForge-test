@@ -18,37 +18,38 @@ public class ForgingScreen extends Screen {
     @Override
     protected void init() {
         int centerX = this.width / 2;
-        int startY = this.height / 2 - 65;
+        int startY = this.height / 2 - 70;
 
-        this.addRenderableWidget(Button.builder(metalButtonText(), button -> {
+        addRenderableWidget(Button.builder(metalButtonText(), button -> {
             cycleMetal();
             button.setMessage(metalButtonText());
         }).bounds(centerX - 110, startY - 45, 220, 20).build());
 
-        this.addRenderableWidget(Button.builder(blueprintButtonText(), button -> {
+        addRenderableWidget(Button.builder(blueprintButtonText(), button -> {
             cycleBlueprint();
             button.setMessage(blueprintButtonText());
         }).bounds(centerX - 110, startY - 20, 220, 20).build());
 
-        this.addRenderableWidget(Button.builder(monsterMaterialButtonText(), button -> {
+        addRenderableWidget(Button.builder(monsterMaterialButtonText(), button -> {
             cycleMonsterMaterial();
             button.setMessage(monsterMaterialButtonText());
         }).bounds(centerX - 110, startY + 5, 220, 20).build());
 
-        this.addRenderableWidget(Button.builder(Component.literal("Forge Head - Timing Bar"), button -> {
-            if (this.minecraft != null) {
-                this.minecraft.setScreen(new TimingBarScreen(selectedMetal, selectedBlueprint, selectedMonsterMaterial));
-            }
-        }).bounds(centerX - 110, startY + 38, 220, 20).build());
+        addRenderableWidget(Button.builder(Component.literal("Forge Head - Timing Bar"), button -> {
+            if (minecraft != null) minecraft.setScreen(new TimingBarScreen(selectedMetal, selectedBlueprint, selectedMonsterMaterial));
+        }).bounds(centerX - 110, startY + 35, 220, 20).build());
 
-        this.addRenderableWidget(Button.builder(Component.literal("Minigame 2 - Rhythm Forging"), button -> {
-            if (this.minecraft != null) {
-                this.minecraft.setScreen(new RhythmForgingScreen(selectedMetal));
-            }
-        }).bounds(centerX - 110, startY + 68, 220, 20).build());
+        // Core Blueprint is universal: only metal + monster material need selecting.
+        addRenderableWidget(Button.builder(Component.literal("Forge Core - Timing Bar"), button -> {
+            if (minecraft != null) minecraft.setScreen(new CoreTimingBarScreen(selectedMetal, selectedMonsterMaterial));
+        }).bounds(centerX - 110, startY + 60, 220, 20).build());
 
-        this.addRenderableWidget(Button.builder(Component.literal("Close"), button -> this.onClose())
-                .bounds(centerX - 50, startY + 105, 100, 20).build());
+        addRenderableWidget(Button.builder(Component.literal("Minigame 2 - Rhythm Forging"), button -> {
+            if (minecraft != null) minecraft.setScreen(new RhythmForgingScreen(selectedMetal));
+        }).bounds(centerX - 110, startY + 85, 220, 20).build());
+
+        addRenderableWidget(Button.builder(Component.literal("Close"), button -> onClose())
+                .bounds(centerX - 50, startY + 115, 100, 20).build());
     }
 
     private Component metalButtonText() {
@@ -56,7 +57,7 @@ public class ForgingScreen extends Screen {
     }
 
     private Component blueprintButtonText() {
-        return Component.literal("Blueprint: " + formatName(selectedBlueprint.name()) + " Head");
+        return Component.literal("Head Blueprint: " + formatName(selectedBlueprint.name()));
     }
 
     private Component monsterMaterialButtonText() {
@@ -90,10 +91,10 @@ public class ForgingScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(this.font, "FORGING TEST", this.width / 2, this.height / 2 - 130, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, "Metal + Blueprint + Monster Material", this.width / 2, this.height / 2 - 117, 0xDDDDDD);
+        guiGraphics.drawCenteredString(font, "FORGING TEST", width / 2, height / 2 - 145, 0xFFFFFF);
+        guiGraphics.drawCenteredString(font, "Head Blueprint is typed | Core Blueprint is universal", width / 2, height / 2 - 132, 0xDDDDDD);
     }
 
     @Override
