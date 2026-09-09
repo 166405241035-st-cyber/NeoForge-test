@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 public class TimingBarScreen extends Screen {
     private static final int BAR_WIDTH = 300;
@@ -15,7 +16,7 @@ public class TimingBarScreen extends Screen {
     private static final int TOTAL_ROUNDS = 10;
 
     private static final float CURSOR_MIN_SPEED = 6.0F;
-    private static final float CURSOR_MAX_SPEED = 10.0F;
+    private static final float CURSOR_MAX_SPEED = 12.0F; // Keep the locally tuned max speed.
     private static final int GREEN_MIN_WIDTH = 45;
     private static final int GREEN_MAX_WIDTH = 100;
 
@@ -164,6 +165,17 @@ public class TimingBarScreen extends Screen {
         ForgingEffect effect = EffectPool.randomEffect(monsterMaterial, blueprint, random);
         EffectTier tier = EffectTierRoller.roll(accuracy, random);
         ForgedHeadResult headResult = new ForgedHeadResult(metal, blueprint, monsterMaterial, effect, tier);
+
+        // Prototype reward path: runClient is an integrated server, so the local player inventory
+        // is backed by the same player state. Later, before dedicated multiplayer support, this
+        // should move behind a validated client->server payload.
+        if (this.minecraft.player != null) {
+            ItemStack forgedHead = ForgedHeadItem.create(headResult);
+            if (!this.minecraft.player.getInventory().add(forgedHead)) {
+                this.minecraft.player.drop(forgedHead, false);
+            }
+        }
+
         this.minecraft.setScreen(new ForgingResultScreen(result, headResult));
     }
 
