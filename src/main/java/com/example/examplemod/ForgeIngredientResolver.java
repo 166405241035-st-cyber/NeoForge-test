@@ -5,6 +5,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public final class ForgeIngredientResolver {
+    public static final int FUEL_PER_COAL = 8;
+    public static final int MAX_FUEL = 100;
+
     private ForgeIngredientResolver() {
     }
 
@@ -27,6 +30,7 @@ public final class ForgeIngredientResolver {
         return null;
     }
 
+    /** All 13 monster materials used by the forging effect system. */
     public static MonsterMaterial monsterMaterial(ItemStack stack) {
         if (stack.is(Items.ROTTEN_FLESH)) return MonsterMaterial.ROTTEN_FLESH;
         if (stack.is(Items.BONE)) return MonsterMaterial.BONE;
@@ -45,7 +49,12 @@ public final class ForgeIngredientResolver {
     }
 
     public static boolean isFuel(ItemStack stack) {
-        return stack.is(Items.COAL) || stack.is(Items.CHARCOAL);
+        return fuelValue(stack) > 0;
+    }
+
+    /** Coal and charcoal both add 8 units to the forge fuel tank. */
+    public static int fuelValue(ItemStack stack) {
+        return stack.is(Items.COAL) || stack.is(Items.CHARCOAL) ? FUEL_PER_COAL : 0;
     }
 
     public static boolean sameItem(ItemStack first, ItemStack second) {
