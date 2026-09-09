@@ -22,9 +22,7 @@ public class ForgingResultScreen extends Screen {
     @Override
     protected void init() {
         this.addRenderableWidget(Button.builder(Component.literal("Continue"), button -> {
-            if (this.minecraft != null) {
-                this.minecraft.setScreen(new ForgingScreen());
-            }
+            if (this.minecraft != null) this.minecraft.setScreen(null);
         }).bounds(this.width / 2 - 50, this.height / 2 + 95, 100, 20).build());
     }
 
@@ -63,7 +61,6 @@ public class ForgingResultScreen extends Screen {
         guiGraphics.drawCenteredString(this.font, "GREAT: " + result.greatCount(), centerX, statsTop + 76, 0xAAFF55);
         guiGraphics.drawCenteredString(this.font, "GOOD: " + result.goodCount(), centerX, statsTop + 92, 0xFFFF55);
         guiGraphics.drawCenteredString(this.font, "MISS: " + result.missCount(), centerX, statsTop + 108, 0xFF5555);
-
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
