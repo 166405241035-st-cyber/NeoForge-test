@@ -9,20 +9,16 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class TimingBarScreen extends Screen {
-    // ==================== EASY TUNING VALUES ====================
     private static final int BAR_WIDTH = 300;
     private static final int BAR_HEIGHT = 24;
     private static final int CURSOR_WIDTH = 3;
     private static final int TOTAL_ROUNDS = 10;
 
-    // Base values for Difficulty 1. Higher metal difficulty is applied below.
     private static final float CURSOR_MIN_SPEED = 6.0F;
     private static final float CURSOR_MAX_SPEED = 10.0F;
     private static final int GREEN_MIN_WIDTH = 45;
     private static final int GREEN_MAX_WIDTH = 100;
 
-    // TEMPORARY METAL DIFFICULTY TUNING.
-    // Difficulty 2/3 makes the cursor faster and target smaller.
     private static final float SPEED_PER_DIFFICULTY_STEP = 1.5F;
     private static final int TARGET_SHRINK_PER_DIFFICULTY_STEP = 10;
 
@@ -30,11 +26,6 @@ public class TimingBarScreen extends Screen {
     private static final int GREAT_SCORE = 75;
     private static final int GOOD_SCORE = 50;
     private static final int MISS_SCORE = 0;
-
-    private static final int PERFECT_ACCURACY = 100;
-    private static final int GREAT_ACCURACY = 75;
-    private static final int GOOD_ACCURACY = 50;
-    private static final int MISS_ACCURACY = 0;
     private static final int COMBO_BONUS_PER_STEP = 5;
 
     private static final float PERFECT_RATIO = 0.20F;
@@ -43,10 +34,11 @@ public class TimingBarScreen extends Screen {
     private static final int GOOD_ZONE_COLOR = 0xFFFFCC33;
     private static final int GREAT_ZONE_COLOR = 0xFF22AA44;
     private static final int PERFECT_ZONE_COLOR = 0xFF66FF66;
-    // ============================================================
 
     private final Random random = new Random();
     private final ForgingMetal metal;
+    private final HeadBlueprintType blueprint;
+    private final MonsterMaterial monsterMaterial;
     private int greenStart;
     private int greenWidth;
     private float cursorPosition;
@@ -67,12 +59,18 @@ public class TimingBarScreen extends Screen {
     private boolean finished;
 
     public TimingBarScreen() {
-        this(ForgingMetal.IRON);
+        this(ForgingMetal.IRON, HeadBlueprintType.SWORD, MonsterMaterial.ROTTEN_FLESH);
     }
 
     public TimingBarScreen(ForgingMetal metal) {
+        this(metal, HeadBlueprintType.SWORD, MonsterMaterial.ROTTEN_FLESH);
+    }
+
+    public TimingBarScreen(ForgingMetal metal, HeadBlueprintType blueprint, MonsterMaterial monsterMaterial) {
         super(Component.literal("Timing Bar"));
         this.metal = metal;
+        this.blueprint = blueprint;
+        this.monsterMaterial = monsterMaterial;
         randomizeRound();
     }
 
@@ -92,7 +90,6 @@ public class TimingBarScreen extends Screen {
     @Override
     public void tick() {
         if (finished) return;
-
         cursorPosition += movingRight ? cursorSpeed : -cursorSpeed;
         if (cursorPosition >= BAR_WIDTH - CURSOR_WIDTH) {
             cursorPosition = BAR_WIDTH - CURSOR_WIDTH;
@@ -121,19 +118,19 @@ public class TimingBarScreen extends Screen {
                 resultColor = PERFECT_ZONE_COLOR;
                 perfectCount++;
                 baseScore = PERFECT_SCORE;
-                accuracyPoints = PERFECT_ACCURACY;
+                accuracyPoints = 100;
             } else if (normalizedDistance <= GREAT_RATIO) {
                 resultText = "GREAT! +" + GREAT_SCORE;
                 resultColor = GREAT_ZONE_COLOR;
                 greatCount++;
                 baseScore = GREAT_SCORE;
-                accuracyPoints = GREAT_ACCURACY;
+                accuracyPoints = 75;
             } else {
                 resultText = "GOOD! +" + GOOD_SCORE;
                 resultColor = GOOD_ZONE_COLOR;
                 goodCount++;
                 baseScore = GOOD_SCORE;
-                accuracyPoints = GOOD_ACCURACY;
+                accuracyPoints = 50;
             }
             currentCombo++;
             maxCombo = Math.max(maxCombo, currentCombo);
@@ -142,7 +139,7 @@ public class TimingBarScreen extends Screen {
             resultColor = 0xFF5555;
             missCount++;
             baseScore = MISS_SCORE;
-            accuracyPoints = MISS_ACCURACY;
+            accuracyPoints = 0;
             currentCombo = 0;
         }
 
@@ -164,7 +161,10 @@ public class TimingBarScreen extends Screen {
 
         double accuracy = weightedAccuracyPoints / (double) TOTAL_ROUNDS;
         ForgingResult result = new ForgingResult(score, accuracy, maxCombo, perfectCount, greatCount, goodCount, missCount);
-        this.minecraft.setScreen(new ForgingResultScreen(result));
+        ForgingEffect effect = EffectPool.randomEffect(monsterMaterial, blueprint, random);
+        EffectTier tier = EffectTierRoller.roll(accuracy, random);
+        ForgedHeadResult headResult = new ForgedHeadResult(metal, blueprint, monsterMaterial, effect, tier);
+        this.minecraft.setScreen(new ForgingResultScreen(result, headResult));
     }
 
     @Override
@@ -185,7 +185,7 @@ public class TimingBarScreen extends Screen {
         int barX = (this.width - BAR_WIDTH) / 2;
         int barY = this.height / 2 - BAR_HEIGHT / 2;
         int panelPaddingX = 28;
-        int panelTop = barY - 92;
+        int panelTop = barY - 105;
         int panelBottom = barY + 82;
         int panelLeft = barX - panelPaddingX;
         int panelRight = barX + BAR_WIDTH + panelPaddingX;
@@ -196,7 +196,8 @@ public class TimingBarScreen extends Screen {
         guiGraphics.fill(panelLeft, panelTop, panelLeft + 1, panelBottom, 0xFFAAAAAA);
         guiGraphics.fill(panelRight - 1, panelTop, panelRight, panelBottom, 0xFFAAAAAA);
 
-        guiGraphics.drawCenteredString(this.font, "TIMING FORGING - " + metal.displayName() + " [Difficulty " + metal.difficulty() + "/3]", this.width / 2, barY - 72, 0xFFFFFF);
+        guiGraphics.drawCenteredString(this.font, "TIMING FORGING - " + metal.displayName() + " [Difficulty " + metal.difficulty() + "/3]", this.width / 2, barY - 88, 0xFFFFFF);
+        guiGraphics.drawCenteredString(this.font, blueprint.name() + " HEAD + " + monsterMaterial.name(), this.width / 2, barY - 74, 0xCCCCCC);
         guiGraphics.drawCenteredString(this.font, "ROUND " + Math.min(round + 1, TOTAL_ROUNDS) + " / " + TOTAL_ROUNDS, this.width / 2, barY - 56, 0xDDDDDD);
         guiGraphics.drawCenteredString(this.font, resultText, this.width / 2, barY - 38, resultColor);
 
