@@ -38,6 +38,7 @@ public class ExampleMod {
     public static final DeferredBlock<Block> FORGING_ANVIL = BLOCKS.register("forging_anvil", registryName -> new ForgingAnvilBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F)));
     public static final DeferredItem<BlockItem> FORGING_ANVIL_ITEM = ITEMS.registerSimpleBlockItem("forging_anvil", FORGING_ANVIL);
     public static final DeferredHolder<MenuType<?>, MenuType<ForgeMenu>> FORGE_MENU = MENUS.register("forge_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new ForgeMenu(windowId, inventory)));
+    public static final DeferredHolder<MenuType<?>, MenuType<AnvilMenu>> ANVIL_MENU = MENUS.register("anvil_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new AnvilMenu(windowId, inventory)));
 
     public static final DeferredItem<Item> CORE_BLUEPRINT = ITEMS.registerSimpleItem("coreblueprint", new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> ROD_BLUEPRINT = ITEMS.registerSimpleItem("rodeblueprint", new Item.Properties().stacksTo(16));
@@ -67,6 +68,9 @@ public class ExampleMod {
     public static final class ClientEvents {
         private ClientEvents() {}
         @net.neoforged.bus.api.SubscribeEvent
-        public static void registerScreens(RegisterMenuScreensEvent event) { event.register(FORGE_MENU.get(), ForgingScreen::new); }
+        public static void registerScreens(RegisterMenuScreensEvent event) {
+            event.register(FORGE_MENU.get(), ForgingScreen::new);
+            event.register(ANVIL_MENU.get(), ForgingAnvilScreen::new);
+        }
     }
 }
