@@ -27,7 +27,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
 
     private void startForge() {
         if (!menu.hasValidRecipe()) {
-            status = "Need blueprint + monster + 5 matching metals + coal";
+            status = "Need blueprint + monster + 5 matching metals";
             return;
         }
 
@@ -62,9 +62,18 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         drawSlotFrame(graphics, x + 102, y + 75, 0xFF9A9A9A);
         drawSlotFrame(graphics, x + 144, y + 85, 0xFF777777);
 
-        graphics.fill(x + 148, y + 24, x + 160, y + 78, 0xFF202020);
-        boolean hasFuel = !menu.stackAt(ForgeMenu.FUEL_SLOT).isEmpty();
-        if (hasFuel) graphics.fill(x + 151, y + 50, x + 157, y + 75, 0xFFFF8A22);
+        // Fuel tank: 0-100, filled from bottom to top.
+        int gaugeX1 = x + 148;
+        int gaugeY1 = y + 24;
+        int gaugeX2 = x + 160;
+        int gaugeY2 = y + 78;
+        graphics.fill(gaugeX1, gaugeY1, gaugeX2, gaugeY2, 0xFF202020);
+        graphics.fill(gaugeX1 + 2, gaugeY1 + 2, gaugeX2 - 2, gaugeY2 - 2, 0xFF111111);
+        int innerHeight = (gaugeY2 - gaugeY1) - 4;
+        int filledHeight = innerHeight * menu.fuel() / menu.maxFuel();
+        if (filledHeight > 0) {
+            graphics.fill(gaugeX1 + 2, gaugeY2 - 2 - filledHeight, gaugeX2 - 2, gaugeY2 - 2, 0xFFFF8A22);
+        }
 
         graphics.fill(x + 85, y + 82, x + 91, y + 94, 0xFF181818);
         graphics.fill(x + 81, y + 91, x + 95, y + 95, 0xFF181818);
@@ -86,6 +95,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         graphics.drawString(font, "FORGE", 8, 7, 0xFFFFFF, false);
         graphics.drawString(font, "Blueprint", 8, 70, 0xDDEEFF, false);
         graphics.drawString(font, "FUEL", 143, 12, 0xFFFFFF, false);
+        graphics.drawCenteredString(font, menu.fuel() + "/" + menu.maxFuel(), 154, 79, 0xFFFFFF);
         graphics.drawString(font, status, 8, 104, menu.hasValidRecipe() ? 0x77FF77 : 0xFFCC66, false);
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFFFFF, false);
     }
