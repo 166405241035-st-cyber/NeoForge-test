@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 /** Rhythm assembly minigame for Head + Core + Rod. */
 public class AnvilRhythmForgingScreen extends Screen {
@@ -36,27 +37,24 @@ public class AnvilRhythmForgingScreen extends Screen {
     private float goodWindow() { return Math.max(greatWindow()+1F, GOOD_WINDOW - (metal.difficulty()-1)*2F); }
 
     @Override protected void init() { spawnTarget(); }
-    private void spawnTarget() {
-        int mx=90, tm=80, bm=80;
-        targetX=mx+random.nextInt(Math.max(1,width-mx*2));
-        targetY=tm+random.nextInt(Math.max(1,height-tm-bm));
-        direction=Direction.values()[random.nextInt(Direction.values().length)];
-        approachRadius=APPROACH_START_RADIUS;
-    }
-    @Override public void tick(){ if(!finished){ approachRadius-=speed(); if(approachRadius<TARGET_RADIUS-goodWindow()) miss("TOO LATE!"); } }
-    private void attempt(int key){
-        if(finished)return; Direction pressed=Direction.fromKey(key); if(pressed==null)return;
-        if(pressed!=direction){miss("WRONG KEY!");return;}
-        float d=Math.abs(approachRadius-TARGET_RADIUS);
-        if(d<=perfectWindow())hit("PERFECT!",0xFF66FF66,100,100,0);
-        else if(d<=greatWindow())hit("GREAT!",0xFF22CC55,75,75,1);
-        else if(d<=goodWindow())hit("GOOD!",0xFFFFCC33,50,50,2);
-        else miss("TOO EARLY!");
-    }
-    private void hit(String text,int color,int base,int accuracy,int grade){ resultText=text+" +"+base;resultColor=color;if(grade==0)perfectCount++;else if(grade==1)greatCount++;else goodCount++;currentCombo++;maxCombo=Math.max(maxCombo,currentCombo);score+=base+Math.max(0,currentCombo-1)*5;weightedAccuracyPoints+=accuracy;next(); }
+    private void spawnTarget() { int mx=90,tm=80,bm=80;targetX=mx+random.nextInt(Math.max(1,width-mx*2));targetY=tm+random.nextInt(Math.max(1,height-tm-bm));direction=Direction.values()[random.nextInt(Direction.values().length)];approachRadius=APPROACH_START_RADIUS; }
+    @Override public void tick(){if(!finished){approachRadius-=speed();if(approachRadius<TARGET_RADIUS-goodWindow())miss("TOO LATE!");}}
+    private void attempt(int key){if(finished)return;Direction pressed=Direction.fromKey(key);if(pressed==null)return;if(pressed!=direction){miss("WRONG KEY!");return;}float d=Math.abs(approachRadius-TARGET_RADIUS);if(d<=perfectWindow())hit("PERFECT!",0xFF66FF66,100,100,0);else if(d<=greatWindow())hit("GREAT!",0xFF22CC55,75,75,1);else if(d<=goodWindow())hit("GOOD!",0xFFFFCC33,50,50,2);else miss("TOO EARLY!");}
+    private void hit(String text,int color,int base,int accuracy,int grade){resultText=text+" +"+base;resultColor=color;if(grade==0)perfectCount++;else if(grade==1)greatCount++;else goodCount++;currentCombo++;maxCombo=Math.max(maxCombo,currentCombo);score+=base+Math.max(0,currentCombo-1)*5;weightedAccuracyPoints+=accuracy;next();}
     private void miss(String why){resultText=why+" MISS!";resultColor=0xFFFF5555;missCount++;currentCombo=0;next();}
     private void next(){round++;if(round>=TOTAL_ROUNDS){finished=true;finish();}else spawnTarget();}
-    private void finish(){if(minecraft==null)return;double accuracy=weightedAccuracyPoints/(double)TOTAL_ROUNDS;ForgingResult result=new ForgingResult(score,accuracy,maxCombo,perfectCount,greatCount,goodCount,missCount);minecraft.setScreen(new AnvilForgingResultScreen(result,assembly));}
+
+    private void finish(){
+        if(minecraft==null)return;
+        double accuracy=weightedAccuracyPoints/(double)TOTAL_ROUNDS;
+        ForgingResult result=new ForgingResult(score,accuracy,maxCombo,perfectCount,greatCount,goodCount,missCount);
+        if(minecraft.player!=null){
+            ItemStack equipment=ExampleMod.FORGED_EQUIPMENT_ITEM.get().createStack(assembly);
+            if(!minecraft.player.getInventory().add(equipment)) minecraft.player.drop(equipment,false);
+        }
+        minecraft.setScreen(new AnvilForgingResultScreen(result,assembly));
+    }
+
     @Override public boolean keyPressed(int keyCode,int scanCode,int modifiers){if(Direction.fromKey(keyCode)!=null){attempt(keyCode);return true;}return super.keyPressed(keyCode,scanCode,modifiers);}
     @Override public void renderBackground(GuiGraphics g,int x,int y,float p){}
     @Override public void render(GuiGraphics g,int mx,int my,float p){g.fill(0,0,width,height,0x88000000);g.fill(12,12,270,80,0xB0000000);g.drawString(font,"FINAL FORGING - "+metal.displayName(),22,22,0xFFFFFF);g.drawString(font,"Round: "+Math.min(round+1,TOTAL_ROUNDS)+"/"+TOTAL_ROUNDS,22,40,0xDDDDDD);g.drawString(font,"Score: "+score+" Combo: x"+currentCombo,22,58,0xDDDDDD);g.drawCenteredString(font,resultText,width/2,22,resultColor);drawTarget(g);g.drawCenteredString(font,"W=UP  A=LEFT  S=DOWN  D=RIGHT",width/2,height-24,0xFFFFFF);super.render(g,mx,my,p);}
