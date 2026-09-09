@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "smeltingandforging:block/forger"
+    },
+    "facing=east": {
+      "model": "smeltingandforging:block/forger",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "smeltingandforging:block/forger",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "smeltingandforging:block/forger",
+      "y": 270
+    }
+  }
+}
