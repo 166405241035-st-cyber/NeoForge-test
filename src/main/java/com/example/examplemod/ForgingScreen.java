@@ -53,29 +53,22 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         graphics.fill(x, y, x + imageWidth, y + imageHeight, 0xEE4B4B4B);
         graphics.fill(x + 4, y + 4, x + imageWidth - 4, y + imageHeight - 4, 0xFF5A5A5A);
 
-        // Blueprint slot.
         drawSlotFrame(graphics, x + 26, y + 44, 0xFF3978C5);
-        // Monster material slot.
         drawSlotFrame(graphics, x + 85, y + 56, 0xFFE0B82F);
-        // Five metal slots.
         drawSlotFrame(graphics, x + 85, y + 29, 0xFF9A9A9A);
         drawSlotFrame(graphics, x + 58, y + 45, 0xFF9A9A9A);
         drawSlotFrame(graphics, x + 112, y + 45, 0xFF9A9A9A);
         drawSlotFrame(graphics, x + 68, y + 75, 0xFF9A9A9A);
         drawSlotFrame(graphics, x + 102, y + 75, 0xFF9A9A9A);
-        // Fuel input.
         drawSlotFrame(graphics, x + 144, y + 85, 0xFF777777);
 
-        // Fuel gauge. One coal/charcoal currently represents one forge charge.
         graphics.fill(x + 148, y + 24, x + 160, y + 78, 0xFF202020);
-        int fuel = Math.min(1, menu.fuelCount());
-        if (fuel > 0) graphics.fill(x + 151, y + 50, x + 157, y + 75, 0xFFFF8A22);
+        boolean hasFuel = !menu.stackAt(ForgeMenu.FUEL_SLOT).isEmpty();
+        if (hasFuel) graphics.fill(x + 151, y + 50, x + 157, y + 75, 0xFFFF8A22);
 
-        // Arrow to forge button.
         graphics.fill(x + 85, y + 82, x + 91, y + 94, 0xFF181818);
         graphics.fill(x + 81, y + 91, x + 95, y + 95, 0xFF181818);
 
-        // Player inventory slot frames.
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) drawSlotFrame(graphics, x + 7 + col * 18, y + 125 + row * 18, 0xFF777777);
         }
