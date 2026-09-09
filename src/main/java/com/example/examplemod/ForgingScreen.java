@@ -2,88 +2,105 @@ package com.example.examplemod;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
-/**
- * Visual foundation for the real Forge Block GUI.
- * Slots now follow the approved layout; actual persistent container syncing is the next step.
- */
-public class ForgingScreen extends Screen {
-    private static final int PANEL_WIDTH = 240;
-    private static final int PANEL_HEIGHT = 210;
+/** Real Forge container screen with clickable Minecraft inventory slots. */
+public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
+    private Button forgeButton;
+    private String status = "Insert ingredients";
 
-    public ForgingScreen() {
-        super(Component.literal("Forge"));
+    public ForgingScreen(ForgeMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
+        this.imageWidth = 176;
+        this.imageHeight = 208;
+        this.inventoryLabelY = 115;
     }
 
     @Override
     protected void init() {
-        int left = (width - PANEL_WIDTH) / 2;
-        int top = (height - PANEL_HEIGHT) / 2;
+        super.init();
+        forgeButton = addRenderableWidget(Button.builder(Component.literal("FORGE"), button -> startForge())
+                .bounds(leftPos + 55, topPos + 99, 66, 20).build());
+    }
 
-        addRenderableWidget(Button.builder(Component.literal("FORGE"), button -> {
-            // The button will read the real slots after the server-backed container is connected.
-        }).bounds(left + 82, top + 100, 76, 20).build());
+    private void startForge() {
+        if (!menu.hasValidRecipe()) {
+            status = "Need blueprint + monster + 5 matching metals + coal";
+            return;
+        }
+
+        ForgingBlueprintType blueprint = menu.selectedBlueprint();
+        ForgingMetal metal = menu.selectedMetal();
+        MonsterMaterial monster = menu.selectedMonster();
+        menu.consumeRecipe();
+
+        if (minecraft == null) return;
+        if (blueprint == ForgingBlueprintType.CORE) {
+            minecraft.setScreen(new CoreTimingBarScreen(metal, monster));
+        } else if (blueprint != null && blueprint.headType() != null) {
+            minecraft.setScreen(new TimingBarScreen(metal, blueprint.headType(), monster));
+        } else {
+            status = "Rod forging will be connected after its rules are locked";
+        }
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+        int x = leftPos;
+        int y = topPos;
+        graphics.fill(x, y, x + imageWidth, y + imageHeight, 0xEE4B4B4B);
+        graphics.fill(x + 4, y + 4, x + imageWidth - 4, y + imageHeight - 4, 0xFF5A5A5A);
+
+        // Blueprint slot.
+        drawSlotFrame(graphics, x + 26, y + 44, 0xFF3978C5);
+        // Monster material slot.
+        drawSlotFrame(graphics, x + 85, y + 56, 0xFFE0B82F);
+        // Five metal slots.
+        drawSlotFrame(graphics, x + 85, y + 29, 0xFF9A9A9A);
+        drawSlotFrame(graphics, x + 58, y + 45, 0xFF9A9A9A);
+        drawSlotFrame(graphics, x + 112, y + 45, 0xFF9A9A9A);
+        drawSlotFrame(graphics, x + 68, y + 75, 0xFF9A9A9A);
+        drawSlotFrame(graphics, x + 102, y + 75, 0xFF9A9A9A);
+        // Fuel input.
+        drawSlotFrame(graphics, x + 144, y + 85, 0xFF777777);
+
+        // Fuel gauge. One coal/charcoal currently represents one forge charge.
+        graphics.fill(x + 148, y + 24, x + 160, y + 78, 0xFF202020);
+        int fuel = Math.min(1, menu.fuelCount());
+        if (fuel > 0) graphics.fill(x + 151, y + 50, x + 157, y + 75, 0xFFFF8A22);
+
+        // Arrow to forge button.
+        graphics.fill(x + 85, y + 82, x + 91, y + 94, 0xFF181818);
+        graphics.fill(x + 81, y + 91, x + 95, y + 95, 0xFF181818);
+
+        // Player inventory slot frames.
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) drawSlotFrame(graphics, x + 7 + col * 18, y + 125 + row * 18, 0xFF777777);
+        }
+        for (int col = 0; col < 9; col++) drawSlotFrame(graphics, x + 7 + col * 18, y + 183, 0xFF777777);
+    }
+
+    private void drawSlotFrame(GuiGraphics graphics, int x, int y, int accent) {
+        graphics.fill(x, y, x + 20, y + 20, 0xFF202020);
+        graphics.fill(x + 1, y + 1, x + 19, y + 19, accent);
+        graphics.fill(x + 3, y + 3, x + 17, y + 17, 0xFF555555);
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        graphics.drawString(font, "FORGE", 8, 7, 0xFFFFFF, false);
+        graphics.drawString(font, "Blueprint", 8, 70, 0xDDEEFF, false);
+        graphics.drawString(font, "FUEL", 143, 12, 0xFFFFFF, false);
+        graphics.drawString(font, status, 8, 104, menu.hasValidRecipe() ? 0x77FF77 : 0xFFCC66, false);
+        graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFFFFF, false);
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics, mouseX, mouseY, partialTick);
-        int left = (width - PANEL_WIDTH) / 2;
-        int top = (height - PANEL_HEIGHT) / 2;
-
-        graphics.fill(left, top, left + PANEL_WIDTH, top + PANEL_HEIGHT, 0xEE555555);
-        graphics.drawCenteredString(font, "FORGE", width / 2, top + 8, 0xFFFFFF);
-
-        // Blueprint - blue slot.
-        drawSlot(graphics, left + 24, top + 48, 0xFF3978C5);
-        graphics.drawString(font, "Blueprint", left + 10, top + 73, 0xDDEEFF);
-
-        // Monster material - yellow center slot.
-        drawSlot(graphics, left + 108, top + 56, 0xFFE0B82F);
-        graphics.drawCenteredString(font, "Monster", left + 117, top + 81, 0xFFF0C0);
-
-        // Five same-metal slots around the monster material.
-        drawSlot(graphics, left + 108, top + 29, 0xFF999999);
-        drawSlot(graphics, left + 81, top + 45, 0xFF999999);
-        drawSlot(graphics, left + 135, top + 45, 0xFF999999);
-        drawSlot(graphics, left + 91, top + 75, 0xFF999999);
-        drawSlot(graphics, left + 125, top + 75, 0xFF999999);
-
-        // Fuel gauge + coal input on the right.
-        graphics.fill(left + 196, top + 27, left + 211, top + 81, 0xFF222222);
-        graphics.fill(left + 199, top + 55, left + 208, top + 78, 0xFFFF8A22);
-        graphics.drawCenteredString(font, "FUEL", left + 203, top + 15, 0xFFFFFF);
-        drawSlot(graphics, left + 194, top + 87, 0xFF777777);
-        graphics.drawCenteredString(font, "Coal", left + 203, top + 109, 0xDDDDDD);
-
-        // Arrow toward Forge button.
-        graphics.fill(left + 114, top + 86, left + 120, top + 96, 0xFF111111);
-        graphics.fill(left + 110, top + 93, left + 124, top + 97, 0xFF111111);
-
-        // Player inventory representation, matching the Minecraft 9x3 + hotbar layout.
-        graphics.drawString(font, "Inventory", left + 39, top + 132, 0xFFFFFF);
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                drawSlot(graphics, left + 39 + col * 18, top + 143 + row * 18, 0xFF777777);
-            }
-        }
-        for (int col = 0; col < 9; col++) {
-            drawSlot(graphics, left + 39 + col * 18, top + 199, 0xFF777777);
-        }
-
         super.render(graphics, mouseX, mouseY, partialTick);
-    }
-
-    private void drawSlot(GuiGraphics graphics, int x, int y, int color) {
-        graphics.fill(x - 1, y - 1, x + 19, y + 19, 0xFF202020);
-        graphics.fill(x, y, x + 18, y + 18, color);
-        graphics.fill(x + 2, y + 2, x + 16, y + 16, 0xFF444444);
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
+        renderTooltip(graphics, mouseX, mouseY);
     }
 }
