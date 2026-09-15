@@ -4,13 +4,20 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 /** Prototype final equipment item produced after the anvil Rhythm minigame. */
 public class ForgedEquipmentItem extends Item {
+    private static final ResourceLocation FORGED_ATTACK_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "forged_attack_damage");
+
     public ForgedEquipmentItem(Properties properties) { super(properties); }
 
     public ItemStack createStack(AnvilAssemblyResult assembly) {
@@ -41,6 +48,17 @@ public class ForgedEquipmentItem extends Item {
 
         stack.set(DataComponents.MAX_DAMAGE, durability);
         stack.set(DataComponents.DAMAGE, 0);
+
+        // Players already have 1 base attack damage. Vanilla tool tooltip damage is
+        // the total displayed value, so the held-item modifier contributes total - 1.
+        double modifierDamage = Math.max(0.0D, attackDamage - 1.0D);
+        ItemAttributeModifiers attributes = ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE,
+                        new AttributeModifier(FORGED_ATTACK_DAMAGE_ID, modifierDamage, AttributeModifier.Operation.ADD_VALUE),
+                        EquipmentSlotGroup.MAINHAND)
+                .build();
+        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attributes);
+
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(equipmentName(assembly.blueprint()) + " "
                 + shortName(headMaterial) + "+" + shortName(coreMaterial) + "+" + shortName(rodMaterial)));
         return stack;
@@ -95,11 +113,7 @@ public class ForgedEquipmentItem extends Item {
         };
     }
 
-    /**
-     * Each forged part contributes one third of the vanilla attack damage for
-     * the equipment type and that part's metal. Mixed metals therefore blend
-     * naturally, while three identical metals return the normal vanilla value.
-     */
+    /** Each part contributes one third of the matching vanilla tool's displayed attack damage. */
     public static double calculateAttackDamage(HeadBlueprintType type, ForgingMetal head, ForgingMetal core, ForgingMetal rod) {
         return vanillaAttackDamage(type, head) / 3.0D
                 + vanillaAttackDamage(type, core) / 3.0D
@@ -107,46 +121,16 @@ public class ForgedEquipmentItem extends Item {
     }
 
     private static double vanillaAttackDamage(HeadBlueprintType type, ForgingMetal metal) {
-        // Values are the normal displayed melee attack damage of the matching vanilla tool.
         return switch (type) {
-            case SWORD -> switch (metal) {
-                case GOLD -> 4.0D;
-                case IRON -> 6.0D;
-                case DIAMOND -> 7.0D;
-                case NETHERITE -> 8.0D;
-            };
-            case AXE -> switch (metal) {
-                case GOLD -> 7.0D;
-                case IRON -> 9.0D;
-                case DIAMOND -> 9.0D;
-                case NETHERITE -> 10.0D;
-            };
-            case PICKAXE -> switch (metal) {
-                case GOLD -> 2.0D;
-                case IRON -> 4.0D;
-                case DIAMOND -> 5.0D;
-                case NETHERITE -> 6.0D;
-            };
-            case SHOVEL -> switch (metal) {
-                case GOLD -> 2.5D;
-                case IRON -> 4.5D;
-                case DIAMOND -> 5.5D;
-                case NETHERITE -> 6.5D;
-            };
-            case HOE -> switch (metal) {
-                case GOLD -> 1.0D;
-                case IRON -> 1.0D;
-                case DIAMOND -> 1.0D;
-                case NETHERITE -> 1.0D;
-            };
+            case SWORD -> switch (metal) { case GOLD -> 4.0D; case IRON -> 6.0D; case DIAMOND -> 7.0D; case NETHERITE -> 8.0D; };
+            case AXE -> switch (metal) { case GOLD -> 7.0D; case IRON -> 9.0D; case DIAMOND -> 9.0D; case NETHERITE -> 10.0D; };
+            case PICKAXE -> switch (metal) { case GOLD -> 2.0D; case IRON -> 4.0D; case DIAMOND -> 5.0D; case NETHERITE -> 6.0D; };
+            case SHOVEL -> switch (metal) { case GOLD -> 2.5D; case IRON -> 4.5D; case DIAMOND -> 5.5D; case NETHERITE -> 6.5D; };
+            case HOE -> 1.0D;
         };
     }
 
-    public static double readAttackDamage(ItemStack stack) {
-        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        return data == null ? 0.0D : data.copyTag().getDouble("forgedAttackDamage");
-    }
-
+    public static double readAttackDamage(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?0.0D:data.copyTag().getDouble("forgedAttackDamage"); }
     public static HeadBlueprintType readBlueprint(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readBlueprint(data.copyTag().getString("blueprint")); }
     public static ForgingMetal readHeadMetal(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readMetal(data.copyTag().getString("headMetal")); }
     public static ForgingMetal readCoreMetal(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readMetal(data.copyTag().getString("coreMetal")); }
