@@ -9,7 +9,9 @@ import java.util.Random;
 /** Final effect roll from Head + Core + Rod. Duplicate effects add tiers, capped at III. */
 public record AnvilAssemblyResult(
         HeadBlueprintType blueprint,
-        ForgingMetal metal,
+        ForgingMetal headMetal,
+        ForgingMetal coreMetal,
+        ForgingMetal rodMetal,
         MonsterMaterial headMaterial,
         MonsterMaterial coreMaterial,
         MonsterMaterial rodMaterial,
@@ -25,8 +27,14 @@ public record AnvilAssemblyResult(
         List<FinalEffect> finalEffects = new ArrayList<>();
         combined.forEach((effect, level) -> finalEffects.add(new FinalEffect(effect, tierOf(Math.min(3, level)))));
         return new AnvilAssemblyResult(
-                head.blueprint(), head.metal(), head.monsterMaterial(), core.monsterMaterial(), rod.monsterMaterial(),
+                head.blueprint(), head.metal(), core.metal(), rod.metal(),
+                head.monsterMaterial(), core.monsterMaterial(), rod.monsterMaterial(),
                 List.copyOf(finalEffects));
+    }
+
+    /** Rhythm difficulty currently follows the Head metal, preserving the existing minigame behavior. */
+    public ForgingMetal rhythmMetal() {
+        return headMetal;
     }
 
     private static void add(Map<ForgingEffect, Integer> effects, ForgingEffect effect, int tier) {
