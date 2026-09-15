@@ -5,14 +5,19 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.level.block.Block;
 
 /** Prototype final equipment item produced after the anvil Rhythm minigame. */
 public class ForgedEquipmentItem extends Item {
@@ -49,6 +54,11 @@ public class ForgedEquipmentItem extends Item {
         stack.set(DataComponents.MAX_DAMAGE, durability);
         stack.set(DataComponents.DAMAGE, 0);
 
+        // The head blueprint decides what kind of real vanilla-style tool this is.
+        // The head metal decides mining tier/speed. Core and rod still contribute
+        // to final durability/damage, but do not change which blocks the tool mines.
+        configureMiningTool(stack, assembly.blueprint(), assembly.headMetal());
+
         // Players already have 1 base attack damage. Vanilla tool tooltip damage is
         // the total displayed value, so the held-item modifier contributes total - 1.
         double modifierDamage = Math.max(0.0D, attackDamage - 1.0D);
@@ -62,6 +72,36 @@ public class ForgedEquipmentItem extends Item {
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(equipmentName(assembly.blueprint()) + " "
                 + shortName(headMaterial) + "+" + shortName(coreMaterial) + "+" + shortName(rodMaterial)));
         return stack;
+    }
+
+    /**
+     * Gives the generic forged item real mining behavior based on its Head.
+     * Example: an Iron Pickaxe Head mines exactly the pickaxe block tag with
+     * iron-tier speed/drop restrictions; Diamond Axe Head behaves as a diamond axe
+     * for block breaking, etc.
+     */
+    private static void configureMiningTool(ItemStack stack, HeadBlueprintType type, ForgingMetal headMetal) {
+        TagKey<Block> mineableTag = switch (type) {
+            case PICKAXE -> BlockTags.MINEABLE_WITH_PICKAXE;
+            case AXE -> BlockTags.MINEABLE_WITH_AXE;
+            case SHOVEL -> BlockTags.MINEABLE_WITH_SHOVEL;
+            case HOE -> BlockTags.MINEABLE_WITH_HOE;
+            case SWORD -> null;
+        };
+
+        if (mineableTag != null) {
+            stack.set(DataComponents.TOOL, vanillaTier(headMetal).createToolProperties(mineableTag));
+        }
+    }
+
+    /** Mining strength follows the metal used for the Head. */
+    private static Tier vanillaTier(ForgingMetal metal) {
+        return switch (metal) {
+            case GOLD -> Tiers.GOLD;
+            case IRON -> Tiers.IRON;
+            case DIAMOND -> Tiers.DIAMOND;
+            case NETHERITE -> Tiers.NETHERITE;
+        };
     }
 
     @Override
