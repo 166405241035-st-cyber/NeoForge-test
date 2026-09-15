@@ -12,7 +12,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
@@ -37,7 +37,7 @@ public final class ForgedEffectEvents {
     private static final double[] BONE_DUST_CHANCE = {0.10D, 0.20D, 0.30D};
 
     @SubscribeEvent
-    public static void onLivingAttack(LivingAttackEvent event) {
+    public static void onLivingAttack(LivingIncomingDamageEvent event) {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || player.level().isClientSide()) return;
 
