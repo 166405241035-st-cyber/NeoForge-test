@@ -37,8 +37,11 @@ public class ExampleMod {
     public static final DeferredItem<BlockItem> FORGING_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("forging_block", FORGING_BLOCK);
     public static final DeferredBlock<Block> FORGING_ANVIL = BLOCKS.register("forging_anvil", registryName -> new ForgingAnvilBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F)));
     public static final DeferredItem<BlockItem> FORGING_ANVIL_ITEM = ITEMS.registerSimpleBlockItem("forging_anvil", FORGING_ANVIL);
+    public static final DeferredBlock<Block> EQUIPMENT_TEST_BLOCK = BLOCKS.register("equipment_test_block", registryName -> new EquipmentTestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(3.5F)));
+    public static final DeferredItem<BlockItem> EQUIPMENT_TEST_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("equipment_test_block", EQUIPMENT_TEST_BLOCK);
     public static final DeferredHolder<MenuType<?>, MenuType<ForgeMenu>> FORGE_MENU = MENUS.register("forge_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new ForgeMenu(windowId, inventory)));
     public static final DeferredHolder<MenuType<?>, MenuType<AnvilMenu>> ANVIL_MENU = MENUS.register("anvil_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new AnvilMenu(windowId, inventory)));
+    public static final DeferredHolder<MenuType<?>, MenuType<EquipmentTestMenu>> EQUIPMENT_TEST_MENU = MENUS.register("equipment_test_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new EquipmentTestMenu(windowId, inventory)));
 
     public static final DeferredItem<Item> CORE_BLUEPRINT = ITEMS.registerSimpleItem("coreblueprint", new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> ROD_BLUEPRINT = ITEMS.registerSimpleItem("rodeblueprint", new Item.Properties().stacksTo(16));
@@ -55,7 +58,7 @@ public class ExampleMod {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
             .title(Component.literal("Smelting & Forging")).withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> FORGING_BLOCK_ITEM.get().getDefaultInstance()).displayItems((parameters, output) -> {
-                output.accept(FORGING_BLOCK_ITEM.get()); output.accept(FORGING_ANVIL_ITEM.get());
+                output.accept(FORGING_BLOCK_ITEM.get()); output.accept(FORGING_ANVIL_ITEM.get()); output.accept(EQUIPMENT_TEST_BLOCK_ITEM.get());
                 output.accept(SWORD_HEAD_BLUEPRINT.get()); output.accept(AXE_HEAD_BLUEPRINT.get()); output.accept(PICKAXE_HEAD_BLUEPRINT.get()); output.accept(SHOVEL_HEAD_BLUEPRINT.get()); output.accept(HOE_HEAD_BLUEPRINT.get());
                 output.accept(CORE_BLUEPRINT.get()); output.accept(ROD_BLUEPRINT.get());
                 output.accept(FORGED_HEAD_ITEM.get()); output.accept(FORGED_CORE_ITEM.get()); output.accept(FORGED_ROD_ITEM.get()); output.accept(FORGED_EQUIPMENT_ITEM.get());
@@ -72,6 +75,7 @@ public class ExampleMod {
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(FORGE_MENU.get(), ForgingScreen::new);
             event.register(ANVIL_MENU.get(), ForgingAnvilScreen::new);
+            event.register(EQUIPMENT_TEST_MENU.get(), EquipmentTestScreen::new);
         }
     }
 }
