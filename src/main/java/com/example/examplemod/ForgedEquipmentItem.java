@@ -2,22 +2,30 @@ package com.example.examplemod;
 
 import java.util.List;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 /** Prototype final equipment item produced after the anvil Rhythm minigame. */
 public class ForgedEquipmentItem extends Item {
@@ -53,14 +61,8 @@ public class ForgedEquipmentItem extends Item {
 
         stack.set(DataComponents.MAX_DAMAGE, durability);
         stack.set(DataComponents.DAMAGE, 0);
-
-        // The head blueprint decides what kind of real vanilla-style tool this is.
-        // The head metal decides mining tier/speed. Core and rod still contribute
-        // to final durability/damage, but do not change which blocks the tool mines.
         configureMiningTool(stack, assembly.blueprint(), assembly.headMetal());
 
-        // Players already have 1 base attack damage. Vanilla tool tooltip damage is
-        // the total displayed value, so the held-item modifier contributes total - 1.
         double modifierDamage = Math.max(0.0D, attackDamage - 1.0D);
         ItemAttributeModifiers attributes = ItemAttributeModifiers.builder()
                 .add(Attributes.ATTACK_DAMAGE,
@@ -74,12 +76,7 @@ public class ForgedEquipmentItem extends Item {
         return stack;
     }
 
-    /**
-     * Gives the generic forged item real mining behavior based on its Head.
-     * Example: an Iron Pickaxe Head mines exactly the pickaxe block tag with
-     * iron-tier speed/drop restrictions; Diamond Axe Head behaves as a diamond axe
-     * for block breaking, etc.
-     */
+    /** Gives the generic forged item real mining behavior based on its Head. */
     private static void configureMiningTool(ItemStack stack, HeadBlueprintType type, ForgingMetal headMetal) {
         TagKey<Block> mineableTag = switch (type) {
             case PICKAXE -> BlockTags.MINEABLE_WITH_PICKAXE;
@@ -88,10 +85,33 @@ public class ForgedEquipmentItem extends Item {
             case HOE -> BlockTags.MINEABLE_WITH_HOE;
             case SWORD -> null;
         };
+        if (mineableTag != null) stack.set(DataComponents.TOOL, vanillaTier(headMetal).createToolProperties(mineableTag));
+    }
 
-        if (mineableTag != null) {
-            stack.set(DataComponents.TOOL, vanillaTier(headMetal).createToolProperties(mineableTag));
-        }
+    /**
+     * Vanilla-style right-click actions are routed by the forged Head Blueprint.
+     * We intentionally reuse vanilla Axe/Shovel/Hoe implementations so stripped
+     * logs, dirt paths, farmland, campfire extinguishing and other supported
+     * vanilla interactions stay consistent with Minecraft.
+     */
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        HeadBlueprintType type = readBlueprint(context.getItemInHand());
+        ForgingMetal metal = readHeadMetal(context.getItemInHand());
+        if (type == null || metal == null) return InteractionResult.PASS;
+
+        Tier tier = vanillaTier(metal);
+        Item vanillaTool = switch (type) {
+            case AXE -> new AxeItem(tier, new Item.Properties());
+            case SHOVEL -> new ShovelItem(tier, new Item.Properties());
+            case HOE -> new HoeItem(tier, new Item.Properties());
+            default -> null;
+        };
+        if (vanillaTool == null) return InteractionResult.PASS;
+
+        // Vanilla code damages context.getItemInHand(), so the forged item itself
+        // loses durability exactly like the corresponding vanilla tool action.
+        return vanillaTool.useOn(context);
     }
 
     /** Mining strength follows the metal used for the Head. */
@@ -130,34 +150,23 @@ public class ForgedEquipmentItem extends Item {
         for (int i = 0; i < count; i++) {
             try {
                 ForgingEffect effect = ForgingEffect.valueOf(tag.getString("effect" + i));
-                EffectTier tier = EffectTier.valueOf(tag.getString("tier" + i));
-                tooltip.add(Component.literal("  " + effect.displayName() + " " + tier.name()).withStyle(ChatFormatting.GREEN));
+                EffectTier effectTier = EffectTier.valueOf(tag.getString("tier" + i));
+                tooltip.add(Component.literal("  " + effect.displayName() + " " + effectTier.name()).withStyle(ChatFormatting.GREEN));
             } catch (IllegalArgumentException ignored) {}
         }
     }
 
-    /** Each forged part contributes exactly one third of the matching vanilla tool's durability. */
     public static int calculateDurability(HeadBlueprintType type, ForgingMetal head, ForgingMetal core, ForgingMetal rod) {
-        double total = vanillaDurability(type, head) / 3.0D
-                + vanillaDurability(type, core) / 3.0D
-                + vanillaDurability(type, rod) / 3.0D;
+        double total = vanillaDurability(type, head) / 3.0D + vanillaDurability(type, core) / 3.0D + vanillaDurability(type, rod) / 3.0D;
         return Math.max(1, (int)Math.round(total));
     }
 
     private static int vanillaDurability(HeadBlueprintType type, ForgingMetal metal) {
-        return switch (metal) {
-            case GOLD -> 32;
-            case IRON -> 250;
-            case DIAMOND -> 1561;
-            case NETHERITE -> 2031;
-        };
+        return switch (metal) { case GOLD -> 32; case IRON -> 250; case DIAMOND -> 1561; case NETHERITE -> 2031; };
     }
 
-    /** Each part contributes one third of the matching vanilla tool's displayed attack damage. */
     public static double calculateAttackDamage(HeadBlueprintType type, ForgingMetal head, ForgingMetal core, ForgingMetal rod) {
-        return vanillaAttackDamage(type, head) / 3.0D
-                + vanillaAttackDamage(type, core) / 3.0D
-                + vanillaAttackDamage(type, rod) / 3.0D;
+        return vanillaAttackDamage(type, head) / 3.0D + vanillaAttackDamage(type, core) / 3.0D + vanillaAttackDamage(type, rod) / 3.0D;
     }
 
     private static double vanillaAttackDamage(HeadBlueprintType type, ForgingMetal metal) {
