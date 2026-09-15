@@ -18,6 +18,7 @@ public class ForgedEquipmentItem extends Item {
         MonsterMaterial coreMaterial = assembly.coreMaterial();
         MonsterMaterial rodMaterial = assembly.rodMaterial();
         int durability = calculateDurability(assembly.blueprint(), assembly.headMetal(), assembly.coreMetal(), assembly.rodMetal());
+        double attackDamage = calculateAttackDamage(assembly.blueprint(), assembly.headMetal(), assembly.coreMetal(), assembly.rodMetal());
         ItemStack stack = new ItemStack(this);
 
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
@@ -26,6 +27,7 @@ public class ForgedEquipmentItem extends Item {
             tag.putString("coreMetal", assembly.coreMetal().name());
             tag.putString("rodMetal", assembly.rodMetal().name());
             tag.putInt("forgedDurability", durability);
+            tag.putDouble("forgedAttackDamage", attackDamage);
             tag.putString("headMaterial", headMaterial.name());
             tag.putString("coreMaterial", coreMaterial.name());
             tag.putString("rodMaterial", rodMaterial.name());
@@ -58,6 +60,9 @@ public class ForgedEquipmentItem extends Item {
             int remaining = Math.max(0, durability - stack.getDamageValue());
             tooltip.add(Component.literal("Durability: " + remaining + " / " + durability).withStyle(ChatFormatting.GRAY));
         }
+        double attackDamage = tag.getDouble("forgedAttackDamage");
+        tooltip.add(Component.literal("Attack Damage: " + formatDamage(attackDamage)).withStyle(ChatFormatting.GRAY));
+
         if (head != null && core != null && rod != null) {
             tooltip.add(Component.literal("Materials: " + displayName(head) + " + " + displayName(core) + " + " + displayName(rod)).withStyle(ChatFormatting.GRAY));
         }
@@ -82,13 +87,64 @@ public class ForgedEquipmentItem extends Item {
     }
 
     private static int vanillaDurability(HeadBlueprintType type, ForgingMetal metal) {
-        // Vanilla tool durability is material-based for Sword/Axe/Pickaxe/Shovel/Hoe.
         return switch (metal) {
             case GOLD -> 32;
             case IRON -> 250;
             case DIAMOND -> 1561;
             case NETHERITE -> 2031;
         };
+    }
+
+    /**
+     * Each forged part contributes one third of the vanilla attack damage for
+     * the equipment type and that part's metal. Mixed metals therefore blend
+     * naturally, while three identical metals return the normal vanilla value.
+     */
+    public static double calculateAttackDamage(HeadBlueprintType type, ForgingMetal head, ForgingMetal core, ForgingMetal rod) {
+        return vanillaAttackDamage(type, head) / 3.0D
+                + vanillaAttackDamage(type, core) / 3.0D
+                + vanillaAttackDamage(type, rod) / 3.0D;
+    }
+
+    private static double vanillaAttackDamage(HeadBlueprintType type, ForgingMetal metal) {
+        // Values are the normal displayed melee attack damage of the matching vanilla tool.
+        return switch (type) {
+            case SWORD -> switch (metal) {
+                case GOLD -> 4.0D;
+                case IRON -> 6.0D;
+                case DIAMOND -> 7.0D;
+                case NETHERITE -> 8.0D;
+            };
+            case AXE -> switch (metal) {
+                case GOLD -> 7.0D;
+                case IRON -> 9.0D;
+                case DIAMOND -> 9.0D;
+                case NETHERITE -> 10.0D;
+            };
+            case PICKAXE -> switch (metal) {
+                case GOLD -> 2.0D;
+                case IRON -> 4.0D;
+                case DIAMOND -> 5.0D;
+                case NETHERITE -> 6.0D;
+            };
+            case SHOVEL -> switch (metal) {
+                case GOLD -> 2.5D;
+                case IRON -> 4.5D;
+                case DIAMOND -> 5.5D;
+                case NETHERITE -> 6.5D;
+            };
+            case HOE -> switch (metal) {
+                case GOLD -> 1.0D;
+                case IRON -> 1.0D;
+                case DIAMOND -> 1.0D;
+                case NETHERITE -> 1.0D;
+            };
+        };
+    }
+
+    public static double readAttackDamage(ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data == null ? 0.0D : data.copyTag().getDouble("forgedAttackDamage");
     }
 
     public static HeadBlueprintType readBlueprint(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readBlueprint(data.copyTag().getString("blueprint")); }
@@ -104,4 +160,5 @@ public class ForgedEquipmentItem extends Item {
     private static String equipmentName(HeadBlueprintType type){return switch(type){case SWORD->"Sword";case AXE->"Axe";case PICKAXE->"Pickaxe";case SHOVEL->"Shovel";case HOE->"Hoe";};}
     private static String shortName(MonsterMaterial material){return switch(material){case ROTTEN_FLESH->"Ro";case BONE->"Bo";case STRING->"St";case GUNPOWDER->"Gu";case SLIME->"Sl";case ENDER->"En";case BLAZE_ROD->"Bl";case GHAST_TEAR->"Gh";case WITHER->"Wi";case PHANTOM->"Ph";case DRAGON_BREATH->"Dr";case SHULKER->"Sh";case NETHER_STAR->"Ne";};}
     private static String displayName(MonsterMaterial material){String[] words=material.name().toLowerCase().split("_");StringBuilder result=new StringBuilder();for(String word:words){if(!result.isEmpty())result.append(' ');result.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));}return result.toString();}
+    private static String formatDamage(double value){return Math.abs(value-Math.rint(value))<0.0001D?Integer.toString((int)Math.rint(value)):String.format("%.2f",value);}
 }
