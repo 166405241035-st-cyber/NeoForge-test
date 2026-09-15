@@ -24,14 +24,16 @@ public class AnvilForgingResultScreen extends Screen {
     @Override public void renderBackground(GuiGraphics g,int x,int y,float p) {}
     @Override public void render(GuiGraphics g,int mx,int my,float p) {
         int cx=width/2, top=height/2-125;
+        int durability=ForgedEquipmentItem.calculateDurability(assembly.blueprint(),assembly.headMetal(),assembly.coreMetal(),assembly.rodMetal());
         g.fill(cx-165,top,cx+165,height/2+135,0xD0000000);
         g.drawCenteredString(font,"FINAL EQUIPMENT COMPLETE",cx,top+14,0xFFFFFF);
-        g.drawCenteredString(font,assembly.metal().displayName()+" "+format(assembly.blueprint().name()),cx,top+32,0x55FFFF);
-        int y=top+54;
+        g.drawCenteredString(font,format(assembly.blueprint().name()),cx,top+32,0x55FFFF);
+        g.drawCenteredString(font,"Durability: "+durability+" / "+durability,cx,top+48,0xDDDDDD);
+        int y=top+68;
         for(AnvilAssemblyResult.FinalEffect effect:assembly.effects()){
             g.drawCenteredString(font,effect.effect().displayName()+" "+effect.tier().name(),cx,y,0x55FF55);y+=16;
         }
-        y=Math.max(y+8,top+110);
+        y=Math.max(y+8,top+120);
         g.drawCenteredString(font,"SCORE: "+result.score(),cx,y,0xFFFF55);
         g.drawCenteredString(font,String.format("ACCURACY: %.1f%%",result.accuracy()),cx,y+18,0xFFFFFF);
         g.drawCenteredString(font,"MAX COMBO: x"+result.maxCombo(),cx,y+36,0xFFFFFF);
