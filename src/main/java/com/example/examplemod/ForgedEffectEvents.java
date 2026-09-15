@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,25 +16,19 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
-/**
- * Server-side entry point for forged equipment effects.
- *
- * First implementation slice:
- * - Crippling Strike: ON_HIT
- * - Zombie Minion Calling: ON_KILL
- * - Bone Dust Extract: MINING
- *
- * Effect-generated damage must eventually be marked before more damaging effects
- * are added so it cannot recursively trigger other forged effects.
- */
+/** Server-side entry point for forged equipment effects. */
 @EventBusSubscriber(modid = ExampleMod.MODID)
 public final class ForgedEffectEvents {
     private ForgedEffectEvents() {}
 
-    // Alpha balance values agreed for the first three trigger tests.
     private static final double[] CRIPPLING_CHANCE = {0.10D, 0.18D, 0.25D};
     private static final double[] ZOMBIE_MINION_CHANCE = {0.05D, 0.10D, 0.15D};
     private static final double[] BONE_DUST_CHANCE = {0.10D, 0.20D, 0.30D};
+
+    // Next easy-effect batch from the approved balance table.
+    private static final double[] VAMPIRIC_CHANCE = {0.15D, 0.25D, 0.40D};
+    private static final int[] LEVITATION_DURATION = {40, 80, 120}; // 2 / 4 / 6 seconds
+    private static final double[] SOUL_SAND_CHANCE = {0.10D, 0.20D, 0.35D};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -42,13 +36,23 @@ public final class ForgedEffectEvents {
         if (!(attacker instanceof Player player) || player.level().isClientSide()) return;
 
         ItemStack weapon = player.getMainHandItem();
-        EffectTier tier = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
-        if (tier == null) return;
 
-        double chance = tierValue(tier, CRIPPLING_CHANCE);
-        if (player.getRandom().nextDouble() < chance) {
+        EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
+        if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE)) {
             // Tier changes proc chance only. Slow strength/duration stay fixed.
             event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
+        }
+
+        EffectTier vampiric = ForgedEffectRuntime.tier(weapon, ForgingEffect.VAMPIRIC_VITALITY);
+        if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE)) {
+            // Tier changes proc chance only. Regeneration itself stays fixed.
+            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0));
+        }
+
+        EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
+        if (levitation != null) {
+            // Tier changes duration only: 2 / 4 / 6 seconds.
+            event.getEntity().addEffect(new MobEffectInstance(MobEffects.LEVITATION, tierValue(levitation, LEVITATION_DURATION), 0));
         }
     }
 
@@ -56,6 +60,9 @@ public final class ForgedEffectEvents {
     public static void onLivingDeath(LivingDeathEvent event) {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || !(player.level() instanceof ServerLevel level)) return;
+
+        // The design says "kill any monster", so passive/non-hostile living entities do not proc it.
+        if (!(event.getEntity() instanceof Monster)) return;
 
         ItemStack weapon = player.getMainHandItem();
         EffectTier tier = ForgedEffectRuntime.tier(weapon, ForgingEffect.ZOMBIE_MINION_CALLING);
@@ -76,14 +83,29 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
 
         ItemStack tool = player.getMainHandItem();
-        EffectTier tier = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
-        if (tier == null || player.getRandom().nextDouble() >= tierValue(tier, BONE_DUST_CHANCE)) return;
 
-        // One bonus Bone Meal per successful proc. Tier changes chance only.
-        Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
+        EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
+        if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE)) {
+            // One bonus Bone Meal per successful proc. Tier changes chance only.
+            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
+        }
+
+        EffectTier soulSand = ForgedEffectRuntime.tier(tool, ForgingEffect.SOUL_SAND_EXTRACTION);
+        if (soulSand != null && player.getRandom().nextDouble() < tierValue(soulSand, SOUL_SAND_CHANCE)) {
+            // One bonus Soul Sand per proc. Tier changes chance only: 10 / 20 / 35%.
+            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.SOUL_SAND));
+        }
     }
 
     private static double tierValue(EffectTier tier, double[] values) {
+        return switch (tier) {
+            case I -> values[0];
+            case II -> values[1];
+            case III -> values[2];
+        };
+    }
+
+    private static int tierValue(EffectTier tier, int[] values) {
         return switch (tier) {
             case I -> values[0];
             case II -> values[1];
