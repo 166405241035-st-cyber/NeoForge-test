@@ -2,7 +2,6 @@ package com.example.examplemod;
 
 import java.util.List;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -12,20 +11,18 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
 
 /** Prototype final equipment item produced after the anvil Rhythm minigame. */
 public class ForgedEquipmentItem extends Item {
@@ -76,7 +73,6 @@ public class ForgedEquipmentItem extends Item {
         return stack;
     }
 
-    /** Gives the generic forged item real mining behavior based on its Head. */
     private static void configureMiningTool(ItemStack stack, HeadBlueprintType type, ForgingMetal headMetal) {
         TagKey<Block> mineableTag = switch (type) {
             case PICKAXE -> BlockTags.MINEABLE_WITH_PICKAXE;
@@ -88,33 +84,52 @@ public class ForgedEquipmentItem extends Item {
         if (mineableTag != null) stack.set(DataComponents.TOOL, vanillaTier(headMetal).createToolProperties(mineableTag));
     }
 
+    /** Expose the same NeoForge ItemAbilities as the vanilla tool selected by the Head. */
+    @Override
+    public boolean canPerformAction(ItemStack stack, ItemAbility ability) {
+        HeadBlueprintType type = readBlueprint(stack);
+        if (type == null) return false;
+        return switch (type) {
+            case AXE -> ItemAbilities.DEFAULT_AXE_ACTIONS.contains(ability);
+            case SHOVEL -> ItemAbilities.DEFAULT_SHOVEL_ACTIONS.contains(ability);
+            case HOE -> ItemAbilities.DEFAULT_HOE_ACTIONS.contains(ability);
+            case PICKAXE -> ItemAbilities.DEFAULT_PICKAXE_ACTIONS.contains(ability);
+            case SWORD -> ItemAbilities.DEFAULT_SWORD_ACTIONS.contains(ability);
+        };
+    }
+
     /**
-     * Vanilla-style right-click actions are routed by the forged Head Blueprint.
-     * We intentionally reuse vanilla Axe/Shovel/Hoe implementations so stripped
-     * logs, dirt paths, farmland, campfire extinguishing and other supported
-     * vanilla interactions stay consistent with Minecraft.
+     * Perform right-click block modification directly through NeoForge's block
+     * ItemAbility API. Do NOT construct AxeItem/ShovelItem/HoeItem here: creating
+     * new Item instances after registries freeze crashes the running game.
      */
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        HeadBlueprintType type = readBlueprint(context.getItemInHand());
-        ForgingMetal metal = readHeadMetal(context.getItemInHand());
-        if (type == null || metal == null) return InteractionResult.PASS;
+        ItemStack stack = context.getItemInHand();
+        HeadBlueprintType type = readBlueprint(stack);
+        if (type == null) return InteractionResult.PASS;
 
-        Tier tier = vanillaTier(metal);
-        Item vanillaTool = switch (type) {
-            case AXE -> new AxeItem(tier, new Item.Properties());
-            case SHOVEL -> new ShovelItem(tier, new Item.Properties());
-            case HOE -> new HoeItem(tier, new Item.Properties());
-            default -> null;
+        ItemAbility[] actions = switch (type) {
+            case AXE -> new ItemAbility[] { ItemAbilities.AXE_STRIP, ItemAbilities.AXE_SCRAPE, ItemAbilities.AXE_WAX_OFF };
+            case SHOVEL -> new ItemAbility[] { ItemAbilities.SHOVEL_FLATTEN, ItemAbilities.SHOVEL_DOUSE };
+            case HOE -> new ItemAbility[] { ItemAbilities.HOE_TILL };
+            default -> new ItemAbility[0];
         };
-        if (vanillaTool == null) return InteractionResult.PASS;
 
-        // Vanilla code damages context.getItemInHand(), so the forged item itself
-        // loses durability exactly like the corresponding vanilla tool action.
-        return vanillaTool.useOn(context);
+        BlockState original = context.getLevel().getBlockState(context.getClickedPos());
+        for (ItemAbility action : actions) {
+            BlockState modified = original.getToolModifiedState(context, action, false);
+            if (modified != null) {
+                context.getLevel().setBlock(context.getClickedPos(), modified, 11);
+                if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
+                    stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
+                }
+                return InteractionResult.sidedSuccess(context.getLevel().isClientSide());
+            }
+        }
+        return InteractionResult.PASS;
     }
 
-    /** Mining strength follows the metal used for the Head. */
     private static Tier vanillaTier(ForgingMetal metal) {
         return switch (metal) {
             case GOLD -> Tiers.GOLD;
