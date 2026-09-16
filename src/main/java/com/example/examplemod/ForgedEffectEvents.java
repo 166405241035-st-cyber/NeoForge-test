@@ -1,15 +1,18 @@
 package com.example.examplemod;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -25,10 +28,13 @@ public final class ForgedEffectEvents {
     private static final double[] ZOMBIE_MINION_CHANCE = {0.05D, 0.10D, 0.15D};
     private static final double[] BONE_DUST_CHANCE = {0.10D, 0.20D, 0.30D};
 
-    // Next easy-effect batch from the approved balance table.
     private static final double[] VAMPIRIC_CHANCE = {0.15D, 0.25D, 0.40D};
     private static final int[] LEVITATION_DURATION = {40, 80, 120}; // 2 / 4 / 6 seconds
     private static final double[] SOUL_SAND_CHANCE = {0.10D, 0.20D, 0.35D};
+
+    // Rotten Flesh mining effects from the approved balance table.
+    private static final double[] SCAVENGER_CHANCE = {0.05D, 0.10D, 0.15D};
+    private static final double[] UNREFINED_ORE_CHANCE = {0.04D, 0.08D, 0.12D};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -39,19 +45,16 @@ public final class ForgedEffectEvents {
 
         EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
         if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE)) {
-            // Tier changes proc chance only. Slow strength/duration stay fixed.
             event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
         }
 
         EffectTier vampiric = ForgedEffectRuntime.tier(weapon, ForgingEffect.VAMPIRIC_VITALITY);
         if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE)) {
-            // Tier changes proc chance only. Regeneration itself stays fixed.
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0));
         }
 
         EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
         if (levitation != null) {
-            // Tier changes duration only: 2 / 4 / 6 seconds.
             event.getEntity().addEffect(new MobEffectInstance(MobEffects.LEVITATION, tierValue(levitation, LEVITATION_DURATION), 0));
         }
     }
@@ -61,7 +64,7 @@ public final class ForgedEffectEvents {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || !(player.level() instanceof ServerLevel level)) return;
 
-        // The design says "kill any monster", so passive/non-hostile living entities do not proc it.
+        // Zombie Minion Calling is intentionally restricted to hostile monsters.
         if (!(event.getEntity() instanceof Monster)) return;
 
         ItemStack weapon = player.getMainHandItem();
@@ -83,18 +86,47 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
 
         ItemStack tool = player.getMainHandItem();
+        BlockState state = event.getState();
 
         EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
         if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE)) {
-            // One bonus Bone Meal per successful proc. Tier changes chance only.
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
         }
 
         EffectTier soulSand = ForgedEffectRuntime.tier(tool, ForgingEffect.SOUL_SAND_EXTRACTION);
         if (soulSand != null && player.getRandom().nextDouble() < tierValue(soulSand, SOUL_SAND_CHANCE)) {
-            // One bonus Soul Sand per proc. Tier changes chance only: 10 / 20 / 35%.
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.SOUL_SAND));
         }
+
+        EffectTier scavenger = ForgedEffectRuntime.tier(tool, ForgingEffect.SCAVENGER_DIG);
+        if (scavenger != null && player.getRandom().nextDouble() < tierValue(scavenger, SCAVENGER_CHANCE)) {
+            // Current alpha pool is equal-weight: Bone, Rotten Flesh, Raw Iron,
+            // Raw Copper or Raw Gold. Tier changes proc chance only.
+            Item bonus = switch (player.getRandom().nextInt(5)) {
+                case 0 -> Items.BONE;
+                case 1 -> Items.ROTTEN_FLESH;
+                case 2 -> Items.RAW_IRON;
+                case 3 -> Items.RAW_COPPER;
+                default -> Items.RAW_GOLD;
+            };
+            Block.popResource(player.level(), event.getPos(), new ItemStack(bonus));
+        }
+
+        EffectTier unrefined = ForgedEffectRuntime.tier(tool, ForgingEffect.UNREFINED_ORE_DISCOVERY);
+        if (unrefined != null && player.getRandom().nextDouble() < tierValue(unrefined, UNREFINED_ORE_CHANCE)) {
+            Item rawOre = rawOreFor(state);
+            if (rawOre != null) {
+                Block.popResource(player.level(), event.getPos(), new ItemStack(rawOre));
+            }
+        }
+    }
+
+    /** Only ores with an actual vanilla Raw Ore item can produce this bonus. */
+    private static Item rawOreFor(BlockState state) {
+        if (state.is(BlockTags.IRON_ORES)) return Items.RAW_IRON;
+        if (state.is(BlockTags.COPPER_ORES)) return Items.RAW_COPPER;
+        if (state.is(BlockTags.GOLD_ORES)) return Items.RAW_GOLD;
+        return null;
     }
 
     private static double tierValue(EffectTier tier, double[] values) {
