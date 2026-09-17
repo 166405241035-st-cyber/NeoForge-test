@@ -1,7 +1,6 @@
 package com.example.examplemod;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -12,7 +11,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -27,12 +25,9 @@ public final class ForgedEffectEvents {
     private static final double[] CRIPPLING_CHANCE = {0.10D, 0.18D, 0.25D};
     private static final double[] ZOMBIE_MINION_CHANCE = {0.05D, 0.10D, 0.15D};
     private static final double[] BONE_DUST_CHANCE = {0.10D, 0.20D, 0.30D};
-
     private static final double[] VAMPIRIC_CHANCE = {0.15D, 0.25D, 0.40D};
-    private static final int[] LEVITATION_DURATION = {40, 80, 120}; // 2 / 4 / 6 seconds
+    private static final int[] LEVITATION_DURATION = {40, 80, 120};
     private static final double[] SOUL_SAND_CHANCE = {0.10D, 0.20D, 0.35D};
-
-    // Rotten Flesh mining effects from the approved balance table.
     private static final double[] SCAVENGER_CHANCE = {0.05D, 0.10D, 0.15D};
     private static final double[] UNREFINED_ORE_CHANCE = {0.04D, 0.08D, 0.12D};
 
@@ -40,31 +35,25 @@ public final class ForgedEffectEvents {
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || player.level().isClientSide()) return;
-
         ItemStack weapon = player.getMainHandItem();
 
         EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
-        if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE)) {
+        if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE))
             event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
-        }
 
         EffectTier vampiric = ForgedEffectRuntime.tier(weapon, ForgingEffect.VAMPIRIC_VITALITY);
-        if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE)) {
+        if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE))
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0));
-        }
 
         EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
-        if (levitation != null) {
+        if (levitation != null)
             event.getEntity().addEffect(new MobEffectInstance(MobEffects.LEVITATION, tierValue(levitation, LEVITATION_DURATION), 0));
-        }
     }
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || !(player.level() instanceof ServerLevel level)) return;
-
-        // Zombie Minion Calling is intentionally restricted to hostile monsters.
         if (!(event.getEntity() instanceof Monster)) return;
 
         ItemStack weapon = player.getMainHandItem();
@@ -84,64 +73,47 @@ public final class ForgedEffectEvents {
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         Player player = event.getPlayer();
         if (player.level().isClientSide()) return;
-
         ItemStack tool = player.getMainHandItem();
-        BlockState state = event.getState();
 
         EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
-        if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE)) {
+        if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE))
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
-        }
 
         EffectTier soulSand = ForgedEffectRuntime.tier(tool, ForgingEffect.SOUL_SAND_EXTRACTION);
-        if (soulSand != null && player.getRandom().nextDouble() < tierValue(soulSand, SOUL_SAND_CHANCE)) {
+        if (soulSand != null && player.getRandom().nextDouble() < tierValue(soulSand, SOUL_SAND_CHANCE))
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.SOUL_SAND));
-        }
 
         EffectTier scavenger = ForgedEffectRuntime.tier(tool, ForgingEffect.SCAVENGER_DIG);
         if (scavenger != null && player.getRandom().nextDouble() < tierValue(scavenger, SCAVENGER_CHANCE)) {
-            // Current alpha pool is equal-weight: Bone, Rotten Flesh, Raw Iron,
-            // Raw Copper or Raw Gold. Tier changes proc chance only.
-            Item bonus = switch (player.getRandom().nextInt(5)) {
+            // Equal-weight pool requested by design: Bone / Rotten Flesh /
+            // Iron Nugget / Gold Nugget. Tier changes proc chance only.
+            Item bonus = switch (player.getRandom().nextInt(4)) {
                 case 0 -> Items.BONE;
                 case 1 -> Items.ROTTEN_FLESH;
-                case 2 -> Items.RAW_IRON;
-                case 3 -> Items.RAW_COPPER;
-                default -> Items.RAW_GOLD;
+                case 2 -> Items.IRON_NUGGET;
+                default -> Items.GOLD_NUGGET;
             };
             Block.popResource(player.level(), event.getPos(), new ItemStack(bonus));
         }
 
         EffectTier unrefined = ForgedEffectRuntime.tier(tool, ForgingEffect.UNREFINED_ORE_DISCOVERY);
         if (unrefined != null && player.getRandom().nextDouble() < tierValue(unrefined, UNREFINED_ORE_CHANCE)) {
-            Item rawOre = rawOreFor(state);
-            if (rawOre != null) {
-                Block.popResource(player.level(), event.getPos(), new ItemStack(rawOre));
-            }
+            // Any successfully broken block can proc this effect. The bonus Raw Ore
+            // is selected independently of the block that was mined.
+            Item rawOre = switch (player.getRandom().nextInt(3)) {
+                case 0 -> Items.RAW_IRON;
+                case 1 -> Items.RAW_COPPER;
+                default -> Items.RAW_GOLD;
+            };
+            Block.popResource(player.level(), event.getPos(), new ItemStack(rawOre));
         }
     }
 
-    /** Only ores with an actual vanilla Raw Ore item can produce this bonus. */
-    private static Item rawOreFor(BlockState state) {
-        if (state.is(BlockTags.IRON_ORES)) return Items.RAW_IRON;
-        if (state.is(BlockTags.COPPER_ORES)) return Items.RAW_COPPER;
-        if (state.is(BlockTags.GOLD_ORES)) return Items.RAW_GOLD;
-        return null;
-    }
-
     private static double tierValue(EffectTier tier, double[] values) {
-        return switch (tier) {
-            case I -> values[0];
-            case II -> values[1];
-            case III -> values[2];
-        };
+        return switch (tier) { case I -> values[0]; case II -> values[1]; case III -> values[2]; };
     }
 
     private static int tierValue(EffectTier tier, int[] values) {
-        return switch (tier) {
-            case I -> values[0];
-            case II -> values[1];
-            case III -> values[2];
-        };
+        return switch (tier) { case I -> values[0]; case II -> values[1]; case III -> values[2]; };
     }
 }
