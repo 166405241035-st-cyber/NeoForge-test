@@ -1,5 +1,6 @@
 {
-  "itemGroup.examplemod": "Example Mod Tab",
+  "itemGroup.examplemod": "Smelting & Forging",
+  "block.examplemod.equipment_test_block": "Equipment Effect Tester",
   "block.examplemod.example_block": "Example Block",
   "item.examplemod.example_item": "Example Item",
 
