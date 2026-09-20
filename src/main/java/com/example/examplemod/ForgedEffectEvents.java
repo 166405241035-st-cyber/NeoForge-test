@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
@@ -11,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -31,15 +33,21 @@ public final class ForgedEffectEvents {
     private static final double[] SCAVENGER_CHANCE = {0.05D, 0.10D, 0.15D};
     private static final double[] UNREFINED_ORE_CHANCE = {0.04D, 0.08D, 0.12D};
 
+    // Combat batch.
+    private static final double[] SPINE_SPIKE_CHANCE = {0.10D, 0.18D, 0.25D};
+    private static final int[] GRAVE_GRASP_DURATION = {10, 20, 30}; // 0.5 / 1 / 1.5 sec
+    private static final double[] RIFT_TELEPORT_CHANCE = {0.15D, 0.25D, 0.40D};
+
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || player.level().isClientSide()) return;
         ItemStack weapon = player.getMainHandItem();
+        LivingEntity target = event.getEntity();
 
         EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
         if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE))
-            event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
 
         EffectTier vampiric = ForgedEffectRuntime.tier(weapon, ForgingEffect.VAMPIRIC_VITALITY);
         if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE))
@@ -47,7 +55,28 @@ public final class ForgedEffectEvents {
 
         EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
         if (levitation != null)
-            event.getEntity().addEffect(new MobEffectInstance(MobEffects.LEVITATION, tierValue(levitation, LEVITATION_DURATION), 0));
+            target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, tierValue(levitation, LEVITATION_DURATION), 0));
+
+        EffectTier spineSpike = ForgedEffectRuntime.tier(weapon, ForgingEffect.SPINE_SPIKE);
+        if (spineSpike != null && player.getRandom().nextDouble() < tierValue(spineSpike, SPINE_SPIKE_CHANCE)) {
+            // Bleeding prototype: Poison provides non-lethal damage-over-time behavior.
+            // Tier changes proc chance only.
+            target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0));
+        }
+
+        EffectTier graveGrasp = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVE_GRASP);
+        if (graveGrasp != null && isCriticalHit(player)) {
+            int duration = tierValue(graveGrasp, GRAVE_GRASP_DURATION);
+            // Stun: stop movement and suppress movement/jump during the short stun window.
+            target.setDeltaMovement(Vec3.ZERO);
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 255));
+            target.addEffect(new MobEffectInstance(MobEffects.JUMP, duration, 128));
+        }
+
+        EffectTier riftTeleport = ForgedEffectRuntime.tier(weapon, ForgingEffect.RIFT_TELEPORT_ATTACK);
+        if (riftTeleport != null && player.getRandom().nextDouble() < tierValue(riftTeleport, RIFT_TELEPORT_CHANCE)) {
+            teleportTargetAway(player, target);
+        }
     }
 
     @SubscribeEvent
@@ -85,8 +114,6 @@ public final class ForgedEffectEvents {
 
         EffectTier scavenger = ForgedEffectRuntime.tier(tool, ForgingEffect.SCAVENGER_DIG);
         if (scavenger != null && player.getRandom().nextDouble() < tierValue(scavenger, SCAVENGER_CHANCE)) {
-            // Equal-weight pool requested by design: Bone / Rotten Flesh /
-            // Iron Nugget / Gold Nugget. Tier changes proc chance only.
             Item bonus = switch (player.getRandom().nextInt(4)) {
                 case 0 -> Items.BONE;
                 case 1 -> Items.ROTTEN_FLESH;
@@ -98,8 +125,6 @@ public final class ForgedEffectEvents {
 
         EffectTier unrefined = ForgedEffectRuntime.tier(tool, ForgingEffect.UNREFINED_ORE_DISCOVERY);
         if (unrefined != null && player.getRandom().nextDouble() < tierValue(unrefined, UNREFINED_ORE_CHANCE)) {
-            // Any successfully broken block can proc this effect. The bonus Raw Ore
-            // is selected independently of the block that was mined.
             Item rawOre = switch (player.getRandom().nextInt(3)) {
                 case 0 -> Items.RAW_IRON;
                 case 1 -> Items.RAW_COPPER;
@@ -107,6 +132,31 @@ public final class ForgedEffectEvents {
             };
             Block.popResource(player.level(), event.getPos(), new ItemStack(rawOre));
         }
+    }
+
+    /**
+     * Mirrors the important vanilla melee-critical conditions closely enough for
+     * the forged trigger: falling, not grounded, not climbing/in water, and not a passenger.
+     */
+    private static boolean isCriticalHit(Player player) {
+        return player.fallDistance > 0.0F
+                && !player.onGround()
+                && !player.onClimbable()
+                && !player.isInWater()
+                && !player.isPassenger();
+    }
+
+    private static void teleportTargetAway(Player player, LivingEntity target) {
+        Vec3 away = target.position().subtract(player.position());
+        if (away.lengthSqr() < 0.001D) away = player.getLookAngle().scale(-1.0D);
+        away = away.normalize();
+
+        // Fixed distance: Tier changes chance only.
+        double distance = 8.0D;
+        double side = (player.getRandom().nextDouble() - 0.5D) * 4.0D;
+        Vec3 sideways = new Vec3(-away.z, 0.0D, away.x).scale(side);
+        Vec3 destination = target.position().add(away.scale(distance)).add(sideways);
+        target.teleportTo(destination.x, destination.y, destination.z);
     }
 
     private static double tierValue(EffectTier tier, double[] values) {
