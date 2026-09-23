@@ -27,6 +27,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.BlockEvent.EntityPlaceEvent;
 
 /** Server-side entry point for forged equipment effects. */
 @EventBusSubscriber(modid = ExampleMod.MODID)
@@ -309,13 +310,24 @@ public final class ForgedEffectEvents {
             }
         }
 
-        EffectTier mutation = ForgedEffectRuntime.tier(tool, ForgingEffect.NETHER_MUTATION);
-        if (mutation != null && isCrop(player.level().getBlockState(clicked.above()))
-                && player.getRandom().nextDouble() < tierValue(mutation, NETHER_MUTATION_CHANCE)) {
-            player.level().setBlockAndUpdate(clicked.above(), Blocks.NETHER_WART.defaultBlockState());
-        }
     }
 
+
+    @SubscribeEvent
+    public static void onEntityPlace(EntityPlaceEvent event) {
+        if (event.getLevel().isClientSide()) return;
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        // Nether Mutation: trigger only after a plant/crop is actually placed.
+        // Tier scales the mutation chance: I = 5%, II = 10%, III = 20%.
+        EffectTier mutation = ForgedEffectRuntime.tier(player.getMainHandItem(), ForgingEffect.NETHER_MUTATION);
+        if (mutation == null || !isPlantableCrop(event.getPlacedBlock())) return;
+        if (player.getRandom().nextDouble() >= tierValue(mutation, NETHER_MUTATION_CHANCE)) return;
+
+        // The planted block mutates into either Nether Wart or a Wither Rose.
+        Block mutatedBlock = player.getRandom().nextBoolean() ? Blocks.NETHER_WART : Blocks.WITHER_ROSE;
+        player.level().setBlockAndUpdate(event.getPlacedBlockPosition(), mutatedBlock.defaultBlockState());
+    }
 
     /**
      * Mirrors the important vanilla melee-critical conditions closely enough for
@@ -325,6 +337,12 @@ public final class ForgedEffectEvents {
         return state.is(Blocks.WHEAT) || state.is(Blocks.CARROTS) || state.is(Blocks.POTATOES)
                 || state.is(Blocks.BEETROOTS) || state.is(Blocks.NETHER_WART)
                 || state.is(Blocks.MELON) || state.is(Blocks.PUMPKIN);
+    }
+
+    private static boolean isPlantableCrop(net.minecraft.world.level.block.state.BlockState state) {
+        return state.is(Blocks.WHEAT) || state.is(Blocks.CARROTS) || state.is(Blocks.POTATOES)
+                || state.is(Blocks.BEETROOTS) || state.is(Blocks.NETHER_WART)
+                || state.is(Blocks.PUMPKIN_STEM) || state.is(Blocks.MELON_STEM);
     }
 
     private static boolean isCriticalHit(Player player) {
