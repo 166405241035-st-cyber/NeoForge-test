@@ -46,8 +46,8 @@ public final class ForgedEffectEvents {
     private static final double[] SLIME_TRAIL_CHANCE = {0.15D, 0.25D, 0.40D};
     private static final float[] WITHER_DRAIN_HEAL = {1.0F, 2.0F, 3.0F};
     private static final double[] CRITICAL_BLAST_CHANCE = {0.15D, 0.25D, 0.40D};
-    private static final double[] VELOCITY_STRIKE_MAX_BONUS = {0.20D, 0.35D, 0.50D};
-    private static final double[] AIRBORNE_MINING_SPEED = {0.25D, 0.45D, 0.70D};
+    private static final double[] VELOCITY_STRIKE_MAX_BONUS = {0.30D, 0.60D, 1.00D};
+    private static final double[] AIRBORNE_MINING_SPEED = {0.50D, 1.00D, 1.50D};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -132,7 +132,7 @@ public final class ForgedEffectEvents {
         EffectTier velocityStrike = ForgedEffectRuntime.tier(weapon, ForgingEffect.VELOCITY_STRIKE);
         if (velocityStrike != null) {
             double horizontalSpeed = player.getDeltaMovement().horizontalDistance();
-            double speedFactor = Math.min(1.0D, horizontalSpeed / 0.35D);
+            double speedFactor = Math.min(1.0D, horizontalSpeed / 0.20D);
             float bonus = (float)(event.getAmount() * tierValue(velocityStrike, VELOCITY_STRIKE_MAX_BONUS) * speedFactor);
             if (bonus > 0.0F) event.setAmount(event.getAmount() + bonus);
         }
@@ -214,10 +214,11 @@ public final class ForgedEffectEvents {
 
         EffectTier airborne = ForgedEffectRuntime.tier(tool, ForgingEffect.AIRBORNE_MINING);
         if (airborne != null && !player.onGround()) {
-            // Temporary Haste is refreshed while mining in the air.
-            int amplifier = tierValue(airborne, AIRBORNE_MINING_SPEED) >= 0.60D ? 2
-                    : tierValue(airborne, AIRBORNE_MINING_SPEED) >= 0.40D ? 1 : 0;
-            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40, amplifier, false, false));
+            // Strong, visible airborne mining boost. This is applied immediately
+            // after each airborne break and lasts long enough to affect the next block.
+            double bonus = tierValue(airborne, AIRBORNE_MINING_SPEED);
+            int amplifier = bonus >= 1.50D ? 4 : bonus >= 1.00D ? 2 : 1;
+            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 80, amplifier, false, false));
         }
     }
 
