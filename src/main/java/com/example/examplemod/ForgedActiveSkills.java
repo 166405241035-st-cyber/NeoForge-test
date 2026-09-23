@@ -64,7 +64,6 @@ public final class ForgedActiveSkills {
             case LAVA_WAVE -> lavaWave(player, tier);
             case STUN_TIME_STOP -> stunTimeStop(player, tier);
             case IRON_FORTRESS_GUARD -> ironFortress(player, tier);
-            case GRAVATIONAL_SLAM -> gravitationalSlam(player, tier);
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tier);
             case NATURE_GOD_BLESS -> natureGodBless(player, tier);
             default -> {
