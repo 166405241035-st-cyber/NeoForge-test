@@ -11,6 +11,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -255,24 +258,35 @@ public final class ForgedEffectEvents {
         EffectTier healingHarvest = ForgedEffectRuntime.tier(tool, ForgingEffect.HEALING_HARVEST);
         if (healingHarvest != null && isCrop(event.getState())
                 && player.getRandom().nextDouble() < tierValue(healingHarvest, HEALING_HARVEST_CHANCE)) {
-            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.POTION));
+            Block.popResource(player.level(), event.getPos(), PotionContents.createItemStack(Items.POTION, net.minecraft.core.registries.BuiltInRegistries.POTION.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(Registries.POTION, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "healing")))));
         }
 
+        }\n    }
+
+    @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) return;
+
+        ItemStack tool = player.getMainHandItem();
         EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
-        if (moisture != null && player.getRandom().nextDouble() < tierValue(moisture, MOISTURE_RETAIN_CHANCE)) {
-            // Every successful farming trigger refreshes the clicked farmland and nearby farmland.
-            BlockPos center = event.getPos();
-            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-2, 0, -2), center.offset(2, 0, 2))) {
-                if (player.level().getBlockState(pos).is(Blocks.FARMLAND)) {
-                    player.level().setBlockAndUpdate(pos, player.level().getBlockState(pos)
-                            .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
-                }
+        if (moisture == null) return;
+
+        BlockPos clicked = event.getPos();
+        BlockPos farmlandPos = player.level().getBlockState(clicked).is(Blocks.FARMLAND)
+                ? clicked : clicked.below();
+        if (!player.level().getBlockState(farmlandPos).is(Blocks.FARMLAND)) return;
+        if (player.getRandom().nextDouble() >= tierValue(moisture, MOISTURE_RETAIN_CHANCE)) return;
+
+        for (BlockPos pos : BlockPos.betweenClosed(farmlandPos.offset(-2, 0, -2),
+                farmlandPos.offset(2, 0, 2))) {
+            if (player.level().getBlockState(pos).is(Blocks.FARMLAND)) {
+                player.level().setBlockAndUpdate(pos,
+                        player.level().getBlockState(pos)
+                                .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
             }
-            if (event.getState().is(Blocks.FARMLAND)) {
-                player.level().setBlockAndUpdate(center, event.getState()
-                        .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
-            }
-        }    }
+        }
+    }
 
     /**
      * Mirrors the important vanilla melee-critical conditions closely enough for
