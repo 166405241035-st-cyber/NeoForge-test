@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.tags.DamageTypeTags;
 import net.neoforged.bus.api.SubscribeEvent;
