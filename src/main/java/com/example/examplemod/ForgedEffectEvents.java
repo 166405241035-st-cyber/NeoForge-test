@@ -266,8 +266,6 @@ public final class ForgedEffectEvents {
                 && player.getRandom().nextDouble() < tierValue(healingHarvest, HEALING_HARVEST_CHANCE)) {
             Block.popResource(player.level(), event.getPos(), PotionContents.createItemStack(Items.POTION, net.minecraft.core.registries.BuiltInRegistries.POTION.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(Registries.POTION, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "healing")))));
         }
-
-        }
     }
 
     @SubscribeEvent
@@ -326,7 +324,7 @@ public final class ForgedEffectEvents {
 
         // The planted block mutates into either Nether Wart or a Wither Rose.
         Block mutatedBlock = player.getRandom().nextBoolean() ? Blocks.NETHER_WART : Blocks.WITHER_ROSE;
-        player.level().setBlockAndUpdate(event.getPlacedBlock().getBlockPos(), mutatedBlock.defaultBlockState());
+        player.level().setBlockAndUpdate(event.getPos(), mutatedBlock.defaultBlockState());
     }
 
     /**
