@@ -11,6 +11,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -255,16 +258,22 @@ public final class ForgedEffectEvents {
         EffectTier healingHarvest = ForgedEffectRuntime.tier(tool, ForgingEffect.HEALING_HARVEST);
         if (healingHarvest != null && isCrop(event.getState())
                 && player.getRandom().nextDouble() < tierValue(healingHarvest, HEALING_HARVEST_CHANCE)) {
-            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.POTION));
+            Block.popResource(player.level(), event.getPos(), PotionUtils.createItemStack(Items.POTION, Potions.HEALING));
         }
 
         EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
-        if (moisture != null && event.getState().is(Blocks.FARMLAND)
-                && player.getRandom().nextDouble() < tierValue(moisture, MOISTURE_RETAIN_CHANCE)) {
-            for (BlockPos pos : BlockPos.betweenClosed(event.getPos().offset(-2, -1, -2), event.getPos().offset(2, 1, 2))) {
-                if (player.level().getBlockState(pos).is(Blocks.FARMLAND))
+        if (moisture != null && player.getRandom().nextDouble() < tierValue(moisture, MOISTURE_RETAIN_CHANCE)) {
+            // Every successful farming trigger refreshes the clicked farmland and nearby farmland.
+            BlockPos center = event.getPos();
+            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-2, 0, -2), center.offset(2, 0, 2))) {
+                if (player.level().getBlockState(pos).is(Blocks.FARMLAND)) {
                     player.level().setBlockAndUpdate(pos, player.level().getBlockState(pos)
                             .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
+                }
+            }
+            if (event.getState().is(Blocks.FARMLAND)) {
+                player.level().setBlockAndUpdate(center, event.getState()
+                        .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
             }
         }    }
 
