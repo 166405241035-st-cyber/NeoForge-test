@@ -12,7 +12,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;\nimport net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -48,6 +50,9 @@ public final class ForgedEffectEvents {
     private static final double[] CRITICAL_BLAST_CHANCE = {0.15D, 0.25D, 0.40D};
     private static final double[] VELOCITY_STRIKE_MAX_BONUS = {0.30D, 0.60D, 1.00D};
     private static final double[] AIRBORNE_MINING_SPEED = {0.50D, 1.00D, 1.50D};
+    private static final int[] SELF_REPAIR_AMOUNT = {2, 5, 10};
+    private static final double[] HEALING_HARVEST_CHANCE = {0.05D, 0.10D, 0.18D};
+    private static final double[] MOISTURE_RETAIN_CHANCE = {0.25D, 0.50D, 0.75D};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -139,6 +144,31 @@ public final class ForgedEffectEvents {
     }
 
     @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) return;
+        ItemStack tool = player.getMainHandItem();
+        long now = player.level().getGameTime();
+
+        EffectTier selfRepair = ForgedEffectRuntime.tier(tool, ForgingEffect.SELF_REPAIRING);
+        if (selfRepair != null && tool.isDamaged() && now % 600L == 0L)
+            tool.setDamageValue(Math.max(0, tool.getDamageValue() - tierValue(selfRepair, SELF_REPAIR_AMOUNT)));
+
+        EffectTier divine = ForgedEffectRuntime.tier(tool, ForgingEffect.DIVINE_BEACON_LIGHT);
+        if (divine != null) {
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 30, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 30, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 30, 0, false, false));
+        }
+
+        EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
+        if (frenzy != null && player.swinging) {
+            int amp = switch (frenzy) { case I -> 0; case II -> 1; case III -> 2; };
+            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 30, amp, false, false));
+        }
+    }
+
+    @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || !(player.level() instanceof ServerLevel level)) return;
@@ -220,12 +250,34 @@ public final class ForgedEffectEvents {
             int amplifier = bonus >= 1.50D ? 4 : bonus >= 1.00D ? 2 : 1;
             player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 80, amplifier, false, false));
         }
-    }
+
+
+        EffectTier healingHarvest = ForgedEffectRuntime.tier(tool, ForgingEffect.HEALING_HARVEST);
+        if (healingHarvest != null && isCrop(event.getState())
+                && player.getRandom().nextDouble() < tierValue(healingHarvest, HEALING_HARVEST_CHANCE)) {
+            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.POTION));
+        }
+
+        EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
+        if (moisture != null && event.getState().is(Blocks.FARMLAND)
+                && player.getRandom().nextDouble() < tierValue(moisture, MOISTURE_RETAIN_CHANCE)) {
+            for (BlockPos pos : BlockPos.betweenClosed(event.getPos().offset(-2, -1, -2), event.getPos().offset(2, 1, 2))) {
+                if (player.level().getBlockState(pos).is(Blocks.FARMLAND))
+                    player.level().setBlockAndUpdate(pos, player.level().getBlockState(pos)
+                            .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
+            }
+        }    }
 
     /**
      * Mirrors the important vanilla melee-critical conditions closely enough for
      * the forged trigger: falling, not grounded, not climbing/in water, and not a passenger.
      */
+    private static boolean isCrop(net.minecraft.world.level.block.state.BlockState state) {
+        return state.is(Blocks.WHEAT) || state.is(Blocks.CARROTS) || state.is(Blocks.POTATOES)
+                || state.is(Blocks.BEETROOTS) || state.is(Blocks.NETHER_WART)
+                || state.is(Blocks.MELON) || state.is(Blocks.PUMPKIN);
+    }
+
     private static boolean isCriticalHit(Player player) {
         return player.fallDistance > 0.0F
                 && !player.onGround()
