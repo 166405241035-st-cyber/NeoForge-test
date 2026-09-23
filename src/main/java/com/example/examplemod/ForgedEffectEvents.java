@@ -64,6 +64,8 @@ public final class ForgedEffectEvents {
     private static final double[] ROTTEN_COMPOST_CHANCE = {0.15D, 0.25D, 0.35D};
     private static final double[] ORGANIC_CATALYST_COOLDOWN = {200.0D, 140.0D, 100.0D};
     private static final double[] NETHER_MUTATION_CHANCE = {0.05D, 0.10D, 0.20D};
+    private static final int[] POISON_GAS_DURATION = {60, 100, 160}; // 3 / 5 / 8 sec
+    private static final float[] EARTHY_SHOCKWAVE_DAMAGE = {3.0F, 5.0F, 7.0F};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -138,7 +140,7 @@ public final class ForgedEffectEvents {
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0));
 
         EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
-        if (levitation != null)
+        if (levitation != null && canUseTimedTrigger(player, "LevitationBlow", 40L))
             target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, tierValue(levitation, LEVITATION_DURATION), 0));
 
         EffectTier spineSpike = ForgedEffectRuntime.tier(weapon, ForgingEffect.SPINE_SPIKE);
@@ -202,6 +204,18 @@ public final class ForgedEffectEvents {
                     1.5F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
         }
 
+        EffectTier poisonGas = ForgedEffectRuntime.tier(weapon, ForgingEffect.POISON_GAS_CLOUD);
+        if (poisonGas != null && canUseTimedTrigger(player, "PoisonGasCloud", 100L)) {
+            int duration = tierValue(poisonGas, POISON_GAS_DURATION);
+            double radius = 3.0D; // Fixed area; Tier changes duration only.
+            AABB cloud = target.getBoundingBox().inflate(radius);
+            for (LivingEntity victim : player.level().getEntitiesOfClass(
+                    LivingEntity.class, cloud, e -> e != player && e.isAlive()
+                            && e.distanceToSqr(target) <= radius * radius)) {
+                victim.addEffect(new MobEffectInstance(MobEffects.POISON, duration, 0));
+            }
+        }
+
         EffectTier velocityStrike = ForgedEffectRuntime.tier(weapon, ForgingEffect.VELOCITY_STRIKE);
         if (velocityStrike != null) {
             double horizontalSpeed = player.getDeltaMovement().horizontalDistance();
@@ -217,6 +231,34 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
         ItemStack tool = player.getMainHandItem();
         long now = player.level().getGameTime();
+
+        boolean wasGrounded = player.getPersistentData().getBoolean("ForgedWasGrounded");
+        boolean groundedNow = player.onGround();
+        EffectTier shockwave = ForgedEffectRuntime.tier(tool, ForgingEffect.EARTHY_SHOCKWAVE);
+        if (shockwave != null && groundedNow && !wasGrounded && player.fallDistance > 0.0F
+                && canUseTimedTrigger(player, "EarthyShockwave", 60L)) {
+            float damage = tierValue(shockwave, EARTHY_SHOCKWAVE_DAMAGE);
+            double radius = 3.0D; // Fixed AoE; Tier changes damage only.
+            AABB area = player.getBoundingBox().inflate(radius, 1.5D, radius);
+            for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area,
+                    e -> e.isAlive() && e.distanceToSqr(player) <= radius * radius)) {
+                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                try {
+                    mob.hurt(player.damageSources().playerAttack(player), damage);
+                } finally {
+                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                }
+                Vec3 away = mob.position().subtract(player.position());
+                if (away.lengthSqr() > 0.01D) {
+                    away = away.normalize();
+                    mob.setDeltaMovement(mob.getDeltaMovement().add(away.x * 0.6D, 0.35D, away.z * 0.6D));
+                    mob.hurtMarked = true;
+                }
+            }
+            if (tool.isDamageableItem())
+                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 2));
+        }
+        player.getPersistentData().putBoolean("ForgedWasGrounded", groundedNow);
 
         EffectTier selfRepair = ForgedEffectRuntime.tier(tool, ForgingEffect.SELF_REPAIRING);
         if (selfRepair != null && tool.isDamaged() && now % 600L == 0L)
