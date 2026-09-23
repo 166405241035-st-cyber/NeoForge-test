@@ -300,7 +300,7 @@ public final class ForgedEffectEvents {
         }
 
         EffectTier organic = ForgedEffectRuntime.tier(tool, ForgingEffect.ORGANIC_CATALYST);
-        if (organic != null && canUseTimedTrigger(player, "OrganicCatalyst", tierValue(organic, ORGANIC_CATALYST_COOLDOWN))) {
+        if (organic != null && canUseTimedTrigger(player, "OrganicCatalyst", Math.round(tierValue(organic, ORGANIC_CATALYST_COOLDOWN)))) {
             BlockPos center = clicked.above();
             for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
                 if (isCrop(player.level().getBlockState(pos))) {
