@@ -11,6 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -56,6 +58,9 @@ public final class ForgedEffectEvents {
     private static final int[] SELF_REPAIR_AMOUNT = {2, 5, 10};
     private static final double[] HEALING_HARVEST_CHANCE = {0.05D, 0.10D, 0.18D};
     private static final double[] MOISTURE_RETAIN_CHANCE = {0.25D, 0.50D, 0.75D};
+    private static final double[] ROTTEN_COMPOST_CHANCE = {0.15D, 0.25D, 0.35D};
+    private static final long[] ORGANIC_CATALYST_COOLDOWN = {200L, 140L, 100L};
+    private static final double[] NETHER_MUTATION_CHANCE = {0.05D, 0.10D, 0.20D};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -261,7 +266,8 @@ public final class ForgedEffectEvents {
             Block.popResource(player.level(), event.getPos(), PotionContents.createItemStack(Items.POTION, net.minecraft.core.registries.BuiltInRegistries.POTION.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(Registries.POTION, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "healing")))));
         }
 
-        }\n    }
+        }
+    }
 
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
@@ -269,24 +275,47 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
 
         ItemStack tool = player.getMainHandItem();
-        EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
-        if (moisture == null) return;
-
         BlockPos clicked = event.getPos();
-        BlockPos farmlandPos = player.level().getBlockState(clicked).is(Blocks.FARMLAND)
-                ? clicked : clicked.below();
-        if (!player.level().getBlockState(farmlandPos).is(Blocks.FARMLAND)) return;
-        if (player.getRandom().nextDouble() >= tierValue(moisture, MOISTURE_RETAIN_CHANCE)) return;
 
-        for (BlockPos pos : BlockPos.betweenClosed(farmlandPos.offset(-2, 0, -2),
-                farmlandPos.offset(2, 0, 2))) {
-            if (player.level().getBlockState(pos).is(Blocks.FARMLAND)) {
-                player.level().setBlockAndUpdate(pos,
-                        player.level().getBlockState(pos)
+        EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
+        if (moisture != null) {
+            BlockPos farmlandPos = player.level().getBlockState(clicked).is(Blocks.FARMLAND) ? clicked : clicked.below();
+            if (player.level().getBlockState(farmlandPos).is(Blocks.FARMLAND)
+                    && player.getRandom().nextDouble() < tierValue(moisture, MOISTURE_RETAIN_CHANCE)) {
+                for (BlockPos pos : BlockPos.betweenClosed(farmlandPos.offset(-2, 0, -2), farmlandPos.offset(2, 0, 2))) {
+                    if (player.level().getBlockState(pos).is(Blocks.FARMLAND)) {
+                        player.level().setBlockAndUpdate(pos, player.level().getBlockState(pos)
                                 .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
+                    }
+                }
             }
         }
+
+        EffectTier rottenCompost = ForgedEffectRuntime.tier(tool, ForgingEffect.ROTTEN_COMPOST);
+        if (rottenCompost != null && player.level().getBlockState(clicked).is(Blocks.FARMLAND)
+                && player.getRandom().nextDouble() < tierValue(rottenCompost, ROTTEN_COMPOST_CHANCE)) {
+            player.level().setBlockAndUpdate(clicked, Blocks.FARMLAND.defaultBlockState()
+                    .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
+            BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player, player.level(), clicked.above(), Direction.UP);
+        }
+
+        EffectTier organic = ForgedEffectRuntime.tier(tool, ForgingEffect.ORGANIC_CATALYST);
+        if (organic != null && canUseTimedTrigger(player, "OrganicCatalyst", tierValue(organic, ORGANIC_CATALYST_COOLDOWN))) {
+            BlockPos center = clicked.above();
+            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
+                if (isCrop(player.level().getBlockState(pos))) {
+                    BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player, player.level(), pos, Direction.UP);
+                }
+            }
+        }
+
+        EffectTier mutation = ForgedEffectRuntime.tier(tool, ForgingEffect.NETHER_MUTATION);
+        if (mutation != null && isCrop(player.level().getBlockState(clicked.above()))
+                && player.getRandom().nextDouble() < tierValue(mutation, NETHER_MUTATION_CHANCE)) {
+            player.level().setBlockAndUpdate(clicked.above(), Blocks.NETHER_WART.defaultBlockState());
+        }
     }
+
 
     /**
      * Mirrors the important vanilla melee-critical conditions closely enough for
