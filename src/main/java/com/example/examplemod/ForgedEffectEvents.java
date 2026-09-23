@@ -22,6 +22,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.tags.DamageTypeTags;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -67,13 +68,13 @@ public final class ForgedEffectEvents {
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
         LivingEntity target = event.getEntity();
 
-        // Aegis Shield protects the player who is receiving the damage.
-        // The previous implementation checked the attacker instead, so Aegis
-        // accidentally modified outgoing damage rather than incoming damage.
+        // Aegis Shield only reduces Projectile and Explosive damage.
+        // It does not reduce melee, magic, fall, fire, or other damage types.
         if (target instanceof Player protectedPlayer && !protectedPlayer.level().isClientSide()
-                && ForgedActiveSkills.isAegisActive(protectedPlayer)) {
-            event.setAmount(event.getAmount() * 0.10F);
-            return;
+                && ForgedActiveSkills.isAegisActive(protectedPlayer)
+                && (event.getSource().is(DamageTypeTags.IS_PROJECTILE)
+                    || event.getSource().is(DamageTypeTags.IS_EXPLOSION))) {
+            event.setAmount(event.getAmount() * 0.10F); // 90% reduction
         }
 
         Entity attacker = event.getSource().getEntity();
