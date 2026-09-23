@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Blocks;\nimport net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -45,6 +45,9 @@ public final class ForgedEffectEvents {
     private static final double[] UNSTOPPABLE_KNOCKBACK_POWER = {1.5D, 2.0D, 3.0D};
     private static final double[] SLIME_TRAIL_CHANCE = {0.15D, 0.25D, 0.40D};
     private static final float[] WITHER_DRAIN_HEAL = {1.0F, 2.0F, 3.0F};
+    private static final double[] CRITICAL_BLAST_CHANCE = {0.15D, 0.25D, 0.40D};
+    private static final double[] VELOCITY_STRIKE_MAX_BONUS = {0.20D, 0.35D, 0.50D};
+    private static final double[] AIRBORNE_MINING_SPEED = {0.25D, 0.45D, 0.70D};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -117,6 +120,22 @@ public final class ForgedEffectEvents {
             target.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 0));
             player.heal(tierValue(witherDrain, WITHER_DRAIN_HEAL));
         }
+
+        EffectTier criticalBlast = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRITICAL_BLAST);
+        if (criticalBlast != null && isCriticalHit(player)
+                && player.getRandom().nextDouble() < tierValue(criticalBlast, CRITICAL_BLAST_CHANCE)) {
+            // Small non-block-breaking blast so the proc does not destroy terrain.
+            player.level().explode(player, target.getX(), target.getY(), target.getZ(),
+                    1.5F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+        }
+
+        EffectTier velocityStrike = ForgedEffectRuntime.tier(weapon, ForgingEffect.VELOCITY_STRIKE);
+        if (velocityStrike != null) {
+            double horizontalSpeed = player.getDeltaMovement().horizontalDistance();
+            double speedFactor = Math.min(1.0D, horizontalSpeed / 0.35D);
+            float bonus = (float)(event.getAmount() * tierValue(velocityStrike, VELOCITY_STRIKE_MAX_BONUS) * speedFactor);
+            if (bonus > 0.0F) event.setAmount(event.getAmount() + bonus);
+        }
     }
 
     @SubscribeEvent
@@ -171,6 +190,34 @@ public final class ForgedEffectEvents {
                 default -> Items.RAW_GOLD;
             };
             Block.popResource(player.level(), event.getPos(), new ItemStack(rawOre));
+        }
+
+        EffectTier vacuum = ForgedEffectRuntime.tier(tool, ForgingEffect.VOID_VACUUM_PICK);
+        if (vacuum != null) {
+            // Pull nearby item entities directly to the player immediately after a block break.
+            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
+                    new net.minecraft.world.phys.AABB(event.getPos()).inflate(3.0D))) {
+                drop.setPos(player.getX(), player.getY() + 0.5D, player.getZ());
+                drop.setDeltaMovement(Vec3.ZERO);
+            }
+        }
+
+        EffectTier magnetic = ForgedEffectRuntime.tier(tool, ForgingEffect.MAGNETIC_CLUMPING);
+        if (magnetic != null) {
+            Vec3 center = Vec3.atCenterOf(event.getPos());
+            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
+                    new net.minecraft.world.phys.AABB(event.getPos()).inflate(4.0D))) {
+                drop.setPos(center.x, center.y, center.z);
+                drop.setDeltaMovement(Vec3.ZERO);
+            }
+        }
+
+        EffectTier airborne = ForgedEffectRuntime.tier(tool, ForgingEffect.AIRBORNE_MINING);
+        if (airborne != null && !player.onGround()) {
+            // Temporary Haste is refreshed while mining in the air.
+            int amplifier = tierValue(airborne, AIRBORNE_MINING_SPEED) >= 0.60D ? 2
+                    : tierValue(airborne, AIRBORNE_MINING_SPEED) >= 0.40D ? 1 : 0;
+            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40, amplifier, false, false));
         }
     }
 
