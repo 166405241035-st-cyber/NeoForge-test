@@ -190,10 +190,8 @@ public final class ForgedEffectEvents {
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 30, 0, false, false));
         }
 
-        if (player.getPersistentData().getLong("ForgedWitherCurseUntil") > player.level().getGameTime()) {
-            double bonus = player.getPersistentData().getDouble("ForgedWitherCurseBonus");
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 30, bonus >= 0.75D ? 2 : bonus >= 0.50D ? 1 : 0, false, false));
-        }
+        // Wither Curse Power damage is applied directly in onLivingAttack.
+        // Do not also add Strength here, otherwise the bonus would be applied twice.
 
         EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
         if (frenzy != null && player.swinging) {
