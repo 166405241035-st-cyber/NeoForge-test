@@ -68,6 +68,7 @@ public final class ForgedActiveSkills {
 
         SmallFireball fireball = new SmallFireball(player.level(), player, player.getLookAngle());
         player.level().addFreshEntity(fireball);
+        startCooldown(player, "FireballShoot", cooldown);
         damageEquipment(player, 3);
     }
 
@@ -88,6 +89,7 @@ public final class ForgedActiveSkills {
                 look.z * power
         );
         player.hurtMarked = true;
+        startCooldown(player, "FrontDash", cooldown);
         damageEquipment(player, 2);
     }
 
@@ -107,6 +109,7 @@ public final class ForgedActiveSkills {
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                 net.minecraft.world.effect.MobEffects.WITHER, 100, 0, false, false
         ));
+        startCooldown(player, "WitherCursePower", cooldown);
         damageEquipment(player, 4);
     }
 
@@ -123,6 +126,7 @@ public final class ForgedActiveSkills {
         Vec3 velocity = pull.normalize().scale(1.0D + tierIndex(tier) * 0.25D);
         target.setDeltaMovement(velocity.x, Math.max(velocity.y, 0.15D), velocity.z);
         target.hurtMarked = true;
+        startCooldown(player, "HarpoonPull", cooldown);
         damageEquipment(player, 2);
     }
 
@@ -145,6 +149,7 @@ public final class ForgedActiveSkills {
         target.setYRot(playerYaw);
         target.setXRot(playerPitch);
 
+        startCooldown(player, "MobSwap", cooldown);
         damageEquipment(player, 3);
     }
 
@@ -172,6 +177,7 @@ public final class ForgedActiveSkills {
             target.hurtMarked = true;
         }
 
+        startCooldown(player, "AirSlashRupture", cooldown);
         damageEquipment(player, 4);
     }
 
