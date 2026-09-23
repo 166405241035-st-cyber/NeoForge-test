@@ -15,6 +15,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -66,6 +67,7 @@ public class ExampleMod {
 
     public ExampleMod(IEventBus modEventBus, ModContainer modContainer) {
         BLOCKS.register(modEventBus); ITEMS.register(modEventBus); MENUS.register(modEventBus); CREATIVE_MODE_TABS.register(modEventBus);
+        modContainer.registerConfig(ModConfig.Type.COMMON, ForgedSkillConfig.SPEC, "examplemod-forged-skills.toml");
     }
 
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
