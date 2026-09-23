@@ -394,7 +394,7 @@ public final class ForgedActiveSkills {
         return switch (effect) {
             case FIREBALL_SHOOT, FRONT_DASH, WITHER_CURSE_POWER, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
-                 STUN_TIME_STOP, IRON_FORTRESS_GUARD, GRAVATIONAL_SLAM,
+                 STUN_TIME_STOP, IRON_FORTRESS_GUARD,
                  ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS -> true;
             default -> false;
         };
