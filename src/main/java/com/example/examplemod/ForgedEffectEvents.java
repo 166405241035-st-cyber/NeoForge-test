@@ -95,7 +95,7 @@ public final class ForgedEffectEvents {
             event.setAmount((float)(event.getAmount() * (1.0D + bonus)));
         }
 
-        EffectTier gravitationalSlam = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVITATIONAL_SLAM);
+        EffectTier gravitationalSlam = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVATIONAL_SLAM);
         if (gravitationalSlam != null && isCriticalHit(player)
                 && canUseTimedTrigger(player, "GravitationalSlam", 100L)) {
             double slamDamage = switch (gravitationalSlam) {
