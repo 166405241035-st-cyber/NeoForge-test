@@ -132,7 +132,10 @@ public final class ForgedActiveSkills {
 
     private static void mobSwap(Player player, EffectTier tier) {
         LivingEntity target = findLookTarget(player, 16.0D);
-        if (!(target instanceof Monster)) return;
+        if (!(target instanceof Monster)) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: ต้องเล็งมอนสเตอร์"), true);
+            return;
+        }
 
         long cooldown = tierValue(tier, MOB_SWAP_COOLDOWN);
         if (!ready(player, "MobSwap", cooldown)) return;
@@ -150,6 +153,7 @@ public final class ForgedActiveSkills {
         target.setXRot(playerPitch);
 
         startCooldown(player, "MobSwap", cooldown);
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: สำเร็จ"), true);
         damageEquipment(player, 3);
     }
 
@@ -185,11 +189,13 @@ public final class ForgedActiveSkills {
         boolean active = player.getPersistentData().getBoolean("ForgedAegisActive");
         if (active) {
             player.getPersistentData().putBoolean("ForgedAegisActive", false);
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Aegis Shield: OFF"), true);
             return;
         }
 
         player.getPersistentData().putBoolean("ForgedAegisActive", true);
         player.getPersistentData().putLong("ForgedAegisNextDrain", player.level().getGameTime() + 100L);
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal("Aegis Shield: ON"), true);
     }
 
     public static void tickAegis(Player player, ItemStack tool) {
@@ -199,6 +205,7 @@ public final class ForgedActiveSkills {
         EffectTier tier = ForgedEffectRuntime.tier(tool, ForgingEffect.AEGIS_SHIELD);
         if (tier == null) {
             player.getPersistentData().putBoolean("ForgedAegisActive", false);
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Aegis Shield: OFF (effect missing)"), true);
             return;
         }
 
@@ -209,6 +216,7 @@ public final class ForgedActiveSkills {
         int cost = tierValue(tier, AEGIS_DRAIN);
         if (tool.getDamageValue() + cost >= tool.getMaxDamage()) {
             player.getPersistentData().putBoolean("ForgedAegisActive", false);
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Aegis Shield: OFF (durability)"), true);
             return;
         }
 
@@ -281,7 +289,7 @@ public final class ForgedActiveSkills {
             if (distance > range) continue;
 
             double dot = look.dot(toTarget.normalize());
-            if (dot < 0.94D) continue;
+            if (dot < 0.80D) continue;
 
             if (distance * distance < bestDistance) {
                 best = entity;
