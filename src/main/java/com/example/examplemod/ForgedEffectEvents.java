@@ -266,6 +266,40 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
         ItemStack tool = player.getMainHandItem();
 
+        EffectTier ultimateLaserFortune = ForgedEffectRuntime.tier(tool, ForgingEffect.ULTIMATE_LASER_BREAKER);
+        if (ultimateLaserFortune != null) {
+            // Ultimate Laser Breaker has a fixed Fortune V passive while mining.
+            // NeoForge's normal block drops still happen; this adds Fortune-style bonus
+            // drops for the common vanilla raw-ore blocks without changing the tool NBT.
+            ItemStack bonusDrop = ItemStack.EMPTY;
+            if (event.getState().is(Blocks.COAL_ORE) || event.getState().is(Blocks.DEEPSLATE_COAL_ORE)) {
+                bonusDrop = new ItemStack(Items.COAL);
+            } else if (event.getState().is(Blocks.DIAMOND_ORE) || event.getState().is(Blocks.DEEPSLATE_DIAMOND_ORE)) {
+                bonusDrop = new ItemStack(Items.DIAMOND);
+            } else if (event.getState().is(Blocks.EMERALD_ORE) || event.getState().is(Blocks.DEEPSLATE_EMERALD_ORE)) {
+                bonusDrop = new ItemStack(Items.EMERALD);
+            } else if (event.getState().is(Blocks.LAPIS_ORE) || event.getState().is(Blocks.DEEPSLATE_LAPIS_ORE)) {
+                bonusDrop = new ItemStack(Items.LAPIS_LAZULI);
+            } else if (event.getState().is(Blocks.REDSTONE_ORE) || event.getState().is(Blocks.DEEPSLATE_REDSTONE_ORE)) {
+                bonusDrop = new ItemStack(Items.REDSTONE);
+            } else if (event.getState().is(Blocks.IRON_ORE) || event.getState().is(Blocks.DEEPSLATE_IRON_ORE)) {
+                bonusDrop = new ItemStack(Items.RAW_IRON);
+            } else if (event.getState().is(Blocks.COPPER_ORE) || event.getState().is(Blocks.DEEPSLATE_COPPER_ORE)) {
+                bonusDrop = new ItemStack(Items.RAW_COPPER);
+            } else if (event.getState().is(Blocks.GOLD_ORE) || event.getState().is(Blocks.DEEPSLATE_GOLD_ORE)
+                    || event.getState().is(Blocks.NETHER_GOLD_ORE)) {
+                bonusDrop = new ItemStack(Items.RAW_GOLD);
+            }
+            if (!bonusDrop.isEmpty()) {
+                // Fortune V: bonus 0..5 units; base vanilla drop remains untouched.
+                int bonus = player.getRandom().nextInt(6);
+                if (bonus > 0) {
+                    bonusDrop.setCount(bonus);
+                    Block.popResource(player.level(), event.getPos(), bonusDrop);
+                }
+            }
+        }
+
         EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
         if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE))
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
