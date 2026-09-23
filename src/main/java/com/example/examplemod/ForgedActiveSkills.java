@@ -232,10 +232,14 @@ public final class ForgedActiveSkills {
             case II -> 50;
             case III -> 80;
         };
-        AABB area = player.getBoundingBox().inflate(5.0D);
-        for (LivingEntity target : player.level().getEntitiesOfClass(
-                LivingEntity.class, area, e -> e != player && e.isAlive() && e instanceof Monster)) {
+        double radius = 5.0D; // Fixed area for every tier; Tier only changes duration.
+        AABB area = player.getBoundingBox().inflate(radius);
+        long frozenUntil = player.level().getGameTime() + duration;
+        for (Monster target : player.level().getEntitiesOfClass(
+                Monster.class, area, e -> e.isAlive() && e.distanceToSqr(player) <= radius * radius)) {
             target.setDeltaMovement(Vec3.ZERO);
+            target.hurtMarked = true;
+            target.getPersistentData().putLong("ForgedTimeStopUntil", frozenUntil);
             target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                     net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, duration, 255, false, false));
             target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
@@ -331,6 +335,43 @@ public final class ForgedActiveSkills {
         player.getPersistentData().putBoolean("ForgedAegisActive", true);
         player.getPersistentData().putLong("ForgedAegisNextDrain", player.level().getGameTime() + 100L);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Aegis Shield: ON"), true);
+    }
+
+    public static void tickWorldEffects(Player player, ItemStack tool) {
+        if (player.level().isClientSide()) return;
+        long now = player.level().getGameTime();
+
+        // Keep Time Stop targets fully immobilized for the whole duration.
+        AABB freezeArea = player.getBoundingBox().inflate(12.0D);
+        for (Monster target : player.level().getEntitiesOfClass(Monster.class, freezeArea,
+                e -> e.getPersistentData().getLong("ForgedTimeStopUntil") > now)) {
+            target.setDeltaMovement(Vec3.ZERO);
+            target.hurtMarked = true;
+            target.setTarget(null);
+        }
+
+        // Nature God Bless passive: while the forged tool is held, nearby crops receive
+        // extra random growth ticks. Tier does NOT increase the area.
+        EffectTier nature = ForgedEffectRuntime.tier(tool, ForgingEffect.NATURE_GOD_BLESS);
+        if (nature != null && player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel
+                && now % 10L == 0L) {
+            int attempts = switch (nature) { case I -> 1; case II -> 2; case III -> 3; };
+            net.minecraft.core.BlockPos center = player.blockPosition();
+            java.util.List<net.minecraft.core.BlockPos> crops = new java.util.ArrayList<>();
+            for (net.minecraft.core.BlockPos pos : net.minecraft.core.BlockPos.betweenClosed(
+                    center.offset(-4, -1, -4), center.offset(4, 2, 4))) {
+                if (serverLevel.getBlockState(pos).getBlock() instanceof net.minecraft.world.level.block.CropBlock) {
+                    crops.add(pos.immutable());
+                }
+            }
+            for (int i = 0; i < attempts && !crops.isEmpty(); i++) {
+                net.minecraft.core.BlockPos pos = crops.get(player.getRandom().nextInt(crops.size()));
+                net.minecraft.world.level.block.state.BlockState state = serverLevel.getBlockState(pos);
+                if (state.getBlock() instanceof net.minecraft.world.level.block.CropBlock crop && !crop.isMaxAge(state)) {
+                    crop.randomTick(state, serverLevel, pos, serverLevel.random);
+                }
+            }
+        }
     }
 
     public static void tickAegis(Player player, ItemStack tool) {
