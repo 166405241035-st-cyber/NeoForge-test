@@ -14,17 +14,6 @@ import java.util.List;
 public final class ForgedActiveSkills {
     private static final String SELECTED_INDEX = "ForgedActiveSkillIndex";
 
-    private static final long[] FIREBALL_COOLDOWN = {160L, 100L, 60L};
-    private static final long[] FRONT_DASH_COOLDOWN = {140L, 90L, 60L};
-    private static final long[] WITHER_CURSE_COOLDOWN = {400L, 400L, 400L};
-    private static final long[] HARPOON_COOLDOWN = {120L, 80L, 50L};
-    private static final long[] MOB_SWAP_COOLDOWN = {240L, 160L, 100L};
-    private static final long[] AIR_SLASH_COOLDOWN = {200L, 140L, 80L};
-    private static final long[] LAVA_WAVE_COOLDOWN = {300L, 200L, 140L};
-    private static final long[] STUN_TIME_STOP_COOLDOWN = {300L, 300L, 300L};
-    private static final long[] IRON_FORTRESS_COOLDOWN = {300L, 300L, 300L};
-    private static final long[] ULTIMATE_LASER_COOLDOWN = {500L, 340L, 200L};
-    private static final long[] NATURE_GOD_COOLDOWN = {400L, 400L, 400L};
     private static final int[] AEGIS_DRAIN = {8, 5, 3};
 
     private ForgedActiveSkills() {}
@@ -73,7 +62,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void fireball(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, FIREBALL_COOLDOWN);
+        long cooldown = ForgedSkillConfig.fireball(tier);
         if (!ready(player, "FireballShoot", cooldown)) return;
 
         SmallFireball fireball = new SmallFireball(player.level(), player, player.getLookAngle());
@@ -83,7 +72,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void frontDash(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, FRONT_DASH_COOLDOWN);
+        long cooldown = ForgedSkillConfig.dash(tier);
         if (!ready(player, "FrontDash", cooldown)) return;
 
         Vec3 look = player.getLookAngle().normalize();
@@ -104,7 +93,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void witherCurse(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, WITHER_CURSE_COOLDOWN);
+        long cooldown = ForgedSkillConfig.wither(tier);
         if (!ready(player, "WitherCursePower", cooldown)) return;
 
         long until = player.level().getGameTime() + 200L;
@@ -127,7 +116,7 @@ public final class ForgedActiveSkills {
         LivingEntity target = findLookTarget(player, 12.0D);
         if (target == null) return;
 
-        long cooldown = tierValue(tier, HARPOON_COOLDOWN);
+        long cooldown = ForgedSkillConfig.harpoon(tier);
         if (!ready(player, "HarpoonPull", cooldown)) return;
 
         Vec3 pull = player.position().subtract(target.position());
@@ -147,7 +136,7 @@ public final class ForgedActiveSkills {
             return;
         }
 
-        long cooldown = tierValue(tier, MOB_SWAP_COOLDOWN);
+        long cooldown = ForgedSkillConfig.swap(tier);
         if (!ready(player, "MobSwap", cooldown)) return;
 
         Vec3 playerPos = player.position();
@@ -168,7 +157,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void airSlashRupture(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, AIR_SLASH_COOLDOWN);
+        long cooldown = ForgedSkillConfig.airSlash(tier);
         if (!ready(player, "AirSlashRupture", cooldown)) return;
 
         double damage = switch (tier) {
@@ -196,7 +185,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void lavaWave(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, LAVA_WAVE_COOLDOWN);
+        long cooldown = ForgedSkillConfig.lava(tier);
         if (!ready(player, "LavaWave", cooldown)) return;
 
         Vec3 look = player.getLookAngle().normalize();
@@ -222,7 +211,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void stunTimeStop(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, STUN_TIME_STOP_COOLDOWN);
+        long cooldown = ForgedSkillConfig.timeStop(tier);
         if (!ready(player, "StunTimeStop", cooldown)) return;
 
         int duration = switch (tier) {
@@ -248,7 +237,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void ironFortress(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, IRON_FORTRESS_COOLDOWN);
+        long cooldown = ForgedSkillConfig.fortress(tier);
         if (!ready(player, "IronFortressGuard", cooldown)) return;
 
         long duration = switch (tier) {
@@ -263,7 +252,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void ultimateLaser(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, ULTIMATE_LASER_COOLDOWN);
+        long cooldown = ForgedSkillConfig.laser(tier);
         if (!ready(player, "UltimateLaserBreaker", cooldown)) return;
 
         Vec3 start = player.getEyePosition();
@@ -291,7 +280,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void natureGodBless(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, NATURE_GOD_COOLDOWN);
+        long cooldown = ForgedSkillConfig.nature(tier);
         if (!ready(player, "NatureGodBless", cooldown)) return;
 
         int chance = tier == EffectTier.I ? 5 : tier == EffectTier.II ? 10 : 20;
