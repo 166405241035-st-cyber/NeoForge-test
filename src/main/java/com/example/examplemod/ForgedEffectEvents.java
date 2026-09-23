@@ -326,7 +326,7 @@ public final class ForgedEffectEvents {
 
         // The planted block mutates into either Nether Wart or a Wither Rose.
         Block mutatedBlock = player.getRandom().nextBoolean() ? Blocks.NETHER_WART : Blocks.WITHER_ROSE;
-        player.level().setBlockAndUpdate(event.getPlacedBlockPosition(), mutatedBlock.defaultBlockState());
+        player.level().setBlockAndUpdate(event.getPlacedBlock().getBlockPos(), mutatedBlock.defaultBlockState());
     }
 
     /**
