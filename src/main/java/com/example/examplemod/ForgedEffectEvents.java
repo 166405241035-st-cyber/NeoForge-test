@@ -77,6 +77,12 @@ public final class ForgedEffectEvents {
             event.setAmount(event.getAmount() * 0.10F); // 90% reduction
         }
 
+        // Iron Fortress Guard reduces all incoming damage by 90% while its timed guard is active.
+        if (target instanceof Player guardedPlayer && !guardedPlayer.level().isClientSide()
+                && guardedPlayer.getPersistentData().getLong("ForgedIronFortressUntil") > guardedPlayer.level().getGameTime()) {
+            event.setAmount(event.getAmount() * 0.10F);
+        }
+
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || player.level().isClientSide()) return;
         if (player.getPersistentData().getBoolean("ForgedEffectDamageGuard")) return;
@@ -86,6 +92,40 @@ public final class ForgedEffectEvents {
         if (player.getPersistentData().getLong("ForgedWitherCurseUntil") > player.level().getGameTime()) {
             double bonus = player.getPersistentData().getDouble("ForgedWitherCurseBonus");
             event.setAmount((float)(event.getAmount() * (1.0D + bonus)));
+        }
+
+        EffectTier gravitationalSlam = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVITATIONAL_SLAM);
+        if (gravitationalSlam != null && isCriticalHit(player)
+                && canUseTimedTrigger(player, "GravitationalSlam", 100L)) {
+            double slamDamage = switch (gravitationalSlam) {
+                case I -> 6.0D;
+                case II -> 9.0D;
+                case III -> 12.0D;
+            };
+            double radius = 5.0D; // Fixed AoE; Tier only changes power.
+            Vec3 center = target.position();
+            AABB slamArea = new AABB(center.x - radius, center.y - radius, center.z - radius,
+                    center.x + radius, center.y + radius, center.z + radius);
+            for (Monster mob : player.level().getEntitiesOfClass(Monster.class, slamArea,
+                    e -> e.isAlive() && e.distanceToSqr(target) <= radius * radius)) {
+                Vec3 pull = center.subtract(mob.position());
+                if (pull.lengthSqr() > 0.01D) {
+                    Vec3 velocity = pull.normalize().scale(1.1D);
+                    mob.setDeltaMovement(velocity.x, Math.max(0.20D, velocity.y), velocity.z);
+                    mob.hurtMarked = true;
+                }
+                if (mob != target) {
+                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                    try {
+                        mob.hurt(player.damageSources().playerAttack(player), (float) slamDamage);
+                    } finally {
+                        player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                    }
+                }
+            }
+            player.level().explode(player, target.getX(), target.getY(), target.getZ(),
+                    2.0F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+            weapon.setDamageValue(Math.min(weapon.getMaxDamage(), weapon.getDamageValue() + 3));
         }
 
         EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
@@ -182,6 +222,7 @@ public final class ForgedEffectEvents {
             tool.setDamageValue(Math.max(0, tool.getDamageValue() - tierValue(selfRepair, SELF_REPAIR_AMOUNT)));
 
         ForgedActiveSkills.tickAegis(player, tool);
+        ForgedActiveSkills.tickWorldEffects(player, tool);
 
         EffectTier divine = ForgedEffectRuntime.tier(tool, ForgingEffect.DIVINE_BEACON_LIGHT);
         if (divine != null) {
@@ -283,6 +324,20 @@ public final class ForgedEffectEvents {
             player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 80, amplifier, false, false));
         }
 
+
+        EffectTier natureBless = ForgedEffectRuntime.tier(tool, ForgingEffect.NATURE_GOD_BLESS);
+        if (natureBless != null && isCrop(event.getState())) {
+            double rewardChance = switch (natureBless) {
+                case I -> 0.05D;
+                case II -> 0.10D;
+                case III -> 0.20D;
+            };
+            if (player.getRandom().nextDouble() < rewardChance) {
+                ItemStack reward = new ItemStack(player.getRandom().nextDouble() < 0.10D
+                        ? Items.ENCHANTED_GOLDEN_APPLE : Items.GOLDEN_APPLE);
+                Block.popResource(player.level(), event.getPos(), reward);
+            }
+        }
 
         EffectTier healingHarvest = ForgedEffectRuntime.tier(tool, ForgingEffect.HEALING_HARVEST);
         if (healingHarvest != null && isCrop(event.getState())
