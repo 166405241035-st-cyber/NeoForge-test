@@ -214,7 +214,7 @@ public final class ForgedActiveSkills {
                 } finally {
                     player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
                 }
-                target.setSecondsOnFire(tier == EffectTier.I ? 3 : tier == EffectTier.II ? 5 : 7);
+                target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(), (tier == EffectTier.I ? 3 : tier == EffectTier.II ? 5 : 7) * 20));
                 target.setDeltaMovement(target.getDeltaMovement().add(look.x * 0.35D, 0.20D, look.z * 0.35D));
                 target.hurtMarked = true;
             }
