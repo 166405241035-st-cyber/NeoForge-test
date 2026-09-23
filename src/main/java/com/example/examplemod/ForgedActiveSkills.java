@@ -23,7 +23,6 @@ public final class ForgedActiveSkills {
     private static final long[] LAVA_WAVE_COOLDOWN = {300L, 200L, 140L};
     private static final long[] STUN_TIME_STOP_COOLDOWN = {300L, 300L, 300L};
     private static final long[] IRON_FORTRESS_COOLDOWN = {300L, 300L, 300L};
-    private static final long[] GRAVITATIONAL_SLAM_COOLDOWN = {100L, 100L, 100L};
     private static final long[] ULTIMATE_LASER_COOLDOWN = {500L, 340L, 200L};
     private static final long[] NATURE_GOD_COOLDOWN = {400L, 400L, 400L};
     private static final int[] AEGIS_DRAIN = {8, 5, 3};
@@ -264,21 +263,6 @@ public final class ForgedActiveSkills {
         damageEquipment(player, 8);
     }
 
-    private static void gravitationalSlam(Player player, EffectTier tier) {
-        long cooldown = tierValue(tier, GRAVITATIONAL_SLAM_COOLDOWN);
-        if (!ready(player, "GravitationalSlam", cooldown)) return;
-        if (player.onGround()) return;
-
-        player.fallDistance = 0.0F;
-        player.setDeltaMovement(player.getDeltaMovement().x, -1.2D, player.getDeltaMovement().z);
-        player.hurtMarked = true;
-        player.getPersistentData().putBoolean("ForgedGravitationalSlamArmed", true);
-        player.getPersistentData().putInt("ForgedGravitationalSlamTier", tierIndex(tier));
-        // The landing event is handled from player tick below.
-        startCooldown(player, "GravitationalSlam", cooldown);
-        damageEquipment(player, 3);
-    }
-
     private static void ultimateLaser(Player player, EffectTier tier) {
         long cooldown = tierValue(tier, ULTIMATE_LASER_COOLDOWN);
         if (!ready(player, "UltimateLaserBreaker", cooldown)) return;
@@ -368,7 +352,9 @@ public final class ForgedActiveSkills {
                 net.minecraft.core.BlockPos pos = crops.get(player.getRandom().nextInt(crops.size()));
                 net.minecraft.world.level.block.state.BlockState state = serverLevel.getBlockState(pos);
                 if (state.getBlock() instanceof net.minecraft.world.level.block.CropBlock crop && !crop.isMaxAge(state)) {
-                    crop.randomTick(state, serverLevel, pos, serverLevel.random);
+                    net.minecraft.world.item.BoneMealItem.growCrop(
+                            new ItemStack(net.minecraft.world.item.Items.BONE_MEAL),
+                            serverLevel, pos);
                 }
             }
         }
