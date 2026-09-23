@@ -65,20 +65,27 @@ public final class ForgedEffectEvents {
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
+        LivingEntity target = event.getEntity();
+
+        // Aegis Shield protects the player who is receiving the damage.
+        // The previous implementation checked the attacker instead, so Aegis
+        // accidentally modified outgoing damage rather than incoming damage.
+        if (target instanceof Player protectedPlayer && !protectedPlayer.level().isClientSide()
+                && ForgedActiveSkills.isAegisActive(protectedPlayer)) {
+            event.setAmount(event.getAmount() * 0.10F);
+            return;
+        }
+
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || player.level().isClientSide()) return;
         if (player.getPersistentData().getBoolean("ForgedEffectDamageGuard")) return;
 
         ItemStack weapon = player.getMainHandItem();
-        if (ForgedActiveSkills.isAegisActive(player)) {
-            event.setAmount(event.getAmount() * 0.10F);
-        }
 
         if (player.getPersistentData().getLong("ForgedWitherCurseUntil") > player.level().getGameTime()) {
             double bonus = player.getPersistentData().getDouble("ForgedWitherCurseBonus");
             event.setAmount((float)(event.getAmount() * (1.0D + bonus)));
         }
-        LivingEntity target = event.getEntity();
 
         EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
         if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE))
