@@ -59,7 +59,7 @@ public final class ForgedEffectEvents {
     private static final double[] HEALING_HARVEST_CHANCE = {0.05D, 0.10D, 0.18D};
     private static final double[] MOISTURE_RETAIN_CHANCE = {0.25D, 0.50D, 0.75D};
     private static final double[] ROTTEN_COMPOST_CHANCE = {0.15D, 0.25D, 0.35D};
-    private static final long[] ORGANIC_CATALYST_COOLDOWN = {200L, 140L, 100L};
+    private static final double[] ORGANIC_CATALYST_COOLDOWN = {200.0D, 140.0D, 100.0D};
     private static final double[] NETHER_MUTATION_CHANCE = {0.05D, 0.10D, 0.20D};
 
     @SubscribeEvent
@@ -296,7 +296,7 @@ public final class ForgedEffectEvents {
                 && player.getRandom().nextDouble() < tierValue(rottenCompost, ROTTEN_COMPOST_CHANCE)) {
             player.level().setBlockAndUpdate(clicked, Blocks.FARMLAND.defaultBlockState()
                     .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
-            BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player, player.level(), clicked.above(), Direction.UP);
+            BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player.level(), clicked.above(), player);
         }
 
         EffectTier organic = ForgedEffectRuntime.tier(tool, ForgingEffect.ORGANIC_CATALYST);
@@ -304,7 +304,7 @@ public final class ForgedEffectEvents {
             BlockPos center = clicked.above();
             for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
                 if (isCrop(player.level().getBlockState(pos))) {
-                    BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player, player.level(), pos, Direction.UP);
+                    BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player.level(), pos, player);
                 }
             }
         }
