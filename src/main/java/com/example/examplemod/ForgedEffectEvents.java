@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Block;\nimport net.minecraft.world.level.block.Blocks;\nimport net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -37,6 +37,12 @@ public final class ForgedEffectEvents {
     private static final double[] SPINE_SPIKE_CHANCE = {0.10D, 0.18D, 0.25D};
     private static final int[] GRAVE_GRASP_DURATION = {10, 20, 30}; // 0.5 / 1 / 1.5 sec
     private static final double[] RIFT_TELEPORT_CHANCE = {0.15D, 0.25D, 0.40D};
+
+    // Additional combat effects from the project skill list (pages 16-19).
+    private static final int[] WEB_TRAP_DURATION = {30, 50, 80}; // 1.5 / 2.5 / 4 sec
+    private static final double[] UNSTOPPABLE_KNOCKBACK_POWER = {1.5D, 2.0D, 3.0D};
+    private static final double[] SLIME_TRAIL_CHANCE = {0.15D, 0.25D, 0.40D};
+    private static final float[] WITHER_DRAIN_HEAL = {1.0F, 2.0F, 3.0F};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -76,6 +82,38 @@ public final class ForgedEffectEvents {
         EffectTier riftTeleport = ForgedEffectRuntime.tier(weapon, ForgingEffect.RIFT_TELEPORT_ATTACK);
         if (riftTeleport != null && player.getRandom().nextDouble() < tierValue(riftTeleport, RIFT_TELEPORT_CHANCE)) {
             teleportTargetAway(player, target);
+        }
+
+        EffectTier webTrap = ForgedEffectRuntime.tier(weapon, ForgingEffect.WEB_TRAP);
+        if (webTrap != null && canUseTimedTrigger(player, "WebTrap", 60L)) {
+            // Temporary web-like restraint without leaving permanent cobweb blocks.
+            target.setDeltaMovement(Vec3.ZERO);
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, tierValue(webTrap, WEB_TRAP_DURATION), 6));
+        }
+
+        EffectTier knockback = ForgedEffectRuntime.tier(weapon, ForgingEffect.UNSTOPPABLE_KNOCKBACK);
+        if (knockback != null) {
+            // Direct velocity is used so the forged effect is not reduced by vanilla knockback resistance.
+            Vec3 away = target.position().subtract(player.position());
+            if (away.lengthSqr() < 0.001D) away = player.getLookAngle();
+            away = away.normalize().scale(tierValue(knockback, UNSTOPPABLE_KNOCKBACK_POWER));
+            target.setDeltaMovement(target.getDeltaMovement().add(away.x, 0.25D, away.z));
+            target.hurtMarked = true;
+        }
+
+        EffectTier slimeTrail = ForgedEffectRuntime.tier(weapon, ForgingEffect.SLIME_TRAIL_STRIKE);
+        if (slimeTrail != null && player.getRandom().nextDouble() < tierValue(slimeTrail, SLIME_TRAIL_CHANCE)) {
+            BlockPos floor = target.blockPosition().below();
+            if (!player.level().getBlockState(floor).isAir()) {
+                player.level().setBlockAndUpdate(floor, Blocks.SLIME_BLOCK.defaultBlockState());
+            }
+        }
+
+        EffectTier witherDrain = ForgedEffectRuntime.tier(weapon, ForgingEffect.WITHER_DRAIN);
+        if (witherDrain != null && canUseTimedTrigger(player, "WitherDrain", 20L)) {
+            // Fixed Wither; Tier changes only the amount of health stolen.
+            target.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 0));
+            player.heal(tierValue(witherDrain, WITHER_DRAIN_HEAL));
         }
     }
 
@@ -157,6 +195,19 @@ public final class ForgedEffectEvents {
         Vec3 sideways = new Vec3(-away.z, 0.0D, away.x).scale(side);
         Vec3 destination = target.position().add(away.scale(distance)).add(sideways);
         target.teleportTo(destination.x, destination.y, destination.z);
+    }
+
+    private static boolean canUseTimedTrigger(Player player, String key, long cooldownTicks) {
+        String dataKey = "ForgingCooldown_" + key;
+        long now = player.level().getGameTime();
+        long readyAt = player.getPersistentData().getLong(dataKey);
+        if (now < readyAt) return false;
+        player.getPersistentData().putLong(dataKey, now + cooldownTicks);
+        return true;
+    }
+
+    private static float tierValue(EffectTier tier, float[] values) {
+        return switch (tier) { case I -> values[0]; case II -> values[1]; case III -> values[2]; };
     }
 
     private static double tierValue(EffectTier tier, double[] values) {
