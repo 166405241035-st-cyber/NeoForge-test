@@ -163,11 +163,18 @@ public final class ForgedEffectEvents {
         if (selfRepair != null && tool.isDamaged() && now % 600L == 0L)
             tool.setDamageValue(Math.max(0, tool.getDamageValue() - tierValue(selfRepair, SELF_REPAIR_AMOUNT)));
 
+        ForgedActiveSkills.tickAegis(player, tool);
+
         EffectTier divine = ForgedEffectRuntime.tier(tool, ForgingEffect.DIVINE_BEACON_LIGHT);
         if (divine != null) {
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 30, 1, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 30, 1, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 30, 0, false, false));
+        }
+
+        if (player.getPersistentData().getLong("ForgedWitherCurseUntil") > player.level().getGameTime()) {
+            double bonus = player.getPersistentData().getDouble("ForgedWitherCurseBonus");
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 30, bonus >= 0.75D ? 2 : bonus >= 0.50D ? 1 : 0, false, false));
         }
 
         EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
