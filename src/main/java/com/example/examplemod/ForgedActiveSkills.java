@@ -20,6 +20,12 @@ public final class ForgedActiveSkills {
     private static final long[] HARPOON_COOLDOWN = {120L, 80L, 50L};
     private static final long[] MOB_SWAP_COOLDOWN = {240L, 160L, 100L};
     private static final long[] AIR_SLASH_COOLDOWN = {200L, 140L, 80L};
+    private static final long[] LAVA_WAVE_COOLDOWN = {300L, 200L, 140L};
+    private static final long[] STUN_TIME_STOP_COOLDOWN = {300L, 300L, 300L};
+    private static final long[] IRON_FORTRESS_COOLDOWN = {300L, 300L, 300L};
+    private static final long[] GRAVITATIONAL_SLAM_COOLDOWN = {100L, 100L, 100L};
+    private static final long[] ULTIMATE_LASER_COOLDOWN = {500L, 340L, 200L};
+    private static final long[] NATURE_GOD_COOLDOWN = {400L, 400L, 400L};
     private static final int[] AEGIS_DRAIN = {8, 5, 3};
 
     private ForgedActiveSkills() {}
@@ -56,6 +62,12 @@ public final class ForgedActiveSkills {
             case HARPOON_PULL -> harpoonPull(player, tier);
             case MOB_SWAP -> mobSwap(player, tier);
             case AIR_SLASH_RUPTURE -> airSlashRupture(player, tier);
+            case LAVA_WAVE -> lavaWave(player, tier);
+            case STUN_TIME_STOP -> stunTimeStop(player, tier);
+            case IRON_FORTRESS_GUARD -> ironFortress(player, tier);
+            case GRAVATIONAL_SLAM -> gravitationalSlam(player, tier);
+            case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tier);
+            case NATURE_GOD_BLESS -> natureGodBless(player, tier);
             default -> {
                 // Other active effects are added to this same dispatcher in later batches.
             }
@@ -185,6 +197,129 @@ public final class ForgedActiveSkills {
         damageEquipment(player, 4);
     }
 
+    private static void lavaWave(Player player, EffectTier tier) {
+        long cooldown = tierValue(tier, LAVA_WAVE_COOLDOWN);
+        if (!ready(player, "LavaWave", cooldown)) return;
+
+        Vec3 look = player.getLookAngle().normalize();
+        for (int i = 1; i <= 5; i++) {
+            Vec3 pos = player.position().add(look.scale(i * 1.5D));
+            AABB area = new AABB(pos.x - 1.2D, pos.y - 1.0D, pos.z - 1.2D,
+                    pos.x + 1.2D, pos.y + 1.5D, pos.z + 1.2D);
+            for (LivingEntity target : player.level().getEntitiesOfClass(
+                    LivingEntity.class, area, e -> e != player && e.isAlive())) {
+                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                try {
+                    target.hurt(player.damageSources().playerAttack(player), tier == EffectTier.I ? 3.0F : tier == EffectTier.II ? 5.0F : 7.0F);
+                } finally {
+                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                }
+                target.setSecondsOnFire(tier == EffectTier.I ? 3 : tier == EffectTier.II ? 5 : 7);
+                target.setDeltaMovement(target.getDeltaMovement().add(look.x * 0.35D, 0.20D, look.z * 0.35D));
+                target.hurtMarked = true;
+            }
+        }
+        startCooldown(player, "LavaWave", cooldown);
+        damageEquipment(player, 6);
+    }
+
+    private static void stunTimeStop(Player player, EffectTier tier) {
+        long cooldown = tierValue(tier, STUN_TIME_STOP_COOLDOWN);
+        if (!ready(player, "StunTimeStop", cooldown)) return;
+
+        int duration = switch (tier) {
+            case I -> 30;
+            case II -> 50;
+            case III -> 80;
+        };
+        AABB area = player.getBoundingBox().inflate(5.0D);
+        for (LivingEntity target : player.level().getEntitiesOfClass(
+                LivingEntity.class, area, e -> e != player && e.isAlive() && e instanceof Monster)) {
+            target.setDeltaMovement(Vec3.ZERO);
+            target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                    net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, duration, 255, false, false));
+            target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                    net.minecraft.world.effect.MobEffects.JUMP, duration, 128, false, false));
+        }
+        startCooldown(player, "StunTimeStop", cooldown);
+        damageEquipment(player, 8);
+    }
+
+    private static void ironFortress(Player player, EffectTier tier) {
+        long cooldown = tierValue(tier, IRON_FORTRESS_COOLDOWN);
+        if (!ready(player, "IronFortressGuard", cooldown)) return;
+
+        long duration = switch (tier) {
+            case I -> 40L;
+            case II -> 80L;
+            case III -> 120L;
+        };
+        player.getPersistentData().putLong("ForgedIronFortressUntil", player.level().getGameTime() + duration);
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal("Iron Fortress Guard: ON"), true);
+        startCooldown(player, "IronFortressGuard", cooldown + duration);
+        damageEquipment(player, 8);
+    }
+
+    private static void gravitationalSlam(Player player, EffectTier tier) {
+        long cooldown = tierValue(tier, GRAVITATIONAL_SLAM_COOLDOWN);
+        if (!ready(player, "GravitationalSlam", cooldown)) return;
+        if (player.onGround()) return;
+
+        player.fallDistance = 0.0F;
+        player.setDeltaMovement(player.getDeltaMovement().x, -1.2D, player.getDeltaMovement().z);
+        player.hurtMarked = true;
+        player.getPersistentData().putBoolean("ForgedGravitationalSlamArmed", true);
+        player.getPersistentData().putInt("ForgedGravitationalSlamTier", tierIndex(tier));
+        // The landing event is handled from player tick below.
+        startCooldown(player, "GravitationalSlam", cooldown);
+        damageEquipment(player, 3);
+    }
+
+    private static void ultimateLaser(Player player, EffectTier tier) {
+        long cooldown = tierValue(tier, ULTIMATE_LASER_COOLDOWN);
+        if (!ready(player, "UltimateLaserBreaker", cooldown)) return;
+
+        Vec3 start = player.getEyePosition();
+        Vec3 look = player.getLookAngle().normalize();
+        double damage = tier == EffectTier.I ? 8.0D : tier == EffectTier.II ? 12.0D : 16.0D;
+
+        for (int i = 1; i <= 16; i++) {
+            Vec3 point = start.add(look.scale(i));
+            AABB area = new AABB(point.x - 0.8D, point.y - 0.8D, point.z - 0.8D,
+                    point.x + 0.8D, point.y + 0.8D, point.z + 0.8D);
+            for (LivingEntity target : player.level().getEntitiesOfClass(
+                    LivingEntity.class, area, e -> e != player && e.isAlive())) {
+                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                try {
+                    target.hurt(player.damageSources().playerAttack(player), (float) damage);
+                } finally {
+                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                }
+            }
+        }
+        player.level().addParticle(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                start.x, start.y, start.z, look.x, look.y, look.z);
+        startCooldown(player, "UltimateLaserBreaker", cooldown);
+        damageEquipment(player, 12);
+    }
+
+    private static void natureGodBless(Player player, EffectTier tier) {
+        long cooldown = tierValue(tier, NATURE_GOD_COOLDOWN);
+        if (!ready(player, "NatureGodBless", cooldown)) return;
+
+        int chance = tier == EffectTier.I ? 5 : tier == EffectTier.II ? 10 : 20;
+        if (player.getRandom().nextInt(100) < chance) {
+            player.getInventory().add(new ItemStack(
+                    player.getRandom().nextDouble() < 0.1D ? net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE
+                            : net.minecraft.world.item.Items.GOLDEN_APPLE));
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Nature God Bless: ได้รับพรจากธรรมชาติ"), true);
+        } else {
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Nature God Bless: ไม่ได้รับรางวัล"), true);
+        }
+        startCooldown(player, "NatureGodBless", cooldown);
+        damageEquipment(player, 8);
+    }
+
     private static void toggleAegis(Player player, ItemStack tool, EffectTier tier) {
         boolean active = player.getPersistentData().getBoolean("ForgedAegisActive");
         if (active) {
@@ -243,7 +378,9 @@ public final class ForgedActiveSkills {
     private static boolean isActive(ForgingEffect effect) {
         return switch (effect) {
             case FIREBALL_SHOOT, FRONT_DASH, WITHER_CURSE_POWER, AEGIS_SHIELD,
-                 HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE -> true;
+                 HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
+                 STUN_TIME_STOP, IRON_FORTRESS_GUARD, GRAVATIONAL_SLAM,
+                 ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS -> true;
             default -> false;
         };
     }
