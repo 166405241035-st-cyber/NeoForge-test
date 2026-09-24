@@ -146,9 +146,9 @@ public final class ForgedEffectEvents {
 
         EffectTier spineSpike = ForgedEffectRuntime.tier(weapon, ForgingEffect.SPINE_SPIKE);
         if (spineSpike != null && player.getRandom().nextDouble() < tierValue(spineSpike, SPINE_SPIKE_CHANCE)) {
-            // Bleeding prototype: Poison provides non-lethal damage-over-time behavior.
+            // Bleeding uses poison-like non-lethal damage-over-time, but is a separate red status.
             // Tier changes proc chance only.
-            target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0));
+            target.addEffect(new MobEffectInstance(ExampleMod.BLEEDING, 100, 0));
         }
 
         EffectTier graveGrasp = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVE_GRASP);
