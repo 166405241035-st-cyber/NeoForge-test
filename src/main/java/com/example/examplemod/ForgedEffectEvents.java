@@ -342,6 +342,23 @@ public final class ForgedEffectEvents {
             }
         }
 
+        long thermalUntil = player.getPersistentData().getLong("ForgedThermalBarrierUntil");
+        if (thermalUntil > now) {
+            BlockPos center = new BlockPos(
+                    player.getPersistentData().getInt("ForgedThermalBarrierX"),
+                    player.getPersistentData().getInt("ForgedThermalBarrierY"),
+                    player.getPersistentData().getInt("ForgedThermalBarrierZ"));
+            int burn = player.getPersistentData().getInt("ForgedThermalBarrierBurn");
+            AABB protectedArea = new AABB(center.offset(-1, 0, -1), center.offset(2, 3, 2));
+            for (Monster mob : player.level().getEntitiesOfClass(Monster.class, protectedArea, Entity::isAlive))
+                mob.setRemainingFireTicks(Math.max(mob.getRemainingFireTicks(), burn * 20));
+            // Keep the fixed 3x3 protected patch as farmland if it was trampled to dirt.
+            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
+                if (player.level().getBlockState(pos).is(Blocks.DIRT))
+                    player.level().setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
+            }
+        }
+
         EffectTier selfRepair = ForgedEffectRuntime.tier(tool, ForgingEffect.SELF_REPAIRING);
         if (selfRepair != null && tool.isDamaged() && now % 600L == 0L)
             tool.setDamageValue(Math.max(0, tool.getDamageValue() - tierValue(selfRepair, SELF_REPAIR_AMOUNT)));
@@ -573,6 +590,51 @@ public final class ForgedEffectEvents {
 
         ItemStack tool = player.getMainHandItem();
         BlockPos clicked = event.getPos();
+
+        EffectTier explosiveTilling = ForgedEffectRuntime.tier(tool, ForgingEffect.EXPLOSIVE_TILLING);
+        if (explosiveTilling != null) {
+            long cd = switch (explosiveTilling) { case I -> 120L; case II -> 80L; case III -> 40L; };
+            if (canUseTimedTrigger(player, "ExplosiveTilling", cd)) {
+                Direction horizontal = player.getDirection();
+                Direction side = horizontal.getClockWise();
+                int changed = 0;
+                for (int offset = -1; offset <= 1; offset++) {
+                    BlockPos pos = clicked.relative(side, offset);
+                    net.minecraft.world.level.block.state.BlockState state = player.level().getBlockState(pos);
+                    if ((state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH))
+                            && player.level().getBlockState(pos.above()).isAir()) {
+                        player.level().setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
+                        changed++;
+                    }
+                }
+                // Durability is charged only for blocks actually tilled.
+                if (changed > 0 && tool.isDamageableItem())
+                    tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + changed));
+            }
+        }
+
+        EffectTier hyperGrowth = ForgedEffectRuntime.tier(tool, ForgingEffect.HYPER_GROWTH_SOIL);
+        if (hyperGrowth != null && player.level() instanceof ServerLevel serverLevel) {
+            int attempts = switch (hyperGrowth) { case I -> 1; case II -> 2; case III -> 3; };
+            boolean grew = false;
+            // Fixed 3x3 farming area for every tier. Tier changes growth speed only.
+            BlockPos center = clicked.above();
+            java.util.List<BlockPos> crops = new java.util.ArrayList<>();
+            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 1, 1))) {
+                if (serverLevel.getBlockState(pos).getBlock() instanceof net.minecraft.world.level.block.CropBlock)
+                    crops.add(pos.immutable());
+            }
+            for (int i = 0; i < attempts && !crops.isEmpty(); i++) {
+                BlockPos pos = crops.get(player.getRandom().nextInt(crops.size()));
+                net.minecraft.world.level.block.state.BlockState state = serverLevel.getBlockState(pos);
+                if (state.getBlock() instanceof net.minecraft.world.level.block.CropBlock crop && !crop.isMaxAge(state)) {
+                    BoneMealItem.growCrop(new ItemStack(Items.BONE_MEAL), serverLevel, pos);
+                    grew = true;
+                }
+            }
+            if (grew && tool.isDamageableItem())
+                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 2));
+        }
 
         EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
         if (moisture != null) {
