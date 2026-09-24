@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -22,6 +24,9 @@ import net.minecraft.world.phys.Vec3;
  * and a block collision switches the projectile into return mode.
  */
 public class ForgedBoomerangEntity extends Entity {
+    private static final EntityDataAccessor<ItemStack> DISPLAY_STACK =
+            SynchedEntityData.defineId(ForgedBoomerangEntity.class, EntityDataSerializers.ITEM_STACK);
+
     private Player owner;
     private ItemStack weapon = ItemStack.EMPTY;
     private double damage;
@@ -38,6 +43,7 @@ public class ForgedBoomerangEntity extends Entity {
         this.owner = owner;
         this.weapon = weapon.copy();
         this.weapon.setCount(1);
+        this.entityData.set(DISPLAY_STACK, this.weapon.copy());
         this.damage = damage;
         setPos(owner.getX(), owner.getEyeY() - 0.15D, owner.getZ());
     }
@@ -109,8 +115,14 @@ public class ForgedBoomerangEntity extends Entity {
         discard();
     }
 
+    public ItemStack getDisplayStack() {
+        return this.entityData.get(DISPLAY_STACK);
+    }
+
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(DISPLAY_STACK, ItemStack.EMPTY);
+    }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {}
