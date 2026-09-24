@@ -391,6 +391,47 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
         ItemStack tool = player.getMainHandItem();
 
+        // Multi-block mining skills. Generated block breaks are guarded so they do not
+        // recursively trigger another forged mining skill.
+        if (!player.getPersistentData().getBoolean("ForgedMultiBreakGuard")) {
+            Direction face = directionFromLook(player);
+
+            EffectTier rough = ForgedEffectRuntime.tier(tool, ForgingEffect.ROUGH_CLEAVE_3X3);
+            if (rough != null) {
+                long cd = switch (rough) { case I -> 160L; case II -> 120L; case III -> 80L; };
+                if (canUseTimedTrigger(player, "RoughCleave3x3", cd))
+                    breakPlane(player, event.getPos(), face, 3, 3, 1);
+            }
+
+            EffectTier tunnel = ForgedEffectRuntime.tier(tool, ForgingEffect.TUNNEL_CHARGE_3X1);
+            if (tunnel != null) {
+                long cd = switch (tunnel) { case I -> 160L; case II -> 120L; case III -> 80L; };
+                if (canUseTimedTrigger(player, "TunnelCharge3x1", cd))
+                    breakPlane(player, event.getPos(), face, 3, 1, 1);
+            }
+
+            EffectTier linearBlast = ForgedEffectRuntime.tier(tool, ForgingEffect.LINEAR_BLAST_1X5);
+            if (linearBlast != null) {
+                long cd = switch (linearBlast) { case I -> 200L; case II -> 140L; case III -> 100L; };
+                if (canUseTimedTrigger(player, "LinearBlast1x5", cd))
+                    breakLine(player, event.getPos(), face, 5);
+            }
+
+            EffectTier wide = ForgedEffectRuntime.tier(tool, ForgingEffect.WIDE_EXCAVATION_4X4);
+            if (wide != null) {
+                long cd = switch (wide) { case I -> 200L; case II -> 140L; case III -> 80L; };
+                if (canUseTimedTrigger(player, "WideExcavation4x4", cd))
+                    breakPlane(player, event.getPos(), face, 4, 4, 1);
+            }
+
+            EffectTier penetration = ForgedEffectRuntime.tier(tool, ForgingEffect.LINEAR_PENETRATION_3X15);
+            if (penetration != null) {
+                long cd = switch (penetration) { case I -> 400L; case II -> 280L; case III -> 180L; };
+                if (canUseTimedTrigger(player, "LinearPenetration3x15", cd))
+                    breakPlane(player, event.getPos(), face, 3, 3, 15);
+            }
+        }
+
         EffectTier staticHover = ForgedEffectRuntime.tier(tool, ForgingEffect.STATIC_HOVER_DROP);
         if (staticHover != null) {
             int duration = switch (staticHover) { case I -> 100; case II -> 200; case III -> 400; };
@@ -620,6 +661,63 @@ public final class ForgedEffectEvents {
      * Mirrors the important vanilla melee-critical conditions closely enough for
      * the forged trigger: falling, not grounded, not climbing/in water, and not a passenger.
      */
+    private static Direction directionFromLook(Player player) {
+        Vec3 look = player.getLookAngle();
+        double ax = Math.abs(look.x), ay = Math.abs(look.y), az = Math.abs(look.z);
+        if (ay >= ax && ay >= az) return look.y > 0 ? Direction.UP : Direction.DOWN;
+        if (ax >= az) return look.x > 0 ? Direction.EAST : Direction.WEST;
+        return look.z > 0 ? Direction.SOUTH : Direction.NORTH;
+    }
+
+    /**
+     * Breaks a fixed plane/depth volume without increasing its dimensions by Tier.
+     * width/height describe the face plane; depth extends forward from the broken block.
+     */
+    private static void breakPlane(Player player, BlockPos origin, Direction face, int width, int height, int depth) {
+        if (!(player.level() instanceof ServerLevel level)) return;
+        java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
+        Direction right = (face.getAxis() == Direction.Axis.Y) ? Direction.EAST
+                : (face.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST);
+        Direction up = (face.getAxis() == Direction.Axis.Y) ? Direction.SOUTH : Direction.UP;
+        int w0 = -(width / 2), h0 = -(height / 2);
+
+        for (int d = 0; d < depth; d++) {
+            BlockPos center = origin.relative(face, d);
+            for (int w = 0; w < width; w++) for (int h = 0; h < height; h++)
+                targets.add(center.relative(right, w0 + w).relative(up, h0 + h));
+        }
+        breakTargets(player, level, origin, targets);
+    }
+
+    private static void breakLine(Player player, BlockPos origin, Direction face, int length) {
+        if (!(player.level() instanceof ServerLevel level)) return;
+        java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
+        for (int i = 0; i < length; i++) targets.add(origin.relative(face, i));
+        breakTargets(player, level, origin, targets);
+    }
+
+    private static void breakTargets(Player player, ServerLevel level, BlockPos origin,
+                                     java.util.Set<BlockPos> targets) {
+        ItemStack tool = player.getMainHandItem();
+        int extraBroken = 0;
+        player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
+        try {
+            for (BlockPos pos : targets) {
+                if (pos.equals(origin)) continue;
+                net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
+                if (state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) continue;
+                if (!tool.isCorrectToolForDrops(state)) continue;
+                if (level.destroyBlock(pos, true, player)) extraBroken++;
+            }
+        } finally {
+            player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
+        }
+        // Project rule: extra blocks cost 50% durability, rounded up.
+        int extraCost = (extraBroken + 1) / 2;
+        if (extraCost > 0 && tool.isDamageableItem())
+            tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + extraCost));
+    }
+
     private static boolean isCrop(net.minecraft.world.level.block.state.BlockState state) {
         return state.is(Blocks.WHEAT) || state.is(Blocks.CARROTS) || state.is(Blocks.POTATOES)
                 || state.is(Blocks.BEETROOTS) || state.is(Blocks.NETHER_WART)
