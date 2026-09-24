@@ -349,7 +349,9 @@ public final class ForgedEffectEvents {
                     player.getPersistentData().getInt("ForgedThermalBarrierY"),
                     player.getPersistentData().getInt("ForgedThermalBarrierZ"));
             int burn = player.getPersistentData().getInt("ForgedThermalBarrierBurn");
-            AABB protectedArea = new AABB(center.offset(-1, 0, -1), center.offset(2, 3, 2));
+            AABB protectedArea = new AABB(
+                    center.getX() - 1.0D, center.getY(), center.getZ() - 1.0D,
+                    center.getX() + 2.0D, center.getY() + 3.0D, center.getZ() + 2.0D);
             for (Monster mob : player.level().getEntitiesOfClass(Monster.class, protectedArea, Entity::isAlive))
                 mob.setRemainingFireTicks(Math.max(mob.getRemainingFireTicks(), burn * 20));
             // Keep the fixed 3x3 protected patch as farmland if it was trampled to dirt.
