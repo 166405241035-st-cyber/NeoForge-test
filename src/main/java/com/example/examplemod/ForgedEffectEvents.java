@@ -48,7 +48,7 @@ public final class ForgedEffectEvents {
     // Combat batch.
     private static final double[] SPINE_SPIKE_CHANCE = {0.10D, 0.18D, 0.25D};
     private static final int[] GRAVE_GRASP_DURATION = {10, 20, 30}; // 0.5 / 1 / 1.5 sec
-    private static final double[] RIFT_TELEPORT_CHANCE = {0.15D, 0.25D, 0.40D};
+    private static final double[] RIFT_TELEPORT_CHANCE = {0.80D, 0.80D, 0.80D};
 
     // Additional combat effects from the project skill list (pages 16-19).
     private static final int[] WEB_TRAP_DURATION = {30, 50, 80}; // 1.5 / 2.5 / 4 sec
@@ -172,6 +172,7 @@ public final class ForgedEffectEvents {
             BlockPos webPos = target.blockPosition();
             if (player.level().getBlockState(webPos).canBeReplaced()) {
                 player.level().setBlockAndUpdate(webPos, Blocks.COBWEB.defaultBlockState());
+                player.level().scheduleTick(webPos, Blocks.COBWEB, tierValue(webTrap, WEB_TRAP_DURATION));
             }
         }
 
