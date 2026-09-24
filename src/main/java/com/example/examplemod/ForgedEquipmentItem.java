@@ -154,7 +154,20 @@ public class ForgedEquipmentItem extends Item {
             tooltip.add(Component.literal("Durability: " + remaining + " / " + durability).withStyle(ChatFormatting.GRAY));
         }
         double attackDamage = tag.getDouble("forgedAttackDamage");
-        tooltip.add(Component.literal("Attack Damage: " + formatDamage(attackDamage)).withStyle(ChatFormatting.GRAY));
+        EffectTier witherCurseTier = ForgedEffectRuntime.tier(stack, ForgingEffect.WITHER_CURSE_POWER);
+        if (witherCurseTier != null) {
+            double multiplier = switch (witherCurseTier) {
+                case I -> 1.5D;
+                case II -> 2.0D;
+                case III -> 3.0D;
+            };
+            double cursedDamage = attackDamage * multiplier;
+            tooltip.add(Component.literal("Attack Damage: " + formatDamage(cursedDamage)
+                    + " (Base " + formatDamage(attackDamage) + " x" + formatDamage(multiplier) + ")")
+                    .withStyle(ChatFormatting.RED));
+        } else {
+            tooltip.add(Component.literal("Attack Damage: " + formatDamage(attackDamage)).withStyle(ChatFormatting.GRAY));
+        }
 
         if (head != null && core != null && rod != null) {
             tooltip.add(Component.literal("Materials: " + displayName(head) + " + " + displayName(core) + " + " + displayName(rod)).withStyle(ChatFormatting.GRAY));
