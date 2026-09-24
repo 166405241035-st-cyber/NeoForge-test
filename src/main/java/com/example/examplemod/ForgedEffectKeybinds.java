@@ -57,11 +57,12 @@ public final class ForgedEffectKeybinds {
             if (timeStopShakeTicks > 0) {
                 net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
                 if (mc.player != null && mc.screen == null) {
-                    double progress = 1.0D - (double) timeStopShakeTicks / timeStopShakeTotal;
-                    float strength = (float)(0.08D + progress * 0.42D);
-                    float phase = timeStopShakeTicks * 1.7F;
+                    // Time Stop is an instant impact: strong shake that fades quickly.
+                    double remaining = (double) timeStopShakeTicks / timeStopShakeTotal;
+                    float strength = (float)(1.15D * remaining);
+                    float phase = timeStopShakeTicks * 2.35F;
                     mc.player.setYRot(mc.player.getYRot() + (float)Math.sin(phase) * strength);
-                    mc.player.setXRot(mc.player.getXRot() + (float)Math.cos(phase * 1.31F) * strength * 0.55F);
+                    mc.player.setXRot(mc.player.getXRot() + (float)Math.cos(phase * 1.47F) * strength * 0.65F);
                 }
                 timeStopShakeTicks--;
             }
