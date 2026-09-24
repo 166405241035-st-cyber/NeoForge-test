@@ -48,7 +48,6 @@ public final class ForgedActiveSkills {
         switch (effect) {
             case FIREBALL_SHOOT -> fireball(player, tier);
             case FRONT_DASH -> frontDash(player, tier);
-            case WITHER_CURSE_POWER -> witherCurse(player, tier);
             case AEGIS_SHIELD -> toggleAegis(player, tool, tier);
             case HARPOON_PULL -> harpoonPull(player, tier);
             case MOB_SWAP -> mobSwap(player, tier);
@@ -99,26 +98,6 @@ public final class ForgedActiveSkills {
         player.hurtMarked = true;
         startCooldown(player, "FrontDash", cooldown);
         damageEquipment(player, 2);
-    }
-
-    private static void witherCurse(Player player, EffectTier tier) {
-        long cooldown = ForgedSkillConfig.wither(tier);
-        if (!ready(player, "WitherCursePower", cooldown)) return;
-
-        long until = player.level().getGameTime() + 200L;
-        double bonus = switch (tier) {
-            case I -> 0.30D;
-            case II -> 0.50D;
-            case III -> 0.75D;
-        };
-
-        player.getPersistentData().putLong("ForgedWitherCurseUntil", until);
-        player.getPersistentData().putDouble("ForgedWitherCurseBonus", bonus);
-        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                net.minecraft.world.effect.MobEffects.WITHER, 100, 0, false, false
-        ));
-        startCooldown(player, "WitherCursePower", cooldown);
-        damageEquipment(player, 4);
     }
 
     private static void harpoonPull(Player player, EffectTier tier) {
@@ -539,7 +518,7 @@ public final class ForgedActiveSkills {
 
     private static boolean isActive(ForgingEffect effect) {
         return switch (effect) {
-            case FIREBALL_SHOOT, FRONT_DASH, WITHER_CURSE_POWER, AEGIS_SHIELD,
+            case FIREBALL_SHOOT, FRONT_DASH, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
                  STUN_TIME_STOP, IRON_FORTRESS_GUARD, BOOMERANG_WEAPON, DIVINE_BEACON_LIGHT,
                  ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS, LINE_BUILDER,
