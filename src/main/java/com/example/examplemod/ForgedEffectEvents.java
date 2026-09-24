@@ -8,7 +8,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -471,68 +470,6 @@ public final class ForgedEffectEvents {
             int amp = switch (frenzy) { case I -> 0; case II -> 1; case III -> 2; };
             player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 30, amp, false, false));
         }
-    }
-
-    @SubscribeEvent
-    public static void onBoomerangTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ThrownTrident trident) || trident.level().isClientSide()
-                || !trident.getPersistentData().getBoolean("ForgedBoomerang")) return;
-        if (!(trident.getOwner() instanceof Player owner)) return;
-
-        int age = trident.getPersistentData().getInt("ForgedBoomerangAge") + 1;
-        trident.getPersistentData().putInt("ForgedBoomerangAge", age);
-        double damage = trident.getPersistentData().getDouble("ForgedBoomerangDamage");
-
-        // Vanilla ThrownTrident stops after an entity hit. We handle damage ourselves and
-        // immediately restore its flight velocity, producing real boomerang-style pass-through.
-        Vec3 beforeHitVelocity = trident.getDeltaMovement();
-        boolean hitEntityThisTick = false;
-        for (LivingEntity target : trident.level().getEntitiesOfClass(LivingEntity.class,
-                trident.getBoundingBox().inflate(0.85D), e -> e != owner && e.isAlive())) {
-            String phase = age >= 20 ? "Return_" : "Out_";
-            String key = "ForgedBoomerangHit_" + phase + target.getUUID();
-            if (trident.getPersistentData().getBoolean(key)) continue;
-            trident.getPersistentData().putBoolean(key, true);
-            hitEntityThisTick = true;
-            owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
-            try {
-                target.hurt(owner.damageSources().playerAttack(owner), (float) damage);
-            } finally {
-                owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
-            }
-        }
-        if (hitEntityThisTick && age < 20 && beforeHitVelocity.lengthSqr() > 0.01D) {
-            trident.setDeltaMovement(beforeHitVelocity.normalize().scale(2.5D));
-            trident.setNoGravity(false);
-            trident.hurtMarked = true;
-        }
-
-        // Return after the outbound flight OR immediately after touching the ground.
-        // This also pulls a trident back out if vanilla collision embedded it in a mob/block.
-        boolean stoppedByBlock = age > 2 && trident.getDeltaMovement().lengthSqr() < 0.01D;
-        if (age >= 20 || trident.onGround() || trident.horizontalCollision || trident.verticalCollision || stoppedByBlock) {
-            Vec3 home = owner.getEyePosition().subtract(trident.position());
-            if (home.lengthSqr() <= 2.25D) {
-                returnBoomerang(owner, trident);
-                return;
-            }
-            trident.setNoGravity(true);
-            trident.setDeltaMovement(home.normalize().scale(0.85D));
-            trident.hurtMarked = true;
-        }
-
-        if (age > 200) returnBoomerang(owner, trident);
-    }
-
-    private static void returnBoomerang(Player owner, ThrownTrident trident) {
-        ItemStack returned = new ItemStack(ExampleMod.FORGED_EQUIPMENT_ITEM.get());
-        if (trident.getPersistentData().contains("ForgedBoomerangItem"))
-            returned.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
-                    net.minecraft.world.item.component.CustomData.of(
-                            trident.getPersistentData().getCompound("ForgedBoomerangItem")));
-        if (!owner.getAbilities().instabuild && !owner.getInventory().add(returned))
-            owner.drop(returned, false);
-        trident.discard();
     }
 
     @SubscribeEvent
