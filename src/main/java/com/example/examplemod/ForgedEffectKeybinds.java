@@ -14,7 +14,15 @@ import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = ExampleMod.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public final class ForgedEffectKeybinds {
+    private static int timeStopShakeTicks;
+    private static int timeStopShakeTotal;
+
     private ForgedEffectKeybinds() {}
+
+    public static void startTimeStopShake(int ticks) {
+        timeStopShakeTicks = Math.max(0, ticks);
+        timeStopShakeTotal = Math.max(1, ticks);
+    }
 
     public static final Lazy<KeyMapping> USE_SKILL = Lazy.of(() -> new KeyMapping(
             "key.examplemod.use_skill",
@@ -46,6 +54,18 @@ public final class ForgedEffectKeybinds {
 
         @SubscribeEvent
         public static void onClientTick(ClientTickEvent.Post event) {
+            if (timeStopShakeTicks > 0) {
+                net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+                if (mc.player != null && mc.screen == null) {
+                    double progress = 1.0D - (double) timeStopShakeTicks / timeStopShakeTotal;
+                    float strength = (float)(0.08D + progress * 0.42D);
+                    float phase = timeStopShakeTicks * 1.7F;
+                    mc.player.setYRot(mc.player.getYRot() + (float)Math.sin(phase) * strength);
+                    mc.player.setXRot(mc.player.getXRot() + (float)Math.cos(phase * 1.31F) * strength * 0.55F);
+                }
+                timeStopShakeTicks--;
+            }
+
             while (CYCLE_SKILL.get().consumeClick()) {
                 ForgedEffectNetwork.sendAction(0);
             }
