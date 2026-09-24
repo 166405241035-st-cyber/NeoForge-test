@@ -458,8 +458,13 @@ public final class ForgedEffectEvents {
         // Wither Curse Power is passive while held: permanent-feeling Wither I via refresh.
         // Its attack multiplier is applied in onLivingAttack.
         EffectTier witherCurse = ForgedEffectRuntime.tier(tool, ForgingEffect.WITHER_CURSE_POWER);
-        if (witherCurse != null)
-            player.addEffect(new MobEffectInstance(MobEffects.WITHER, 30, 0, false, false));
+        if (witherCurse != null) {
+            // Do not reset Wither's internal damage timer every player tick.
+            // Refresh Wither I only when it is close to expiring, so vanilla Wither damage can tick normally.
+            MobEffectInstance currentWither = player.getEffect(MobEffects.WITHER);
+            if (currentWither == null || currentWither.getDuration() <= 20)
+                player.addEffect(new MobEffectInstance(MobEffects.WITHER, 120, 0, false, false));
+        }
 
         EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
         if (frenzy != null && player.swinging) {
