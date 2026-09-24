@@ -19,6 +19,7 @@ public final class ForgedSkillConfig {
     public static final ModConfigSpec.ConfigValue<Double> NATURE_I, NATURE_II, NATURE_III;
     public static final ModConfigSpec.ConfigValue<Double> BOOMERANG_I, BOOMERANG_II, BOOMERANG_III;
     public static final ModConfigSpec.ConfigValue<Double> DIVINE_I, DIVINE_II, DIVINE_III;
+    public static final ModConfigSpec.ConfigValue<Double> GRAVITATIONAL_I, GRAVITATIONAL_II, GRAVITATIONAL_III;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -38,6 +39,7 @@ public final class ForgedSkillConfig {
         NATURE_I=value(b,"nature_god_bless","tier_i",10.0); NATURE_II=value(b,"nature_god_bless","tier_ii",10.0); NATURE_III=value(b,"nature_god_bless","tier_iii",10.0);
         BOOMERANG_I=value(b,"boomerang_weapon","tier_i",6.0); BOOMERANG_II=value(b,"boomerang_weapon","tier_ii",6.0); BOOMERANG_III=value(b,"boomerang_weapon","tier_iii",6.0);
         DIVINE_I=value(b,"divine_beacon_light","tier_i",7.5); DIVINE_II=value(b,"divine_beacon_light","tier_ii",5.0); DIVINE_III=value(b,"divine_beacon_light","tier_iii",3.0);
+        GRAVITATIONAL_I=value(b,"gravitational_slam","tier_i",300.0); GRAVITATIONAL_II=value(b,"gravitational_slam","tier_ii",210.0); GRAVITATIONAL_III=value(b,"gravitational_slam","tier_iii",120.0);
 
         b.pop();
         SPEC = b.build();
@@ -68,4 +70,5 @@ public final class ForgedSkillConfig {
     public static long nature(EffectTier t){return ticks(t,NATURE_I,NATURE_II,NATURE_III);}
     public static long boomerang(EffectTier t){return ticks(t,BOOMERANG_I,BOOMERANG_II,BOOMERANG_III);}
     public static long divine(EffectTier t){return ticks(t,DIVINE_I,DIVINE_II,DIVINE_III);}
+    public static long gravitationalSlam(EffectTier t){return ticks(t,GRAVITATIONAL_I,GRAVITATIONAL_II,GRAVITATIONAL_III);}
 }
