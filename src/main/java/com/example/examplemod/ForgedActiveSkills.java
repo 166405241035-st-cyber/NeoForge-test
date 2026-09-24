@@ -63,6 +63,7 @@ public final class ForgedActiveSkills {
             case LINE_BUILDER -> lineBuilder(player, tier);
             case EARTHY_WALL_RISE -> earthyWallRise(player, tier);
             case SKY_BRIDGE_WALK -> toggleSkyBridge(player, tier);
+            case POCKET_DIMENSION, INTERNAL_STORAGE -> openStorage(player, tool);
             default -> {
                 // Other active effects are added to this same dispatcher in later batches.
             }
@@ -367,6 +368,14 @@ public final class ForgedActiveSkills {
         damageEquipment(player, 8);
     }
 
+    private static void openStorage(Player player, ItemStack tool) {
+        int size = ForgedStorageMenu.storageSize(tool);
+        if (size <= 0) return;
+        player.openMenu(new net.minecraft.world.SimpleMenuProvider(
+                (id, inv, p) -> new ForgedStorageMenu(id, inv, tool),
+                net.minecraft.network.chat.Component.literal("Forged Storage")));
+    }
+
     private static void lineBuilder(Player player, EffectTier tier) {
         long cooldown = 40L; // fixed 2 sec
         if (!ready(player, "LineBuilder", cooldown)) return;
@@ -534,7 +543,7 @@ public final class ForgedActiveSkills {
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
                  STUN_TIME_STOP, IRON_FORTRESS_GUARD, BOOMERANG_WEAPON, DIVINE_BEACON_LIGHT,
                  ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS, LINE_BUILDER,
-                 EARTHY_WALL_RISE, SKY_BRIDGE_WALK -> true;
+                 EARTHY_WALL_RISE, SKY_BRIDGE_WALK, POCKET_DIMENSION, INTERNAL_STORAGE -> true;
             default -> false;
         };
     }
