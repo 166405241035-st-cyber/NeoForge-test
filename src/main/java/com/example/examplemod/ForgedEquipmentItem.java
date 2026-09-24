@@ -131,9 +131,6 @@ public class ForgedEquipmentItem extends Item {
             case II -> 1.35D;
             case III -> 1.75D;
         };
-
-        ItemStack thrownStack = stack.copy();
-        thrownStack.setCount(1);
         double throwDamage = readAttackDamage(stack) * multiplier;
         ForgedBoomerangEntity projectile = new ForgedBoomerangEntity(level, player, thrownStack, throwDamage);
         Vec3 direction = player.getLookAngle().normalize();
