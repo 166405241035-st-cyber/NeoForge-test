@@ -16,6 +16,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -131,16 +132,12 @@ public class ForgedEquipmentItem extends Item {
             case III -> 1.75D;
         };
 
-        ThrownTrident projectile = new ThrownTrident(level, player, thrownStack);
-        projectile.setBaseDamage(readAttackDamage(stack) * multiplier);
-        projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
-        projectile.pickup = AbstractArrow.Pickup.DISALLOWED;
-        projectile.getPersistentData().putBoolean("ForgedBoomerang", true);
-        projectile.getPersistentData().putDouble("ForgedBoomerangDamage", readAttackDamage(stack) * multiplier);
-        CustomData projectileData = thrownStack.get(DataComponents.CUSTOM_DATA);
-        if (projectileData != null)
-            projectile.getPersistentData().put("ForgedBoomerangItem", projectileData.copyTag());
-        projectile.getPersistentData().putInt("ForgedBoomerangAge", 0);
+        ItemStack thrownStack = stack.copy();
+        thrownStack.setCount(1);
+        double throwDamage = readAttackDamage(stack) * multiplier;
+        ForgedBoomerangEntity projectile = new ForgedBoomerangEntity(level, player, thrownStack, throwDamage);
+        Vec3 direction = player.getLookAngle().normalize();
+        projectile.setDeltaMovement(direction.scale(2.5D));
         level.addFreshEntity(projectile);
 
         if (!player.getAbilities().instabuild) stack.shrink(1);
