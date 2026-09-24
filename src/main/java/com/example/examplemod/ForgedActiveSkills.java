@@ -54,6 +54,7 @@ public final class ForgedActiveSkills {
             case AIR_SLASH_RUPTURE -> airSlashRupture(player, tier);
             case LAVA_WAVE -> lavaWave(player, tier);
             case STUN_TIME_STOP -> stunTimeStop(player, tier);
+            case GRAVATIONAL_SLAM -> gravitationalSlam(player, tier);
             case IRON_FORTRESS_GUARD -> ironFortress(player, tier);
             case DIVINE_BEACON_LIGHT -> divineBeaconLaser(player, tier);
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tier);
@@ -252,6 +253,55 @@ public final class ForgedActiveSkills {
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Stun Time Stop!"), true);
     }
 
+    private static void gravitationalSlam(Player player, EffectTier tier) {
+        long cooldown = ForgedSkillConfig.gravitationalSlam(tier);
+        if (!ready(player, "GravitationalSlam", cooldown)) return;
+        long now = player.level().getGameTime();
+        if (player.getPersistentData().getLong("ForgedGravitationalSlamUntil") > now) return;
+
+        // Fixed 5-second charge. Tier changes cooldown only.
+        player.getPersistentData().putLong("ForgedGravitationalSlamUntil", now + 100L);
+        player.getPersistentData().putDouble("ForgedGravitationalSlamX", player.getX());
+        player.getPersistentData().putDouble("ForgedGravitationalSlamY", player.getY());
+        player.getPersistentData().putDouble("ForgedGravitationalSlamZ", player.getZ());
+        player.getPersistentData().putBoolean("ForgedGravitationalSlamOldInvulnerable", player.isInvulnerable());
+        player.setInvulnerable(true);
+        startCooldown(player, "GravitationalSlam", cooldown);
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam: Charging..."), true);
+    }
+
+    private static void releaseGravitationalSlam(Player player) {
+        double x = player.getPersistentData().getDouble("ForgedGravitationalSlamX");
+        double y = player.getPersistentData().getDouble("ForgedGravitationalSlamY");
+        double z = player.getPersistentData().getDouble("ForgedGravitationalSlamZ");
+        Vec3 center = new Vec3(x, y, z);
+
+        // 3x3 horizontal blast area (1.5 blocks from center), 80 damage, no block damage.
+        AABB blast = new AABB(x - 1.5D, y - 1.5D, z - 1.5D, x + 1.5D, y + 1.5D, z + 1.5D);
+        for (LivingEntity target : player.level().getEntitiesOfClass(
+                LivingEntity.class, blast, e -> e != player && e.isAlive())) {
+            player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+            try {
+                target.hurt(player.damageSources().playerAttack(player), 80.0F);
+            } finally {
+                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+            }
+        }
+
+        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION_EMITTER,
+                    x, y + 0.5D, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    x, y + 0.5D, z, 24, 1.2D, 0.4D, 1.2D, 0.04D);
+        }
+
+        player.setInvulnerable(player.getPersistentData().getBoolean("ForgedGravitationalSlamOldInvulnerable"));
+        player.getPersistentData().remove("ForgedGravitationalSlamOldInvulnerable");
+        player.getPersistentData().remove("ForgedGravitationalSlamUntil");
+        damageEquipment(player, 12);
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam!"), true);
+    }
+
     private static void ironFortress(Player player, EffectTier tier) {
         long cooldown = ForgedSkillConfig.fortress(tier);
         if (!ready(player, "IronFortressGuard", cooldown)) return;
@@ -414,6 +464,46 @@ public final class ForgedActiveSkills {
         if (player.level().isClientSide()) return;
         long now = player.level().getGameTime();
 
+        // Gravitational Slam: lock the caster for 5 seconds, continuously pull all
+        // living entities within 10 blocks, and show rising smoke once per second.
+        long slamUntil = player.getPersistentData().getLong("ForgedGravitationalSlamUntil");
+        if (slamUntil > 0L) {
+            if (now >= slamUntil) {
+                releaseGravitationalSlam(player);
+            } else {
+                double x = player.getPersistentData().getDouble("ForgedGravitationalSlamX");
+                double y = player.getPersistentData().getDouble("ForgedGravitationalSlamY");
+                double z = player.getPersistentData().getDouble("ForgedGravitationalSlamZ");
+                Vec3 center = new Vec3(x, y, z);
+
+                // Hard-lock movement and position during the charge.
+                player.setDeltaMovement(Vec3.ZERO);
+                player.teleportTo(x, y, z);
+                player.hurtMarked = true;
+
+                double pullRadius = 10.0D;
+                AABB pullArea = new AABB(x - pullRadius, y - pullRadius, z - pullRadius,
+                        x + pullRadius, y + pullRadius, z + pullRadius);
+                for (LivingEntity target : player.level().getEntitiesOfClass(
+                        LivingEntity.class, pullArea,
+                        e -> e != player && e.isAlive() && e.position().distanceToSqr(center) <= pullRadius * pullRadius)) {
+                    Vec3 toward = center.subtract(target.position());
+                    if (toward.lengthSqr() > 0.04D) {
+                        Vec3 pull = toward.normalize().scale(0.18D);
+                        target.setDeltaMovement(target.getDeltaMovement().scale(0.72D).add(pull));
+                        target.hurtMarked = true;
+                    }
+                }
+
+                // Campfire-like rising smoke every 1 second while charging.
+                long elapsed = 100L - (slamUntil - now);
+                if (elapsed % 20L == 0L && player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+                    server.sendParticles(net.minecraft.core.particles.ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                            x, y + 0.2D, z, 12, 0.7D, 0.15D, 0.7D, 0.035D);
+                }
+            }
+        }
+
         // Keep every living Time Stop target immobilized. Hostile mobs also lose
         // their attack target while stunned. Remove only the glow added by this skill.
         AABB freezeArea = player.getBoundingBox().inflate(20.0D);
@@ -526,7 +616,7 @@ public final class ForgedActiveSkills {
         return switch (effect) {
             case FIREBALL_SHOOT, FRONT_DASH, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
-                 STUN_TIME_STOP, IRON_FORTRESS_GUARD, DIVINE_BEACON_LIGHT,
+                 STUN_TIME_STOP, GRAVATIONAL_SLAM, IRON_FORTRESS_GUARD, DIVINE_BEACON_LIGHT,
                  ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS, LINE_BUILDER,
                  EARTHY_WALL_RISE, SKY_BRIDGE_WALK, POCKET_DIMENSION, INTERNAL_STORAGE -> true;
             default -> false;
