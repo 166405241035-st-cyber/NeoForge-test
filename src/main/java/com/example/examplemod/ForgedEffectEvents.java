@@ -273,7 +273,6 @@ public final class ForgedEffectEvents {
             cloud.setWaitTime(0);
             cloud.setRadiusPerTick(0.0F);
             cloud.setRadiusOnUse(0.0F);
-            cloud.setReapplicationDelay(10);
             cloud.setPotionContents(new PotionContents(java.util.Optional.empty(),
                     java.util.Optional.of(0x4E9331),
                     java.util.List.of(new MobEffectInstance(MobEffects.POISON, 40, 0))));
