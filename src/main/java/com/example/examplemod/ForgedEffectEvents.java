@@ -5,6 +5,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
@@ -262,13 +263,22 @@ public final class ForgedEffectEvents {
         EffectTier poisonGas = ForgedEffectRuntime.tier(weapon, ForgingEffect.POISON_GAS_CLOUD);
         if (poisonGas != null && canUseTimedTrigger(player, "PoisonGasCloud", 100L)) {
             int duration = tierValue(poisonGas, POISON_GAS_DURATION);
-            double radius = 3.0D; // Fixed area; Tier changes duration only.
-            AABB cloud = target.getBoundingBox().inflate(radius);
-            for (LivingEntity victim : player.level().getEntitiesOfClass(
-                    LivingEntity.class, cloud, e -> e != player && e.isAlive()
-                            && e.distanceToSqr(target) <= radius * radius)) {
-                victim.addEffect(new MobEffectInstance(MobEffects.POISON, duration, 0));
-            }
+
+            // Real lingering-style cloud. Radius is fixed at 5 blocks for every Tier;
+            // Tier changes only how long the cloud remains.
+            AreaEffectCloud cloud = new AreaEffectCloud(player.level(), target.getX(), target.getY(), target.getZ());
+            cloud.setOwner(player);
+            cloud.setRadius(5.0F);
+            cloud.setDuration(duration);
+            cloud.setWaitTime(0);
+            cloud.setRadiusPerTick(0.0F);
+            cloud.setRadiusOnUse(0.0F);
+            cloud.setReapplicationDelay(10);
+            cloud.setPotionContents(new PotionContents(java.util.Optional.empty(),
+                    java.util.Optional.of(0x4E9331),
+                    java.util.List.of(new MobEffectInstance(MobEffects.POISON, 40, 0))));
+            cloud.getPersistentData().putUUID("ForgedPoisonGasOwner", player.getUUID());
+            player.level().addFreshEntity(cloud);
         }
 
         EffectTier velocityStrike = ForgedEffectRuntime.tier(weapon, ForgingEffect.VELOCITY_STRIKE);
@@ -286,6 +296,18 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
         ItemStack tool = player.getMainHandItem();
         long now = player.level().getGameTime();
+
+        // Poison Gas Cloud owner immunity. The cloud itself remains a normal
+        // lingering-style AreaEffectCloud for every other living entity.
+        AABB gasCheck = player.getBoundingBox().inflate(5.5D);
+        boolean insideOwnGas = !player.level().getEntitiesOfClass(AreaEffectCloud.class, gasCheck,
+                cloud -> cloud.isAlive()
+                        && cloud.getPersistentData().hasUUID("ForgedPoisonGasOwner")
+                        && cloud.getPersistentData().getUUID("ForgedPoisonGasOwner").equals(player.getUUID())
+                        && player.distanceToSqr(cloud) <= (double) cloud.getRadius() * cloud.getRadius()).isEmpty();
+        if (insideOwnGas && player.hasEffect(MobEffects.POISON)) {
+            player.removeEffect(MobEffects.POISON);
+        }
 
         // Allied Zombie Minion AI: protect/follow the summoner and attack hostile monsters.
         if (now % 5L == 0L) {
