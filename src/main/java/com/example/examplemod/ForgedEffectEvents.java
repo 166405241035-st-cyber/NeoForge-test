@@ -927,11 +927,8 @@ public final class ForgedEffectEvents {
         if (away.lengthSqr() < 0.001D) away = player.getLookAngle().scale(-1.0D);
         away = away.normalize();
 
-        // Fixed distance: Tier changes chance only.
-        double distance = 8.0D;
-        double side = (player.getRandom().nextDouble() - 0.5D) * 4.0D;
-        Vec3 sideways = new Vec3(-away.z, 0.0D, away.x).scale(side);
-        Vec3 destination = target.position().add(away.scale(distance)).add(sideways);
+        // Tier controls the exact displacement distance: 4 / 8 / 15 blocks.
+        Vec3 destination = target.position().add(away.scale(distance));
         target.teleportTo(destination.x, destination.y, destination.z);
     }
 
