@@ -483,19 +483,28 @@ public final class ForgedEffectEvents {
         trident.getPersistentData().putInt("ForgedBoomerangAge", age);
         double damage = trident.getPersistentData().getDouble("ForgedBoomerangDamage");
 
-        // Damage entities manually so the boomerang never gets stuck inside a mob.
+        // Vanilla ThrownTrident stops after an entity hit. We handle damage ourselves and
+        // immediately restore its flight velocity, producing real boomerang-style pass-through.
+        Vec3 beforeHitVelocity = trident.getDeltaMovement();
+        boolean hitEntityThisTick = false;
         for (LivingEntity target : trident.level().getEntitiesOfClass(LivingEntity.class,
                 trident.getBoundingBox().inflate(0.85D), e -> e != owner && e.isAlive())) {
             String phase = age >= 20 ? "Return_" : "Out_";
             String key = "ForgedBoomerangHit_" + phase + target.getUUID();
             if (trident.getPersistentData().getBoolean(key)) continue;
             trident.getPersistentData().putBoolean(key, true);
+            hitEntityThisTick = true;
             owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
             try {
                 target.hurt(owner.damageSources().playerAttack(owner), (float) damage);
             } finally {
                 owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
             }
+        }
+        if (hitEntityThisTick && age < 20 && beforeHitVelocity.lengthSqr() > 0.01D) {
+            trident.setDeltaMovement(beforeHitVelocity.normalize().scale(2.5D));
+            trident.setNoGravity(false);
+            trident.hurtMarked = true;
         }
 
         // Return after the outbound flight OR immediately after touching the ground.
