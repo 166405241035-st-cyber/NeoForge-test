@@ -505,6 +505,24 @@ public final class ForgedEffectEvents {
             }
         }
 
+        EffectTier autoSmelt = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_SMELT_MINING);
+        if (autoSmelt != null) {
+            Item smelted = null;
+            if (event.getState().is(Blocks.IRON_ORE) || event.getState().is(Blocks.DEEPSLATE_IRON_ORE)) smelted = Items.IRON_INGOT;
+            else if (event.getState().is(Blocks.GOLD_ORE) || event.getState().is(Blocks.DEEPSLATE_GOLD_ORE)
+                    || event.getState().is(Blocks.NETHER_GOLD_ORE)) smelted = Items.GOLD_INGOT;
+            else if (event.getState().is(Blocks.COPPER_ORE) || event.getState().is(Blocks.DEEPSLATE_COPPER_ORE)) smelted = Items.COPPER_INGOT;
+            if (smelted != null) {
+                int bonus = switch (autoSmelt) {
+                    case I -> player.getRandom().nextDouble() < 0.20D ? 1 : 0;
+                    case II -> player.getRandom().nextDouble() < 0.40D ? 1 : 0;
+                    case III -> player.getRandom().nextDouble() < 0.60D ? 1 : 0;
+                };
+                // Vanilla ore drop still occurs; this prototype adds the guaranteed smelted result.
+                Block.popResource(player.level(), event.getPos(), new ItemStack(smelted, 1 + bonus));
+            }
+        }
+
         EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
         if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE))
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
@@ -564,6 +582,41 @@ public final class ForgedEffectEvents {
         }
 
 
+        EffectTier autoChest = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_CHEST_TRANSPORT);
+        if (autoChest != null && isCrop(event.getState()) && player.level() instanceof ServerLevel serverLevel) {
+            int range = switch (autoChest) { case I -> 8; case II -> 16; case III -> 32; };
+            net.minecraft.world.Container destination = null;
+            double best = Double.MAX_VALUE;
+            BlockPos center = event.getPos();
+            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-range, -4, -range), center.offset(range, 4, range))) {
+                net.minecraft.world.level.block.entity.BlockEntity be = serverLevel.getBlockEntity(pos);
+                if (be instanceof net.minecraft.world.Container container) {
+                    double dist = pos.distSqr(center);
+                    if (dist < best) { best = dist; destination = container; }
+                }
+            }
+            if (destination != null) {
+                for (ItemEntity drop : serverLevel.getEntitiesOfClass(ItemEntity.class, new AABB(center).inflate(3.0D))) {
+                    ItemStack stack = drop.getItem();
+                    for (int slot = 0; slot < destination.getContainerSize() && !stack.isEmpty(); slot++) {
+                        ItemStack existing = destination.getItem(slot);
+                        if (existing.isEmpty()) {
+                            destination.setItem(slot, stack.copy());
+                            stack.setCount(0);
+                        } else if (ItemStack.isSameItemSameComponents(existing, stack)
+                                && existing.getCount() < existing.getMaxStackSize()) {
+                            int move = Math.min(stack.getCount(), existing.getMaxStackSize() - existing.getCount());
+                            existing.grow(move); stack.shrink(move);
+                            destination.setItem(slot, existing);
+                        }
+                    }
+                    if (stack.isEmpty()) drop.discard(); else drop.setItem(stack);
+                }
+                if (tool.isDamageableItem())
+                    tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
+            }
+        }
+
         EffectTier natureBless = ForgedEffectRuntime.tier(tool, ForgingEffect.NATURE_GOD_BLESS);
         if (natureBless != null && isCrop(event.getState())) {
             double rewardChance = switch (natureBless) {
@@ -592,6 +645,22 @@ public final class ForgedEffectEvents {
 
         ItemStack tool = player.getMainHandItem();
         BlockPos clicked = event.getPos();
+
+        EffectTier extendedReach = ForgedEffectRuntime.tier(tool, ForgingEffect.EXTENDED_REACH_TILLING);
+        if (extendedReach != null) {
+            int extraReach = switch (extendedReach) { case I -> 2; case II -> 4; case III -> 6; };
+            Vec3 eye = player.getEyePosition();
+            Vec3 look = player.getLookAngle().normalize();
+            for (int d = 1; d <= extraReach; d++) {
+                BlockPos pos = BlockPos.containing(eye.add(look.scale(4.5D + d)));
+                net.minecraft.world.level.block.state.BlockState state = player.level().getBlockState(pos);
+                if ((state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH))
+                        && player.level().getBlockState(pos.above()).isAir()) {
+                    player.level().setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
+                    break;
+                }
+            }
+        }
 
         EffectTier explosiveTilling = ForgedEffectRuntime.tier(tool, ForgingEffect.EXPLOSIVE_TILLING);
         if (explosiveTilling != null) {
