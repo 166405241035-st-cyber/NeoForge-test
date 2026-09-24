@@ -481,56 +481,48 @@ public final class ForgedEffectEvents {
 
         int age = trident.getPersistentData().getInt("ForgedBoomerangAge") + 1;
         trident.getPersistentData().putInt("ForgedBoomerangAge", age);
+        double damage = trident.getPersistentData().getDouble("ForgedBoomerangDamage");
 
-        // After the outbound flight, home back to the owner like Loyalty.
-        if (age >= 20) {
+        // Damage entities manually so the boomerang never gets stuck inside a mob.
+        for (LivingEntity target : trident.level().getEntitiesOfClass(LivingEntity.class,
+                trident.getBoundingBox().inflate(0.85D), e -> e != owner && e.isAlive())) {
+            String phase = age >= 20 ? "Return_" : "Out_";
+            String key = "ForgedBoomerangHit_" + phase + target.getUUID();
+            if (trident.getPersistentData().getBoolean(key)) continue;
+            trident.getPersistentData().putBoolean(key, true);
+            owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+            try {
+                target.hurt(owner.damageSources().playerAttack(owner), (float) damage);
+            } finally {
+                owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+            }
+        }
+
+        // Return after the outbound flight OR immediately after touching the ground.
+        // This also pulls a trident back out if vanilla collision embedded it in a mob/block.
+        if (age >= 20 || trident.inGround()) {
             Vec3 home = owner.getEyePosition().subtract(trident.position());
             if (home.lengthSqr() <= 2.25D) {
-                ItemStack returned = new ItemStack(ExampleMod.FORGED_EQUIPMENT_ITEM.get());
-                if (trident.getPersistentData().contains("ForgedBoomerangItem"))
-                    returned.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
-                            net.minecraft.world.item.component.CustomData.of(
-                                    trident.getPersistentData().getCompound("ForgedBoomerangItem")));
-                if (!owner.getAbilities().instabuild) {
-                    if (!owner.getInventory().add(returned))
-                        owner.drop(returned, false);
-                }
-                trident.discard();
+                returnBoomerang(owner, trident);
                 return;
             }
-            Vec3 velocity = home.normalize().scale(0.85D);
-            trident.setDeltaMovement(velocity);
-            trident.hurtMarked = true;
             trident.setNoGravity(true);
-
-            // Return path can also damage enemies. Each entity is hit once on return.
-            double damage = trident.getPersistentData().getDouble("ForgedBoomerangDamage");
-            for (LivingEntity target : trident.level().getEntitiesOfClass(LivingEntity.class,
-                    trident.getBoundingBox().inflate(0.75D),
-                    e -> e != owner && e.isAlive())) {
-                String key = "ForgedBoomerangHit_" + target.getUUID();
-                if (trident.getPersistentData().getBoolean(key)) continue;
-                trident.getPersistentData().putBoolean(key, true);
-                owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
-                try {
-                    target.hurt(owner.damageSources().playerAttack(owner), (float) damage);
-                } finally {
-                    owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
-                }
-            }
+            trident.setDeltaMovement(home.normalize().scale(0.85D));
+            trident.hurtMarked = true;
         }
 
-        // Safety: never leave the forged weapon entity stranded forever.
-        if (age > 200) {
-            ItemStack returned = new ItemStack(ExampleMod.FORGED_EQUIPMENT_ITEM.get());
-                if (trident.getPersistentData().contains("ForgedBoomerangItem"))
-                    returned.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
-                            net.minecraft.world.item.component.CustomData.of(
-                                    trident.getPersistentData().getCompound("ForgedBoomerangItem")));
-            if (!owner.getAbilities().instabuild && !owner.getInventory().add(returned))
-                owner.drop(returned, false);
-            trident.discard();
-        }
+        if (age > 200) returnBoomerang(owner, trident);
+    }
+
+    private static void returnBoomerang(Player owner, ThrownTrident trident) {
+        ItemStack returned = new ItemStack(ExampleMod.FORGED_EQUIPMENT_ITEM.get());
+        if (trident.getPersistentData().contains("ForgedBoomerangItem"))
+            returned.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                    net.minecraft.world.item.component.CustomData.of(
+                            trident.getPersistentData().getCompound("ForgedBoomerangItem")));
+        if (!owner.getAbilities().instabuild && !owner.getInventory().add(returned))
+            owner.drop(returned, false);
+        trident.discard();
     }
 
     @SubscribeEvent
