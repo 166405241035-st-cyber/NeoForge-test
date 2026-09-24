@@ -37,7 +37,7 @@ public final class ForgedEffectEvents {
     private ForgedEffectEvents() {}
 
     private static final double[] CRIPPLING_CHANCE = {0.10D, 0.18D, 0.25D};
-    private static final double[] ZOMBIE_MINION_CHANCE = {0.05D, 0.10D, 0.15D};
+    private static final double[] ZOMBIE_MINION_CHANCE = {0.15D, 0.30D, 0.60D};
     private static final double[] BONE_DUST_CHANCE = {0.10D, 0.20D, 0.30D};
     private static final double[] VAMPIRIC_CHANCE = {0.15D, 0.25D, 0.40D};
     private static final int[] LEVITATION_DURATION = {40, 80, 120};
