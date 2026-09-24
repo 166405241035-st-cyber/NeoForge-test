@@ -5,6 +5,8 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -35,6 +37,7 @@ public class ExampleMod {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MODID);
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static final DeferredBlock<Block> FORGING_BLOCK = BLOCKS.register("forging_block", registryName -> new ForgingBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
@@ -43,6 +46,9 @@ public class ExampleMod {
     public static final DeferredItem<BlockItem> FORGING_ANVIL_ITEM = ITEMS.registerSimpleBlockItem("forging_anvil", FORGING_ANVIL);
     public static final DeferredBlock<Block> EQUIPMENT_TEST_BLOCK = BLOCKS.register("equipment_test_block", registryName -> new EquipmentTestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(3.5F)));
     public static final DeferredItem<BlockItem> EQUIPMENT_TEST_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("equipment_test_block", EQUIPMENT_TEST_BLOCK);
+    public static final DeferredHolder<EntityType<?>, EntityType<ForgedBoomerangEntity>> FORGED_BOOMERANG = ENTITY_TYPES.register("forged_boomerang",
+            () -> EntityType.Builder.<ForgedBoomerangEntity>of(ForgedBoomerangEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).clientTrackingRange(8).updateInterval(1).build("forged_boomerang"));
     public static final DeferredHolder<MobEffect, MobEffect> BLEEDING = MOB_EFFECTS.register("bleeding",
             () -> new BleedingMobEffect(MobEffectCategory.HARMFUL, 0xD11A2A));
 
@@ -73,7 +79,7 @@ public class ExampleMod {
             }).build());
 
     public ExampleMod(IEventBus modEventBus, ModContainer modContainer) {
-        BLOCKS.register(modEventBus); ITEMS.register(modEventBus); MENUS.register(modEventBus); MOB_EFFECTS.register(modEventBus); CREATIVE_MODE_TABS.register(modEventBus);
+        BLOCKS.register(modEventBus); ITEMS.register(modEventBus); MENUS.register(modEventBus); MOB_EFFECTS.register(modEventBus); ENTITY_TYPES.register(modEventBus); CREATIVE_MODE_TABS.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, ForgedSkillConfig.SPEC, "examplemod-forged-skills.toml");
     }
 
