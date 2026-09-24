@@ -17,7 +17,7 @@ import net.minecraft.world.item.component.CustomData;
 public class ForgedStorageMenu extends AbstractContainerMenu {
     private final ItemStack tool;
     private final SimpleContainer storage;
-    private final int slots;
+    private final int storageSlotCount;
 
     public ForgedStorageMenu(int id, Inventory inv) {
         this(id, inv, inv.player.getMainHandItem());
@@ -26,12 +26,13 @@ public class ForgedStorageMenu extends AbstractContainerMenu {
     public ForgedStorageMenu(int id, Inventory inv, ItemStack tool) {
         super(ExampleMod.FORGED_STORAGE_MENU.get(), id);
         this.tool = tool;
-        this.slots = storageSize(tool);
-        this.storage = new SimpleContainer(Math.max(1, slots));
+        this.storageOwner = inv.player;
+        this.storageSlotCount = storageSize(tool);
+        this.storage = new SimpleContainer(Math.max(1, storageSlotCount));
         load();
 
-        int rows = (slots + 8) / 9;
-        for (int i = 0; i < slots; i++)
+        int rows = (storageSlotCount + 8) / 9;
+        for (int i = 0; i < storageSlotCount; i++)
             addSlot(new Slot(storage, i, 8 + (i % 9) * 18, 18 + (i / 9) * 18));
 
         int invY = 31 + rows * 18;
@@ -57,7 +58,7 @@ public class ForgedStorageMenu extends AbstractContainerMenu {
         for(int i=0;i<list.size();i++){
             CompoundTag e=list.getCompound(i); int slot=e.getInt("slot");
             if(slot>=0&&slot<storage.getContainerSize())
-                ItemStack.parse(tool.getItemHolder().registryLookup(), e.getCompound("item")).ifPresent(s->storage.setItem(slot,s));
+                ItemStack.parse(invRegistryAccess(), e.getCompound("item")).ifPresent(s->storage.setItem(slot,s));
         }
     }
 
@@ -67,21 +68,28 @@ public class ForgedStorageMenu extends AbstractContainerMenu {
             for(int i=0;i<storage.getContainerSize();i++){
                 ItemStack s=storage.getItem(i); if(s.isEmpty())continue;
                 CompoundTag e=new CompoundTag(); e.putInt("slot",i);
-                e.put("item",s.save(tool.getItemHolder().registryLookup()));
+                e.put("item",s.save(invRegistryAccess()));
                 list.add(e);
             }
             root.put("forgedStorage",list);
         });
     }
 
-    @Override public void removed(Player player){ save(); super.removed(player); }
+    private net.minecraft.core.HolderLookup.Provider invRegistryAccess() {
+        return storageOwner.registryAccess();
+    }
+
+    private Player storageOwner;
+
+    @Override public void removed(Player player){ this.storageOwner = player; save(); super.removed(player); }
+    public int getStorageSlotCount(){ return storageSlotCount; }
     @Override public boolean stillValid(Player player){ return !tool.isEmpty() && storageSize(tool)>0; }
 
     @Override public ItemStack quickMoveStack(Player player,int index){
-        Slot slot=slots.get(index); if(!slot.hasItem())return ItemStack.EMPTY;
+        Slot slot=this.slots.get(index); if(!slot.hasItem())return ItemStack.EMPTY;
         ItemStack original=slot.getItem(), copy=original.copy();
-        if(index<this.slots){ if(!moveItemStackTo(original,this.slots,slots.size(),true))return ItemStack.EMPTY; }
-        else if(!moveItemStackTo(original,0,this.slots,false))return ItemStack.EMPTY;
+        if(index<this.storageSlotCount){ if(!moveItemStackTo(original,this.storageSlotCount,this.slots.size(),true))return ItemStack.EMPTY; }
+        else if(!moveItemStackTo(original,0,this.storageSlotCount,false))return ItemStack.EMPTY;
         if(original.isEmpty())slot.set(ItemStack.EMPTY); else slot.setChanged();
         return copy;
     }
