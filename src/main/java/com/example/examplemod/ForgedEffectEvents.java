@@ -260,6 +260,48 @@ public final class ForgedEffectEvents {
         }
         player.getPersistentData().putBoolean("ForgedWasGrounded", groundedNow);
 
+        long staticHoverUntil = player.getPersistentData().getLong("ForgedStaticHoverUntil");
+        if (staticHoverUntil > now) {
+            BlockPos hoverPos = new BlockPos(
+                    (int) player.getPersistentData().getLong("ForgedStaticHoverX"),
+                    (int) player.getPersistentData().getLong("ForgedStaticHoverY"),
+                    (int) player.getPersistentData().getLong("ForgedStaticHoverZ"));
+            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
+                    new AABB(hoverPos).inflate(2.5D))) {
+                drop.setNoGravity(true);
+                drop.setDeltaMovement(Vec3.ZERO);
+            }
+        } else if (staticHoverUntil != 0L) {
+            BlockPos hoverPos = new BlockPos(
+                    (int) player.getPersistentData().getLong("ForgedStaticHoverX"),
+                    (int) player.getPersistentData().getLong("ForgedStaticHoverY"),
+                    (int) player.getPersistentData().getLong("ForgedStaticHoverZ"));
+            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
+                    new AABB(hoverPos).inflate(3.0D))) drop.setNoGravity(false);
+            player.getPersistentData().putLong("ForgedStaticHoverUntil", 0L);
+        }
+
+        long blockLevitationUntil = player.getPersistentData().getLong("ForgedBlockLevitationUntil");
+        if (blockLevitationUntil > now) {
+            BlockPos levPos = new BlockPos(
+                    (int) player.getPersistentData().getLong("ForgedBlockLevitationX"),
+                    (int) player.getPersistentData().getLong("ForgedBlockLevitationY"),
+                    (int) player.getPersistentData().getLong("ForgedBlockLevitationZ"));
+            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
+                    new AABB(levPos).inflate(2.5D))) {
+                drop.setNoGravity(true);
+                drop.setDeltaMovement(0.0D, 0.06D, 0.0D);
+            }
+        } else if (blockLevitationUntil != 0L) {
+            BlockPos levPos = new BlockPos(
+                    (int) player.getPersistentData().getLong("ForgedBlockLevitationX"),
+                    (int) player.getPersistentData().getLong("ForgedBlockLevitationY"),
+                    (int) player.getPersistentData().getLong("ForgedBlockLevitationZ"));
+            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
+                    new AABB(levPos).inflate(4.0D))) drop.setNoGravity(false);
+            player.getPersistentData().putLong("ForgedBlockLevitationUntil", 0L);
+        }
+
         EffectTier selfRepair = ForgedEffectRuntime.tier(tool, ForgingEffect.SELF_REPAIRING);
         if (selfRepair != null && tool.isDamaged() && now % 600L == 0L)
             tool.setDamageValue(Math.max(0, tool.getDamageValue() - tierValue(selfRepair, SELF_REPAIR_AMOUNT)));
@@ -308,6 +350,26 @@ public final class ForgedEffectEvents {
         Player player = event.getPlayer();
         if (player.level().isClientSide()) return;
         ItemStack tool = player.getMainHandItem();
+
+        EffectTier staticHover = ForgedEffectRuntime.tier(tool, ForgingEffect.STATIC_HOVER_DROP);
+        if (staticHover != null) {
+            int duration = switch (staticHover) { case I -> 100; case II -> 200; case III -> 400; };
+            player.getPersistentData().putLong("ForgedStaticHoverUntil", player.level().getGameTime() + duration);
+            player.getPersistentData().putLong("ForgedStaticHoverX", event.getPos().getX());
+            player.getPersistentData().putLong("ForgedStaticHoverY", event.getPos().getY());
+            player.getPersistentData().putLong("ForgedStaticHoverZ", event.getPos().getZ());
+        }
+
+        EffectTier blockLevitation = ForgedEffectRuntime.tier(tool, ForgingEffect.BLOCK_LEVITATION);
+        if (blockLevitation != null && canUseTimedTrigger(player, "BlockLevitation", 60L)) {
+            int duration = switch (blockLevitation) { case I -> 40; case II -> 80; case III -> 120; };
+            player.getPersistentData().putLong("ForgedBlockLevitationUntil", player.level().getGameTime() + duration);
+            player.getPersistentData().putLong("ForgedBlockLevitationX", event.getPos().getX());
+            player.getPersistentData().putLong("ForgedBlockLevitationY", event.getPos().getY());
+            player.getPersistentData().putLong("ForgedBlockLevitationZ", event.getPos().getZ());
+            if (tool.isDamageableItem())
+                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
+        }
 
         EffectTier ultimateLaserFortune = ForgedEffectRuntime.tier(tool, ForgingEffect.ULTIMATE_LASER_BREAKER);
         if (ultimateLaserFortune != null) {
