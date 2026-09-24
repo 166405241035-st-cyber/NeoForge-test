@@ -8,6 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -82,6 +90,57 @@ public class ForgedEquipmentItem extends Item {
             case SWORD -> null;
         };
         if (mineableTag != null) stack.set(DataComponents.TOOL, vanillaTier(headMetal).createToolProperties(mineableTag));
+    }
+
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (ForgedEffectRuntime.tier(stack, ForgingEffect.BOOMERANG_WEAPON) == null)
+            return super.use(level, player, hand);
+        player.startUsingItem(hand);
+        return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return ForgedEffectRuntime.tier(stack, ForgingEffect.BOOMERANG_WEAPON) != null ? 72000 : super.getUseDuration(stack, entity);
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return ForgedEffectRuntime.tier(stack, ForgingEffect.BOOMERANG_WEAPON) != null ? UseAnim.SPEAR : super.getUseAnimation(stack);
+    }
+
+    @Override
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity living, int timeLeft) {
+        EffectTier tier = ForgedEffectRuntime.tier(stack, ForgingEffect.BOOMERANG_WEAPON);
+        if (tier == null || !(living instanceof Player player)) {
+            super.releaseUsing(stack, level, living, timeLeft);
+            return;
+        }
+
+        int charged = getUseDuration(stack, living) - timeLeft;
+        if (charged < 10 || level.isClientSide()) return;
+
+        ItemStack thrownStack = stack.copy();
+        thrownStack.setCount(1);
+        double multiplier = switch (tier) {
+            case I -> 1.0D;
+            case II -> 1.35D;
+            case III -> 1.75D;
+        };
+
+        ThrownTrident projectile = new ThrownTrident(level, player, thrownStack);
+        projectile.setBaseDamage(readAttackDamage(stack) * multiplier);
+        projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
+        projectile.pickup = AbstractArrow.Pickup.DISALLOWED;
+        projectile.getPersistentData().putBoolean("ForgedBoomerang", true);
+        projectile.getPersistentData().putDouble("ForgedBoomerangDamage", readAttackDamage(stack) * multiplier);
+        projectile.getPersistentData().putInt("ForgedBoomerangAge", 0);
+        level.addFreshEntity(projectile);
+
+        if (!player.getAbilities().instabuild) stack.shrink(1);
     }
 
     /** Expose the same NeoForge ItemAbilities as the vanilla tool selected by the Head. */
