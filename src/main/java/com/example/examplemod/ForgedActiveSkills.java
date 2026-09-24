@@ -200,15 +200,27 @@ public final class ForgedActiveSkills {
     private static void stunTimeStop(Player player, EffectTier tier) {
         long cooldown = ForgedSkillConfig.timeStop(tier);
         if (!ready(player, "StunTimeStop", cooldown)) return;
+        if (player.getPersistentData().getLong("ForgedTimeStopChargeUntil") > player.level().getGameTime()) return;
 
+        // Fixed 5 second charge. The client receives the end time through persistent
+        // player data/state on the normal tick path; particles make the charge visible
+        // to everyone nearby while the local camera shake is handled client-side.
+        long now = player.level().getGameTime();
+        player.getPersistentData().putLong("ForgedTimeStopChargeUntil", now + 100L);
+        player.getPersistentData().putInt("ForgedTimeStopChargeTier", tierIndex(tier));
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal("Stun Time Stop: Charging..."), true);
+    }
+
+    private static void releaseStunTimeStop(Player player, EffectTier tier) {
         int duration = switch (tier) {
-            case I -> 30;
-            case II -> 50;
-            case III -> 80;
+            case I -> 80;   // 4 sec
+            case II -> 120; // 6 sec
+            case III -> 200; // 10 sec
         };
-        double radius = 5.0D; // Fixed area for every tier; Tier only changes duration.
+        double radius = 8.0D; // Fixed radius for every Tier.
         AABB area = player.getBoundingBox().inflate(radius);
         long frozenUntil = player.level().getGameTime() + duration;
+
         for (Monster target : player.level().getEntitiesOfClass(
                 Monster.class, area, e -> e.isAlive() && e.distanceToSqr(player) <= radius * radius)) {
             target.setDeltaMovement(Vec3.ZERO);
@@ -219,8 +231,22 @@ public final class ForgedActiveSkills {
             target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                     net.minecraft.world.effect.MobEffects.JUMP, duration, 128, false, false));
         }
-        startCooldown(player, "StunTimeStop", cooldown);
+
+        // Visible 8-block ring, similar in purpose to a lingering-potion boundary.
+        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+            for (int i = 0; i < 72; i++) {
+                double angle = Math.PI * 2.0D * i / 72.0D;
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL,
+                        player.getX() + Math.cos(angle) * radius,
+                        player.getY() + 0.15D,
+                        player.getZ() + Math.sin(angle) * radius,
+                        2, 0.08D, 0.08D, 0.08D, 0.0D);
+            }
+        }
+
+        startCooldown(player, "StunTimeStop", ForgedSkillConfig.timeStop(tier));
         damageEquipment(player, 8);
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal("Stun Time Stop!"), true);
     }
 
     private static void ironFortress(Player player, EffectTier tier) {
@@ -384,6 +410,26 @@ public final class ForgedActiveSkills {
     public static void tickWorldEffects(Player player, ItemStack tool) {
         if (player.level().isClientSide()) return;
         long now = player.level().getGameTime();
+
+        // Stun Time Stop charge: 5 seconds. Particle intensity increases as the
+        // charge approaches completion; the actual stun is released only at the end.
+        long chargeUntil = player.getPersistentData().getLong("ForgedTimeStopChargeUntil");
+        if (chargeUntil > 0L) {
+            long remaining = chargeUntil - now;
+            if (remaining <= 0L) {
+                int tierIndex = player.getPersistentData().getInt("ForgedTimeStopChargeTier");
+                EffectTier chargedTier = tierIndex <= 0 ? EffectTier.I : tierIndex == 1 ? EffectTier.II : EffectTier.III;
+                player.getPersistentData().remove("ForgedTimeStopChargeUntil");
+                player.getPersistentData().remove("ForgedTimeStopChargeTier");
+                releaseStunTimeStop(player, chargedTier);
+            } else if (player.level() instanceof net.minecraft.server.level.ServerLevel server && now % 2L == 0L) {
+                double progress = 1.0D - remaining / 100.0D;
+                int count = 2 + (int)(progress * 8.0D);
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL,
+                        player.getX(), player.getY() + 1.0D, player.getZ(),
+                        count, 0.45D, 0.65D, 0.45D, 0.02D + progress * 0.04D);
+            }
+        }
 
         // Keep Time Stop targets fully immobilized for the whole duration.
         AABB freezeArea = player.getBoundingBox().inflate(12.0D);
