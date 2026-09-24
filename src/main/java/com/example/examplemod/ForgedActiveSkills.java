@@ -254,7 +254,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void boomerangWeapon(Player player, ItemStack tool, EffectTier tier) {
-        long cooldown = 120L; // Fixed 6 sec; Tier scales throw damage only.
+        long cooldown = ForgedSkillConfig.boomerang(tier); // Configurable; defaults to fixed 6 sec.
         if (!ready(player, "BoomerangWeapon", cooldown)) return;
 
         LivingEntity target = findLookTarget(player, 18.0D);
@@ -289,7 +289,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void divineBeaconLaser(Player player, EffectTier tier) {
-        long cooldown = switch (tier) { case I -> 300L; case II -> 200L; case III -> 120L; }; // 15/10/6 sec
+        long cooldown = ForgedSkillConfig.divine(tier); // Configurable; defaults 7.5/5/3 sec.
         if (!ready(player, "DivineBeaconLight", cooldown)) return;
 
         Vec3 start = player.getEyePosition();
