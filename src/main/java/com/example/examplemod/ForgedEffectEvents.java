@@ -66,6 +66,7 @@ public final class ForgedEffectEvents {
     private static final double[] NETHER_MUTATION_CHANCE = {0.05D, 0.10D, 0.20D};
     private static final int[] POISON_GAS_DURATION = {60, 100, 160}; // 3 / 5 / 8 sec
     private static final float[] EARTHY_SHOCKWAVE_DAMAGE = {3.0F, 5.0F, 7.0F};
+    private static final float[] COMBO_DETONATION_DAMAGE = {2.5F, 4.0F, 6.0F};
 
     @SubscribeEvent
     public static void onLivingAttack(LivingIncomingDamageEvent event) {
@@ -196,6 +197,31 @@ public final class ForgedEffectEvents {
             player.heal(tierValue(witherDrain, WITHER_DRAIN_HEAL));
         }
 
+        EffectTier comboDetonation = ForgedEffectRuntime.tier(weapon, ForgingEffect.COMBO_DETONATION);
+        if (comboDetonation != null) {
+            String targetKey = "ForgedComboTarget";
+            String countKey = "ForgedComboCount";
+            String currentTarget = target.getUUID().toString();
+            String previousTarget = player.getPersistentData().getString(targetKey);
+            int combo = currentTarget.equals(previousTarget)
+                    ? player.getPersistentData().getInt(countKey) + 1 : 1;
+            player.getPersistentData().putString(targetKey, currentTarget);
+            player.getPersistentData().putInt(countKey, combo);
+
+            if (combo >= 3) {
+                player.getPersistentData().putInt(countKey, 0);
+                float comboDamage = tierValue(comboDetonation, COMBO_DETONATION_DAMAGE);
+                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                try {
+                    target.hurt(player.damageSources().playerAttack(player), comboDamage);
+                } finally {
+                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                }
+                player.level().explode(player, target.getX(), target.getY(), target.getZ(),
+                        1.25F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+            }
+        }
+
         EffectTier criticalBlast = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRITICAL_BLAST);
         if (criticalBlast != null && isCriticalHit(player)
                 && player.getRandom().nextDouble() < tierValue(criticalBlast, CRITICAL_BLAST_CHANCE)) {
@@ -300,6 +326,20 @@ public final class ForgedEffectEvents {
             for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
                     new AABB(levPos).inflate(4.0D))) drop.setNoGravity(false);
             player.getPersistentData().putLong("ForgedBlockLevitationUntil", 0L);
+        }
+
+        EffectTier thermalBarrier = ForgedEffectRuntime.tier(tool, ForgingEffect.THERMAL_CROP_BARRIER);
+        if (thermalBarrier != null && now % 10L == 0L) {
+            int burnSeconds = switch (thermalBarrier) { case I -> 3; case II -> 5; case III -> 8; };
+            double radius = 5.0D; // Fixed protection area; Tier changes burn duration only.
+            AABB area = player.getBoundingBox().inflate(radius, 2.0D, radius);
+            for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area,
+                    e -> e.isAlive() && e.distanceToSqr(player) <= radius * radius)) {
+                BlockPos below = mob.blockPosition().below();
+                if (player.level().getBlockState(below).is(Blocks.FARMLAND)) {
+                    mob.setRemainingFireTicks(Math.max(mob.getRemainingFireTicks(), burnSeconds * 20));
+                }
+            }
         }
 
         EffectTier selfRepair = ForgedEffectRuntime.tier(tool, ForgingEffect.SELF_REPAIRING);
@@ -527,6 +567,38 @@ public final class ForgedEffectEvents {
 
     }
 
+
+    @SubscribeEvent
+    public static void onFarmlandTrample(net.neoforged.neoforge.event.level.BlockEvent.FarmlandTrampleEvent event) {
+        if (event.getLevel().isClientSide()) return;
+        Entity trampler = event.getEntity();
+
+        // Find a nearby player holding the protection effect. Area is fixed for all tiers.
+        for (Player owner : event.getLevel().getEntitiesOfClass(Player.class,
+                new AABB(event.getPos()).inflate(5.0D))) {
+            ItemStack held = owner.getMainHandItem();
+            EffectTier flora = ForgedEffectRuntime.tier(held, ForgingEffect.FLORA_AEGIS);
+            EffectTier thermal = ForgedEffectRuntime.tier(held, ForgingEffect.THERMAL_CROP_BARRIER);
+            if (flora == null && thermal == null) continue;
+
+            event.setCanceled(true);
+
+            if (flora != null && held.isDamageableItem()) {
+                int cost = switch (flora) { case I -> 6; case II -> 4; case III -> 2; };
+                held.setDamageValue(Math.min(held.getMaxDamage(), held.getDamageValue() + cost));
+            }
+
+            if (thermal != null) {
+                if (held.isDamageableItem())
+                    held.setDamageValue(Math.min(held.getMaxDamage(), held.getDamageValue() + 2));
+                if (trampler instanceof Monster monster) {
+                    int burn = switch (thermal) { case I -> 3; case II -> 5; case III -> 8; };
+                    monster.setRemainingFireTicks(Math.max(monster.getRemainingFireTicks(), burn * 20));
+                }
+            }
+            break;
+        }
+    }
 
     @SubscribeEvent
     public static void onEntityPlace(EntityPlaceEvent event) {
