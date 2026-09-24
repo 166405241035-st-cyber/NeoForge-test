@@ -8,6 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -464,6 +465,58 @@ public final class ForgedEffectEvents {
         if (frenzy != null && player.swinging) {
             int amp = switch (frenzy) { case I -> 0; case II -> 1; case III -> 2; };
             player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 30, amp, false, false));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBoomerangTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ThrownTrident trident) || trident.level().isClientSide()
+                || !trident.getPersistentData().getBoolean("ForgedBoomerang")) return;
+        if (!(trident.getOwner() instanceof Player owner)) return;
+
+        int age = trident.getPersistentData().getInt("ForgedBoomerangAge") + 1;
+        trident.getPersistentData().putInt("ForgedBoomerangAge", age);
+
+        // After the outbound flight, home back to the owner like Loyalty.
+        if (age >= 20) {
+            Vec3 home = owner.getEyePosition().subtract(trident.position());
+            if (home.lengthSqr() <= 2.25D) {
+                ItemStack returned = trident.getPickupItem().copy();
+                if (!owner.getAbilities().instabuild) {
+                    if (!owner.getInventory().add(returned))
+                        owner.drop(returned, false);
+                }
+                trident.discard();
+                return;
+            }
+            Vec3 velocity = home.normalize().scale(0.85D);
+            trident.setDeltaMovement(velocity);
+            trident.hurtMarked = true;
+            trident.setNoGravity(true);
+
+            // Return path can also damage enemies. Each entity is hit once on return.
+            double damage = trident.getPersistentData().getDouble("ForgedBoomerangDamage");
+            for (LivingEntity target : trident.level().getEntitiesOfClass(LivingEntity.class,
+                    trident.getBoundingBox().inflate(0.75D),
+                    e -> e != owner && e.isAlive())) {
+                String key = "ForgedBoomerangHit_" + target.getUUID();
+                if (trident.getPersistentData().getBoolean(key)) continue;
+                trident.getPersistentData().putBoolean(key, true);
+                owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                try {
+                    target.hurt(owner.damageSources().playerAttack(owner), (float) damage);
+                } finally {
+                    owner.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                }
+            }
+        }
+
+        // Safety: never leave the forged weapon entity stranded forever.
+        if (age > 200) {
+            ItemStack returned = trident.getPickupItem().copy();
+            if (!owner.getAbilities().instabuild && !owner.getInventory().add(returned))
+                owner.drop(returned, false);
+            trident.discard();
         }
     }
 
