@@ -258,6 +258,39 @@ public final class ForgedEffectEvents {
         ItemStack tool = player.getMainHandItem();
         long now = player.level().getGameTime();
 
+        // Allied Zombie Minion AI: protect/follow the summoner and attack hostile monsters.
+        if (now % 5L == 0L) {
+            AABB minionArea = player.getBoundingBox().inflate(32.0D);
+            for (Zombie minion : player.level().getEntitiesOfClass(Zombie.class, minionArea,
+                    z -> z.isAlive() && z.getPersistentData().hasUUID("ForgingMinionOwner")
+                            && z.getPersistentData().getUUID("ForgingMinionOwner").equals(player.getUUID()))) {
+                LivingEntity current = minion.getTarget();
+                if (current == player || (current instanceof Zombie allied
+                        && allied.getPersistentData().hasUUID("ForgingMinionOwner"))) {
+                    minion.setTarget(null);
+                    current = null;
+                }
+                if (current == null || !current.isAlive()) {
+                    Monster nearest = null;
+                    double bestDistance = 256.0D;
+                    for (Monster candidate : player.level().getEntitiesOfClass(Monster.class,
+                            minion.getBoundingBox().inflate(16.0D),
+                            mob -> mob.isAlive() && mob != minion
+                                    && !(mob instanceof Zombie z && z.getPersistentData().hasUUID("ForgingMinionOwner")))) {
+                        double distance = minion.distanceToSqr(candidate);
+                        if (distance < bestDistance) {
+                            bestDistance = distance;
+                            nearest = candidate;
+                        }
+                    }
+                    if (nearest != null) minion.setTarget(nearest);
+                }
+                if (minion.getTarget() == null && minion.distanceToSqr(player) > 36.0D) {
+                    minion.getNavigation().moveTo(player, 1.15D);
+                }
+            }
+        }
+
         boolean wasGrounded = player.getPersistentData().getBoolean("ForgedWasGrounded");
         boolean groundedNow = player.onGround();
         EffectTier shockwave = ForgedEffectRuntime.tier(tool, ForgingEffect.EARTHY_SHOCKWAVE);
