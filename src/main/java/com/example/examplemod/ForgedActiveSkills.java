@@ -1,5 +1,8 @@
 package com.example.examplemod;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -57,6 +60,9 @@ public final class ForgedActiveSkills {
             case DIVINE_BEACON_LIGHT -> divineBeaconLaser(player, tier);
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tier);
             case NATURE_GOD_BLESS -> natureGodBless(player, tier);
+            case LINE_BUILDER -> lineBuilder(player, tier);
+            case EARTHY_WALL_RISE -> earthyWallRise(player, tier);
+            case SKY_BRIDGE_WALK -> toggleSkyBridge(player, tier);
             default -> {
                 // Other active effects are added to this same dispatcher in later batches.
             }
@@ -361,6 +367,55 @@ public final class ForgedActiveSkills {
         damageEquipment(player, 8);
     }
 
+    private static void lineBuilder(Player player, EffectTier tier) {
+        long cooldown = 40L; // fixed 2 sec
+        if (!ready(player, "LineBuilder", cooldown)) return;
+        ItemStack offhand = player.getOffhandItem();
+        if (!(offhand.getItem() instanceof net.minecraft.world.item.BlockItem blockItem) || offhand.isEmpty()) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Line Builder: ถือบล็อกไว้มือซ้าย"), true);
+            return;
+        }
+        net.minecraft.core.Direction dir = player.getDirection();
+        BlockPos start = player.blockPosition().relative(dir);
+        int placed = 0;
+        for (int i = 0; i < 5 && !offhand.isEmpty(); i++) {
+            BlockPos pos = start.relative(dir, i);
+            if (!player.level().getBlockState(pos).canBeReplaced()) continue;
+            player.level().setBlockAndUpdate(pos, blockItem.getBlock().defaultBlockState());
+            offhand.shrink(1);
+            placed++;
+        }
+        if (placed == 0) return;
+        startCooldown(player, "LineBuilder", cooldown);
+        damageEquipment(player, switch (tier) { case I -> 5; case II -> 3; case III -> 1; });
+    }
+
+    private static void earthyWallRise(Player player, EffectTier tier) {
+        long cooldown = switch (tier) { case I -> 160L; case II -> 100L; case III -> 60L; };
+        if (!ready(player, "EarthyWallRise", cooldown)) return;
+        net.minecraft.core.Direction forward = player.getDirection();
+        net.minecraft.core.Direction side = forward.getClockWise();
+        BlockPos center = player.blockPosition().relative(forward, 2);
+        int placed = 0;
+        for (int i = -1; i <= 1; i++) {
+            BlockPos pos = center.relative(side, i);
+            if (player.level().getBlockState(pos).canBeReplaced()) {
+                player.level().setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
+                placed++;
+            }
+        }
+        if (placed == 0) return;
+        startCooldown(player, "EarthyWallRise", cooldown);
+        damageEquipment(player, 4);
+    }
+
+    private static void toggleSkyBridge(Player player, EffectTier tier) {
+        boolean active = !player.getPersistentData().getBoolean("ForgedSkyBridgeActive");
+        player.getPersistentData().putBoolean("ForgedSkyBridgeActive", active);
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                "Sky Bridge Walk: " + (active ? "ON" : "OFF")), true);
+    }
+
     private static void toggleAegis(Player player, ItemStack tool, EffectTier tier) {
         boolean active = player.getPersistentData().getBoolean("ForgedAegisActive");
         if (active) {
@@ -385,6 +440,24 @@ public final class ForgedActiveSkills {
             target.setDeltaMovement(Vec3.ZERO);
             target.hurtMarked = true;
             target.setTarget(null);
+        }
+
+        if (player.getPersistentData().getBoolean("ForgedSkyBridgeActive")) {
+            EffectTier sky = ForgedEffectRuntime.tier(tool, ForgingEffect.SKY_BRIDGE_WALK);
+            if (sky == null) {
+                player.getPersistentData().putBoolean("ForgedSkyBridgeActive", false);
+            } else {
+                BlockPos below = player.blockPosition().below();
+                if (player.level().getBlockState(below).canBeReplaced()) {
+                    int cost = switch (sky) { case I -> 3; case II -> 2; case III -> 1; };
+                    if (!tool.isDamageableItem() || tool.getDamageValue() + cost < tool.getMaxDamage()) {
+                        player.level().setBlockAndUpdate(below, Blocks.COBBLESTONE.defaultBlockState());
+                        damageEquipment(player, cost);
+                    } else {
+                        player.getPersistentData().putBoolean("ForgedSkyBridgeActive", false);
+                    }
+                }
+            }
         }
 
         // Nature God Bless passive: while the forged tool is held, nearby crops receive
@@ -460,7 +533,8 @@ public final class ForgedActiveSkills {
             case FIREBALL_SHOOT, FRONT_DASH, WITHER_CURSE_POWER, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
                  STUN_TIME_STOP, IRON_FORTRESS_GUARD, BOOMERANG_WEAPON, DIVINE_BEACON_LIGHT,
-                 ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS -> true;
+                 ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS, LINE_BUILDER,
+                 EARTHY_WALL_RISE, SKY_BRIDGE_WALK -> true;
             default -> false;
         };
     }
