@@ -481,7 +481,11 @@ public final class ForgedEffectEvents {
         if (age >= 20) {
             Vec3 home = owner.getEyePosition().subtract(trident.position());
             if (home.lengthSqr() <= 2.25D) {
-                ItemStack returned = trident.getPickupItem().copy();
+                ItemStack returned = new ItemStack(ExampleMod.FORGED_EQUIPMENT_ITEM.get());
+                if (trident.getPersistentData().contains("ForgedBoomerangItem"))
+                    returned.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                            net.minecraft.world.item.component.CustomData.of(
+                                    trident.getPersistentData().getCompound("ForgedBoomerangItem")));
                 if (!owner.getAbilities().instabuild) {
                     if (!owner.getInventory().add(returned))
                         owner.drop(returned, false);
@@ -513,7 +517,11 @@ public final class ForgedEffectEvents {
 
         // Safety: never leave the forged weapon entity stranded forever.
         if (age > 200) {
-            ItemStack returned = trident.getPickupItem().copy();
+            ItemStack returned = new ItemStack(ExampleMod.FORGED_EQUIPMENT_ITEM.get());
+                if (trident.getPersistentData().contains("ForgedBoomerangItem"))
+                    returned.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                            net.minecraft.world.item.component.CustomData.of(
+                                    trident.getPersistentData().getCompound("ForgedBoomerangItem")));
             if (!owner.getAbilities().instabuild && !owner.getInventory().add(returned))
                 owner.drop(returned, false);
             trident.discard();
