@@ -93,9 +93,14 @@ public final class ForgedEffectEvents {
 
         ItemStack weapon = player.getMainHandItem();
 
-        if (player.getPersistentData().getLong("ForgedWitherCurseUntil") > player.level().getGameTime()) {
-            double bonus = player.getPersistentData().getDouble("ForgedWitherCurseBonus");
-            event.setAmount((float)(event.getAmount() * (1.0D + bonus)));
+        EffectTier witherCurse = ForgedEffectRuntime.tier(weapon, ForgingEffect.WITHER_CURSE_POWER);
+        if (witherCurse != null) {
+            double multiplier = switch (witherCurse) {
+                case I -> 1.5D;
+                case II -> 2.0D;
+                case III -> 3.0D;
+            };
+            event.setAmount((float)(event.getAmount() * multiplier));
         }
 
         EffectTier gravitationalSlam = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVATIONAL_SLAM);
@@ -449,8 +454,11 @@ public final class ForgedEffectEvents {
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 30, 0, false, false));
         }
 
-        // Wither Curse Power damage is applied directly in onLivingAttack.
-        // Do not also add Strength here, otherwise the bonus would be applied twice.
+        // Wither Curse Power is passive while held: permanent-feeling Wither I via refresh.
+        // Its attack multiplier is applied in onLivingAttack.
+        EffectTier witherCurse = ForgedEffectRuntime.tier(tool, ForgingEffect.WITHER_CURSE_POWER);
+        if (witherCurse != null)
+            player.addEffect(new MobEffectInstance(MobEffects.WITHER, 30, 0, false, false));
 
         EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
         if (frenzy != null && player.swinging) {
