@@ -15,6 +15,14 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class ForgedEffectNetwork {
     private ForgedEffectNetwork() {}
 
+    public record TimeStopShakePayload(int ticks) implements CustomPacketPayload {
+        public static final Type<TimeStopShakePayload> TYPE =
+                new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "time_stop_shake"));
+        public static final StreamCodec<ByteBuf, TimeStopShakePayload> STREAM_CODEC =
+                StreamCodec.composite(ByteBufCodecs.VAR_INT, TimeStopShakePayload::ticks, TimeStopShakePayload::new);
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
     public record ActiveSkillPayload(int action) implements CustomPacketPayload {
         public static final Type<ActiveSkillPayload> TYPE =
                 new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "active_skill"));
@@ -35,6 +43,11 @@ public final class ForgedEffectNetwork {
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToClient(
+                TimeStopShakePayload.TYPE,
+                TimeStopShakePayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> ForgedEffectKeybinds.startTimeStopShake(payload.ticks()))
+        );
         registrar.playToServer(
                 ActiveSkillPayload.TYPE,
                 ActiveSkillPayload.STREAM_CODEC,
@@ -44,6 +57,10 @@ public final class ForgedEffectNetwork {
                     }
                 })
         );
+    }
+
+    public static void sendTimeStopShake(net.minecraft.server.level.ServerPlayer player, int ticks) {
+        PacketDistributor.sendToPlayer(player, new TimeStopShakePayload(ticks));
     }
 
     public static void sendAction(int action) {
