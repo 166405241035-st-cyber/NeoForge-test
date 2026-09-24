@@ -39,7 +39,7 @@ public final class ForgedEffectEvents {
     private static final double[] CRIPPLING_CHANCE = {0.10D, 0.18D, 0.25D};
     private static final double[] ZOMBIE_MINION_CHANCE = {0.15D, 0.30D, 0.60D};
     private static final double[] BONE_DUST_CHANCE = {0.10D, 0.20D, 0.30D};
-    private static final double[] VAMPIRIC_CHANCE = {0.15D, 0.25D, 0.40D};
+    private static final double[] VAMPIRIC_CHANCE = {0.60D, 0.60D, 0.60D};
     private static final int[] LEVITATION_DURATION = {40, 80, 120};
     private static final double[] SOUL_SAND_CHANCE = {0.10D, 0.20D, 0.35D};
     private static final double[] SCAVENGER_CHANCE = {0.05D, 0.10D, 0.15D};
@@ -137,8 +137,14 @@ public final class ForgedEffectEvents {
             target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
 
         EffectTier vampiric = ForgedEffectRuntime.tier(weapon, ForgingEffect.VAMPIRIC_VITALITY);
-        if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE))
-            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0));
+        if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE)) {
+            // Instant healing: Tier I = 2 hearts, II = 3 hearts, III = 4 hearts.
+            player.heal(switch (vampiric) {
+                case I -> 4.0F;
+                case II -> 6.0F;
+                case III -> 8.0F;
+            });
+        }
 
         EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
         if (levitation != null && canUseTimedTrigger(player, "LevitationBlow", 40L))
