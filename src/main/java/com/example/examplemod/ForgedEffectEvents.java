@@ -500,7 +500,8 @@ public final class ForgedEffectEvents {
 
         // Return after the outbound flight OR immediately after touching the ground.
         // This also pulls a trident back out if vanilla collision embedded it in a mob/block.
-        if (age >= 20 || trident.onGround() || trident.horizontalCollision || trident.verticalCollision) {
+        boolean stoppedByBlock = age > 2 && trident.getDeltaMovement().lengthSqr() < 0.01D;
+        if (age >= 20 || trident.onGround() || trident.horizontalCollision || trident.verticalCollision || stoppedByBlock) {
             Vec3 home = owner.getEyePosition().subtract(trident.position());
             if (home.lengthSqr() <= 2.25D) {
                 returnBoomerang(owner, trident);
