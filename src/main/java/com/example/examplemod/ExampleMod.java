@@ -43,6 +43,7 @@ public class ExampleMod {
     public static final DeferredHolder<MenuType<?>, MenuType<ForgeMenu>> FORGE_MENU = MENUS.register("forge_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new ForgeMenu(windowId, inventory)));
     public static final DeferredHolder<MenuType<?>, MenuType<AnvilMenu>> ANVIL_MENU = MENUS.register("anvil_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new AnvilMenu(windowId, inventory)));
     public static final DeferredHolder<MenuType<?>, MenuType<EquipmentTestMenu>> EQUIPMENT_TEST_MENU = MENUS.register("equipment_test_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new EquipmentTestMenu(windowId, inventory)));
+    public static final DeferredHolder<MenuType<?>, MenuType<ForgedStorageMenu>> FORGED_STORAGE_MENU = MENUS.register("forged_storage", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new ForgedStorageMenu(windowId, inventory)));
 
     public static final DeferredItem<Item> CORE_BLUEPRINT = ITEMS.registerSimpleItem("coreblueprint", new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> ROD_BLUEPRINT = ITEMS.registerSimpleItem("rodeblueprint", new Item.Properties().stacksTo(16));
@@ -78,6 +79,7 @@ public class ExampleMod {
             event.register(FORGE_MENU.get(), ForgingScreen::new);
             event.register(ANVIL_MENU.get(), ForgingAnvilScreen::new);
             event.register(EQUIPMENT_TEST_MENU.get(), EquipmentTestScreen::new);
+            event.register(FORGED_STORAGE_MENU.get(), ForgedStorageScreen::new);
         }
     }
 }
