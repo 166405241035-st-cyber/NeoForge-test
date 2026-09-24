@@ -172,7 +172,11 @@ public final class ForgedEffectEvents {
             BlockPos webPos = target.blockPosition();
             if (player.level().getBlockState(webPos).canBeReplaced()) {
                 player.level().setBlockAndUpdate(webPos, Blocks.COBWEB.defaultBlockState());
-                player.level().scheduleTick(webPos, Blocks.COBWEB, tierValue(webTrap, WEB_TRAP_DURATION));
+                target.getPersistentData().putLong("ForgedWebTrapUntil",
+                        player.level().getGameTime() + tierValue(webTrap, WEB_TRAP_DURATION));
+                target.getPersistentData().putInt("ForgedWebTrapX", webPos.getX());
+                target.getPersistentData().putInt("ForgedWebTrapY", webPos.getY());
+                target.getPersistentData().putInt("ForgedWebTrapZ", webPos.getZ());
             }
         }
 
@@ -303,6 +307,23 @@ public final class ForgedEffectEvents {
                     minion.getNavigation().moveTo(player, 1.15D);
                 }
             }
+        }
+
+        // Vanilla cobweb has no scheduled self-removal behavior, so remove forged webs explicitly.
+        for (LivingEntity trapped : player.level().getEntitiesOfClass(LivingEntity.class,
+                player.getBoundingBox().inflate(32.0D),
+                e -> e.getPersistentData().getLong("ForgedWebTrapUntil") > 0L
+                        && e.getPersistentData().getLong("ForgedWebTrapUntil") <= now)) {
+            BlockPos webPos = new BlockPos(
+                    trapped.getPersistentData().getInt("ForgedWebTrapX"),
+                    trapped.getPersistentData().getInt("ForgedWebTrapY"),
+                    trapped.getPersistentData().getInt("ForgedWebTrapZ"));
+            if (player.level().getBlockState(webPos).is(Blocks.COBWEB))
+                player.level().removeBlock(webPos, false);
+            trapped.getPersistentData().remove("ForgedWebTrapUntil");
+            trapped.getPersistentData().remove("ForgedWebTrapX");
+            trapped.getPersistentData().remove("ForgedWebTrapY");
+            trapped.getPersistentData().remove("ForgedWebTrapZ");
         }
 
         boolean wasGrounded = player.getPersistentData().getBoolean("ForgedWasGrounded");
