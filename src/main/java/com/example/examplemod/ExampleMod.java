@@ -23,6 +23,8 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -92,6 +94,13 @@ public class ExampleMod {
             event.register(ANVIL_MENU.get(), ForgingAnvilScreen::new);
             event.register(EQUIPMENT_TEST_MENU.get(), EquipmentTestScreen::new);
             event.register(FORGED_STORAGE_MENU.get(), ForgedStorageScreen::new);
+        }
+
+        @net.neoforged.bus.api.SubscribeEvent
+        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            // Temporary invisible renderer for the server-controlled boomerang.
+            // A visible custom/item renderer can replace this once mechanics are stable.
+            event.registerEntityRenderer(FORGED_BOOMERANG.get(), NoopRenderer::new);
         }
     }
 }
