@@ -135,8 +135,6 @@ public class ForgedEquipmentItem extends Item {
         projectile.setBaseDamage(readAttackDamage(stack) * multiplier);
         projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
         projectile.pickup = AbstractArrow.Pickup.DISALLOWED;
-        // Maximum vanilla arrow piercing level: keep flying through mobs instead of stopping on first hit.
-        projectile.setPierceLevel((byte) 127);
         projectile.getPersistentData().putBoolean("ForgedBoomerang", true);
         projectile.getPersistentData().putDouble("ForgedBoomerangDamage", readAttackDamage(stack) * multiplier);
         CustomData projectileData = thrownStack.get(DataComponents.CUSTOM_DATA);
