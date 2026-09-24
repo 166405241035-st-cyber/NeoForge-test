@@ -208,6 +208,9 @@ public final class ForgedActiveSkills {
         long now = player.level().getGameTime();
         player.getPersistentData().putLong("ForgedTimeStopChargeUntil", now + 100L);
         player.getPersistentData().putInt("ForgedTimeStopChargeTier", tierIndex(tier));
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            ForgedEffectNetwork.sendTimeStopShake(serverPlayer, 100);
+        }
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Stun Time Stop: Charging..."), true);
     }
 
