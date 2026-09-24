@@ -162,14 +162,17 @@ public final class ForgedEffectEvents {
 
         EffectTier riftTeleport = ForgedEffectRuntime.tier(weapon, ForgingEffect.RIFT_TELEPORT_ATTACK);
         if (riftTeleport != null && player.getRandom().nextDouble() < tierValue(riftTeleport, RIFT_TELEPORT_CHANCE)) {
-            teleportTargetAway(player, target);
+            teleportTargetAway(player, target, switch (riftTeleport) { case I -> 4.0D; case II -> 8.0D; case III -> 15.0D; });
         }
 
         EffectTier webTrap = ForgedEffectRuntime.tier(weapon, ForgingEffect.WEB_TRAP);
         if (webTrap != null && canUseTimedTrigger(player, "WebTrap", 60L)) {
-            // Temporary web-like restraint without leaving permanent cobweb blocks.
-            target.setDeltaMovement(Vec3.ZERO);
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, tierValue(webTrap, WEB_TRAP_DURATION), 6));
+            // Real cobweb restraint: movement is slowed by the block itself, but the mob keeps its AI
+            // and can still attack the player when in reach.
+            BlockPos webPos = target.blockPosition();
+            if (player.level().getBlockState(webPos).canBeReplaced()) {
+                player.level().setBlockAndUpdate(webPos, Blocks.COBWEB.defaultBlockState());
+            }
         }
 
         EffectTier knockback = ForgedEffectRuntime.tier(weapon, ForgingEffect.UNSTOPPABLE_KNOCKBACK);
@@ -185,8 +188,18 @@ public final class ForgedEffectEvents {
         EffectTier slimeTrail = ForgedEffectRuntime.tier(weapon, ForgingEffect.SLIME_TRAIL_STRIKE);
         if (slimeTrail != null && player.getRandom().nextDouble() < tierValue(slimeTrail, SLIME_TRAIL_CHANCE)) {
             BlockPos floor = target.blockPosition().below();
-            if (!player.level().getBlockState(floor).isAir()) {
-                player.level().setBlockAndUpdate(floor, Blocks.SLIME_BLOCK.defaultBlockState());
+            if (slimeTrail == EffectTier.I) {
+                replaceFloorWithSlime(player, floor);
+            } else if (slimeTrail == EffectTier.II) {
+                replaceFloorWithSlime(player, floor);
+                replaceFloorWithSlime(player, floor.north());
+                replaceFloorWithSlime(player, floor.south());
+                replaceFloorWithSlime(player, floor.east());
+                replaceFloorWithSlime(player, floor.west());
+            } else {
+                for (int x = -1; x <= 1; x++)
+                    for (int z = -1; z <= 1; z++)
+                        replaceFloorWithSlime(player, floor.offset(x, 0, z));
             }
         }
 
@@ -904,7 +917,12 @@ public final class ForgedEffectEvents {
                 && !player.isPassenger();
     }
 
-    private static void teleportTargetAway(Player player, LivingEntity target) {
+    private static void replaceFloorWithSlime(Player player, BlockPos pos) {
+        if (!player.level().getBlockState(pos).isAir())
+            player.level().setBlockAndUpdate(pos, Blocks.SLIME_BLOCK.defaultBlockState());
+    }
+
+    private static void teleportTargetAway(Player player, LivingEntity target, double distance) {
         Vec3 away = target.position().subtract(player.position());
         if (away.lengthSqr() < 0.001D) away = player.getLookAngle().scale(-1.0D);
         away = away.normalize();
