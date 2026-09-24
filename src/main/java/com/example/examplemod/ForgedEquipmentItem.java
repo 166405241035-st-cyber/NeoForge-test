@@ -137,6 +137,9 @@ public class ForgedEquipmentItem extends Item {
         projectile.pickup = AbstractArrow.Pickup.DISALLOWED;
         projectile.getPersistentData().putBoolean("ForgedBoomerang", true);
         projectile.getPersistentData().putDouble("ForgedBoomerangDamage", readAttackDamage(stack) * multiplier);
+        CustomData projectileData = thrownStack.get(DataComponents.CUSTOM_DATA);
+        if (projectileData != null)
+            projectile.getPersistentData().put("ForgedBoomerangItem", projectileData.copyTag());
         projectile.getPersistentData().putInt("ForgedBoomerangAge", 0);
         level.addFreshEntity(projectile);
 
