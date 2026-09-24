@@ -9,6 +9,8 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -32,6 +34,7 @@ public class ExampleMod {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MODID);
+    public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static final DeferredBlock<Block> FORGING_BLOCK = BLOCKS.register("forging_block", registryName -> new ForgingBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
@@ -40,6 +43,9 @@ public class ExampleMod {
     public static final DeferredItem<BlockItem> FORGING_ANVIL_ITEM = ITEMS.registerSimpleBlockItem("forging_anvil", FORGING_ANVIL);
     public static final DeferredBlock<Block> EQUIPMENT_TEST_BLOCK = BLOCKS.register("equipment_test_block", registryName -> new EquipmentTestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(3.5F)));
     public static final DeferredItem<BlockItem> EQUIPMENT_TEST_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("equipment_test_block", EQUIPMENT_TEST_BLOCK);
+    public static final DeferredHolder<MobEffect, MobEffect> BLEEDING = MOB_EFFECTS.register("bleeding",
+            () -> new BleedingMobEffect(MobEffectCategory.HARMFUL, 0xD11A2A));
+
     public static final DeferredHolder<MenuType<?>, MenuType<ForgeMenu>> FORGE_MENU = MENUS.register("forge_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new ForgeMenu(windowId, inventory)));
     public static final DeferredHolder<MenuType<?>, MenuType<AnvilMenu>> ANVIL_MENU = MENUS.register("anvil_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new AnvilMenu(windowId, inventory)));
     public static final DeferredHolder<MenuType<?>, MenuType<EquipmentTestMenu>> EQUIPMENT_TEST_MENU = MENUS.register("equipment_test_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new EquipmentTestMenu(windowId, inventory)));
@@ -67,7 +73,7 @@ public class ExampleMod {
             }).build());
 
     public ExampleMod(IEventBus modEventBus, ModContainer modContainer) {
-        BLOCKS.register(modEventBus); ITEMS.register(modEventBus); MENUS.register(modEventBus); CREATIVE_MODE_TABS.register(modEventBus);
+        BLOCKS.register(modEventBus); ITEMS.register(modEventBus); MENUS.register(modEventBus); MOB_EFFECTS.register(modEventBus); CREATIVE_MODE_TABS.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, ForgedSkillConfig.SPEC, "examplemod-forged-skills.toml");
     }
 
