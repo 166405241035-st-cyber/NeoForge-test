@@ -53,6 +53,8 @@ public final class ForgedActiveSkills {
             case LAVA_WAVE -> lavaWave(player, tier);
             case STUN_TIME_STOP -> stunTimeStop(player, tier);
             case IRON_FORTRESS_GUARD -> ironFortress(player, tier);
+            case BOOMERANG_WEAPON -> boomerangWeapon(player, tool, tier);
+            case DIVINE_BEACON_LIGHT -> divineBeaconLaser(player, tier);
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tier);
             case NATURE_GOD_BLESS -> natureGodBless(player, tier);
             default -> {
@@ -251,6 +253,69 @@ public final class ForgedActiveSkills {
         damageEquipment(player, 8);
     }
 
+    private static void boomerangWeapon(Player player, ItemStack tool, EffectTier tier) {
+        long cooldown = 120L; // Fixed 6 sec; Tier scales throw damage only.
+        if (!ready(player, "BoomerangWeapon", cooldown)) return;
+
+        LivingEntity target = findLookTarget(player, 18.0D);
+        if (target == null) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Boomerang Weapon: ต้องเล็งเป้าหมาย"), true);
+            return;
+        }
+
+        double multiplier = switch (tier) { case I -> 1.0D; case II -> 1.35D; case III -> 1.75D; };
+        float baseDamage = (float) player.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE);
+        player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+        try {
+            target.hurt(player.damageSources().playerAttack(player), (float)(baseDamage * multiplier));
+        } finally {
+            player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+        }
+
+        // Visual outbound/return path. The forged item stays in hand so it cannot be lost/desynced.
+        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+            Vec3 from = player.getEyePosition();
+            Vec3 to = target.getEyePosition();
+            Vec3 delta = to.subtract(from);
+            for (int i = 0; i <= 12; i++) {
+                double t = i / 12.0D;
+                Vec3 p = from.add(delta.scale(t));
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT,
+                        p.x, p.y, p.z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
+            }
+        }
+        startCooldown(player, "BoomerangWeapon", cooldown);
+        damageEquipment(player, 3);
+    }
+
+    private static void divineBeaconLaser(Player player, EffectTier tier) {
+        long cooldown = switch (tier) { case I -> 300L; case II -> 200L; case III -> 120L; }; // 15/10/6 sec
+        if (!ready(player, "DivineBeaconLight", cooldown)) return;
+
+        Vec3 start = player.getEyePosition();
+        Vec3 look = player.getLookAngle().normalize();
+        LivingEntity target = findLookTarget(player, 24.0D);
+        if (target != null) {
+            player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+            try {
+                target.hurt(player.damageSources().playerAttack(player), 12.0F);
+                target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(), 80));
+            } finally {
+                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+            }
+        }
+
+        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+            for (int i = 1; i <= 24; i++) {
+                Vec3 p = start.add(look.scale(i));
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                        p.x, p.y, p.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
+        }
+        startCooldown(player, "DivineBeaconLight", cooldown);
+        damageEquipment(player, 6);
+    }
+
     private static void ultimateLaser(Player player, EffectTier tier) {
         long cooldown = ForgedSkillConfig.laser(tier);
         if (!ready(player, "UltimateLaserBreaker", cooldown)) return;
@@ -394,7 +459,7 @@ public final class ForgedActiveSkills {
         return switch (effect) {
             case FIREBALL_SHOOT, FRONT_DASH, WITHER_CURSE_POWER, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
-                 STUN_TIME_STOP, IRON_FORTRESS_GUARD,
+                 STUN_TIME_STOP, IRON_FORTRESS_GUARD, BOOMERANG_WEAPON, DIVINE_BEACON_LIGHT,
                  ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS -> true;
             default -> false;
         };
