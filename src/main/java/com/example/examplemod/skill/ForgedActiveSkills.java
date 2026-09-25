@@ -532,24 +532,14 @@ public final class ForgedActiveSkills {
             }
         }
 
-        // Travelling energy trail from the player to the hit point, followed by a sweep
-        // across every affected block so the shape of the skill is visible.
-        Vec3 eye = player.getEyePosition();
-        Vec3 hitPoint = hit.getLocation();
-        Vec3 ray = hitPoint.subtract(eye);
-        double rayLength = ray.length();
-        if (rayLength > 0.01D) {
-            Vec3 rayDir = ray.normalize();
-            for (double d = 0.25D; d <= rayLength; d += 0.22D) {
-                Vec3 point = eye.add(rayDir.scale(d));
-                level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                        point.x, point.y, point.z, 1, 0.025D, 0.025D, 0.025D, 0.0D);
-            }
-        }
+        // Mining-wave visual: no white laser. Each affected block emits a short
+        // impact/sweep burst, so the particle shape follows the actual mining area.
         for (BlockPos pos : targets) {
             Vec3 point = Vec3.atCenterOf(pos);
-            level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                    point.x, point.y, point.z, 3, 0.22D, 0.22D, 0.22D, 0.015D);
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
+                    point.x, point.y, point.z, 5, 0.34D, 0.34D, 0.34D, 0.08D);
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
+                    point.x, point.y, point.z, 3, 0.26D, 0.26D, 0.26D, 0.025D);
         }
 
         int broken = 0;
