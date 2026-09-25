@@ -324,7 +324,7 @@ public final class ForgedActiveSkills {
 
         // Each target killed by the Slam immediately refunds 10 seconds of its cooldown.
         if (killedBySlam > 0) {
-            String key = "ForgedSkillCooldown_GravitationalSlam";
+            String key = "ForgedActiveCooldown_GravitationalSlam";
             long readyAt = player.getPersistentData().getLong(key);
             long reduced = Math.max(player.level().getGameTime(), readyAt - killedBySlam * 200L);
             player.getPersistentData().putLong(key, reduced);
