@@ -1,5 +1,11 @@
 package com.example.examplemod;
 
+import com.example.examplemod.block.*;
+import com.example.examplemod.entity.*;
+import com.example.examplemod.item.*;
+import com.example.examplemod.skill.*;
+import com.example.examplemod.skill.client.*;
+
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
