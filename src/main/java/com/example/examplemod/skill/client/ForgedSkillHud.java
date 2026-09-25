@@ -19,22 +19,32 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
 @EventBusSubscriber(modid = ExampleMod.MODID, value = Dist.CLIENT)
 public final class ForgedSkillHud {
     private static int serverSelectedIndex;
-    private static String serverCooldownKey = "";
-    private static long serverReadyAt;
+    private static final Map<String, Long> serverReadyAt = new HashMap<>();
     private static long serverSlamUntil;
     private static boolean serverAegisActive;
 
     private ForgedSkillHud() {}
 
-    public static void updateServerState(int selectedIndex, String cooldownKey, long readyAt,
+    public static void updateServerState(int selectedIndex, String cooldownStates, long ignoredReadyAt,
                                          long slamUntil, boolean aegisActive) {
         serverSelectedIndex = Math.max(0, selectedIndex);
-        serverCooldownKey = cooldownKey == null ? "" : cooldownKey;
-        serverReadyAt = Math.max(0L, readyAt);
+        serverReadyAt.clear();
+        if (cooldownStates != null && !cooldownStates.isEmpty()) {
+            for (String entry : cooldownStates.split(";")) {
+                int split = entry.indexOf('=');
+                if (split <= 0) continue;
+                try {
+                    serverReadyAt.put(entry.substring(0, split),
+                            Math.max(0L, Long.parseLong(entry.substring(split + 1))));
+                } catch (NumberFormatException ignored) {}
+            }
+        }
         serverSlamUntil = Math.max(0L, slamUntil);
         serverAegisActive = aegisActive;
     }
@@ -49,39 +59,41 @@ public final class ForgedSkillHud {
         if (active.isEmpty()) return;
 
         int selected = Math.min(serverSelectedIndex, active.size() - 1);
-        ForgingEffect skill = active.get(selected);
-
-        // Show the physical key name (R), not the localized typed character (e.g. Thai พ).
-        String useKey = "R";
-        String cycleKey = "Shift + R";
-        String title = "[" + useKey + "] " + skill.displayName();
-
-        String status;
-        long slamUntil = serverSlamUntil;
-        if (skill == ForgingEffect.GRAVATIONAL_SLAM && slamUntil > mc.player.level().getGameTime()) {
-            double seconds = (slamUntil - mc.player.level().getGameTime()) / 20.0D;
-            status = String.format(Locale.ROOT, "Charging: %.1fs", seconds);
-        } else if (skill == ForgingEffect.AEGIS_SHIELD) {
-            status = serverAegisActive ? "ACTIVE" : "READY";
-        } else {
-            String expectedKey = ForgedActiveSkills.cooldownKey(skill);
-            long remaining = expectedKey != null && expectedKey.equals(serverCooldownKey)
-                    ? Math.max(0L, serverReadyAt - mc.player.level().getGameTime()) : 0L;
-            status = remaining <= 0L ? "READY" : "CD " + formatTime(remaining);
-        }
-
         GuiGraphics gui = event.getGuiGraphics();
 
-        // Compact HUD: render at 75% scale and keep it tight to the bottom-right corner.
+        // Show every active skill on this equipment. The selected skill is highlighted.
         final float scale = 0.75F;
         final int padding = 3;
         final int line = mc.font.lineHeight + 1;
-        String cycle = active.size() > 1 ? "[Shift+R] Change" : "";
+        String cycle = active.size() > 1 ? "[Shift + R] Change" : "";
 
-        int contentWidth = Math.max(mc.font.width(title), Math.max(mc.font.width(status), mc.font.width(cycle)));
-        int rows = active.size() > 1 ? 3 : 2;
+        List<String> rows = new java.util.ArrayList<>();
+        List<Integer> colors = new java.util.ArrayList<>();
+        long now = mc.player.level().getGameTime();
+
+        for (int i = 0; i < active.size(); i++) {
+            ForgingEffect skill = active.get(i);
+            String status;
+            if (skill == ForgingEffect.GRAVITATIONAL_SLAM && serverSlamUntil > now) {
+                double seconds = (serverSlamUntil - now) / 20.0D;
+                status = String.format(Locale.ROOT, "Charging %.1fs", seconds);
+            } else if (skill == ForgingEffect.AEGIS_SHIELD && serverAegisActive) {
+                status = "ACTIVE";
+            } else {
+                long remaining = Math.max(0L, serverReadyAt.getOrDefault(skill.name(), 0L) - now);
+                status = remaining <= 0L ? "READY" : "CD " + formatTime(remaining);
+            }
+
+            String marker = i == selected ? "> " : "  ";
+            rows.add(marker + "[R] " + skill.displayName() + "   " + status);
+            colors.add(i == selected ? 0xFFFFFF
+                    : (status.equals("READY") || status.equals("ACTIVE") ? 0xB8FFB8 : 0xFFD27F));
+        }
+
+        int contentWidth = mc.font.width(cycle);
+        for (String row : rows) contentWidth = Math.max(contentWidth, mc.font.width(row));
         int boxWidth = contentWidth + padding * 2;
-        int boxHeight = rows * line + padding * 2;
+        int boxHeight = (rows.size() + (active.size() > 1 ? 1 : 0)) * line + padding * 2;
 
         int scaledScreenWidth = (int)(gui.guiWidth() / scale);
         int scaledScreenHeight = (int)(gui.guiHeight() / scale);
@@ -91,11 +103,13 @@ public final class ForgedSkillHud {
         gui.pose().pushPose();
         gui.pose().scale(scale, scale, 1.0F);
         gui.fill(x, y, x + boxWidth, y + boxHeight, 0x70000000);
-        gui.drawString(mc.font, Component.literal(title), x + padding, y + padding, 0xFFFFFF, true);
-        gui.drawString(mc.font, Component.literal(status), x + padding, y + padding + line,
-                status.equals("READY") || status.equals("ACTIVE") ? 0x55FF55 : 0xFFCC55, true);
+        for (int i = 0; i < rows.size(); i++) {
+            gui.drawString(mc.font, Component.literal(rows.get(i)),
+                    x + padding, y + padding + line * i, colors.get(i), true);
+        }
         if (active.size() > 1) {
-            gui.drawString(mc.font, Component.literal(cycle), x + padding, y + padding + line * 2, 0xAAAAAA, true);
+            gui.drawString(mc.font, Component.literal(cycle),
+                    x + padding, y + padding + line * rows.size(), 0xAAAAAA, true);
         }
         gui.pose().popPose();
     }
