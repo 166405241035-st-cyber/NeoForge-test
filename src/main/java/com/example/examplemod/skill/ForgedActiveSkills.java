@@ -748,10 +748,15 @@ public final class ForgedActiveSkills {
 
     private static void syncHud(Player player, ForgingEffect effect, int selectedIndex) {
         if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return;
-        String key = cooldownKey(effect);
         ItemStack tool = player.getMainHandItem();
-        long readyAt = key == null ? 0L : itemCooldownReadyAt(tool, key);
-        ForgedEffectNetwork.sendHudState(serverPlayer, selectedIndex, key, readyAt,
+        StringBuilder cooldownStates = new StringBuilder();
+        for (ForgingEffect activeEffect : getActiveEffects(tool)) {
+            String activeKey = cooldownKey(activeEffect);
+            long readyAt = activeKey == null ? 0L : itemCooldownReadyAt(tool, activeKey);
+            if (!cooldownStates.isEmpty()) cooldownStates.append(';');
+            cooldownStates.append(activeEffect.name()).append('=').append(readyAt);
+        }
+        ForgedEffectNetwork.sendHudState(serverPlayer, selectedIndex, cooldownStates.toString(), 0L,
                 player.getPersistentData().getLong("ForgedGravitationalSlamUntil"),
                 player.getPersistentData().getBoolean("ForgedAegisActive"));
     }
