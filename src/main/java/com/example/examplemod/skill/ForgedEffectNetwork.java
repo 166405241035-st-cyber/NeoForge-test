@@ -30,14 +30,14 @@ public final class ForgedEffectNetwork {
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
-    public record SkillHudStatePayload(int selectedIndex, String cooldownKey, long readyAt, long slamUntil, boolean aegisActive)
+    public record SkillHudStatePayload(int selectedIndex, String cooldownStates, long readyAt, long slamUntil, boolean aegisActive)
             implements CustomPacketPayload {
         public static final Type<SkillHudStatePayload> TYPE =
                 new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "skill_hud_state"));
         public static final StreamCodec<ByteBuf, SkillHudStatePayload> STREAM_CODEC =
                 StreamCodec.composite(
                         ByteBufCodecs.VAR_INT, SkillHudStatePayload::selectedIndex,
-                        ByteBufCodecs.STRING_UTF8, SkillHudStatePayload::cooldownKey,
+                        ByteBufCodecs.STRING_UTF8, SkillHudStatePayload::cooldownStates,
                         ByteBufCodecs.VAR_LONG, SkillHudStatePayload::readyAt,
                         ByteBufCodecs.VAR_LONG, SkillHudStatePayload::slamUntil,
                         ByteBufCodecs.BOOL, SkillHudStatePayload::aegisActive,
@@ -75,7 +75,7 @@ public final class ForgedEffectNetwork {
                 SkillHudStatePayload.TYPE,
                 SkillHudStatePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> ForgedSkillHud.updateServerState(
-                        payload.selectedIndex(), payload.cooldownKey(), payload.readyAt(),
+                        payload.selectedIndex(), payload.cooldownStates(), payload.readyAt(),
                         payload.slamUntil(), payload.aegisActive()))
         );
         registrar.playToServer(
@@ -94,10 +94,10 @@ public final class ForgedEffectNetwork {
     }
 
     public static void sendHudState(net.minecraft.server.level.ServerPlayer player,
-                                    int selectedIndex, String cooldownKey, long readyAt,
+                                    int selectedIndex, String cooldownStates, long readyAt,
                                     long slamUntil, boolean aegisActive) {
         PacketDistributor.sendToPlayer(player,
-                new SkillHudStatePayload(selectedIndex, cooldownKey == null ? "" : cooldownKey,
+                new SkillHudStatePayload(selectedIndex, cooldownStates == null ? "" : cooldownStates,
                         Math.max(0L, readyAt), Math.max(0L, slamUntil), aegisActive));
     }
 
