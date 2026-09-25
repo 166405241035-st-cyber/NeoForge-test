@@ -71,6 +71,7 @@ public final class ForgedActiveSkills {
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tool, tier);
             case BLOCK_LEVITATION -> blockLevitation(player, tool, tier);
             case MAGNETIC_CLUMPING -> magneticClumping(player, tool, tier);
+            case LINEAR_PENETRATION_3X15 -> linearPenetration(player, tool, tier);
             case OBSIDIAN_BREAKER -> obsidianBreaker(player, tool, tier);
             case NATURE_GOD_BLESS -> natureGodBless(player, tool, tier);
             case LINE_BUILDER -> lineBuilder(player, tool, tier);
@@ -473,6 +474,49 @@ public final class ForgedActiveSkills {
         return ((net.minecraft.world.phys.BlockHitResult) hit).getBlockPos();
     }
 
+    private static void linearPenetration(Player player, ItemStack tool, EffectTier tier) {
+        long cooldown = switch (tier) { case I -> 400L; case II -> 280L; case III -> 180L; };
+        if (!ready(tool, player, "LinearPenetration3x15", cooldown)) return;
+        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
+
+        BlockPos origin = lookedBlock(player, 6.0D);
+        if (origin == null) return;
+
+        net.minecraft.world.phys.HitResult rawHit = player.pick(6.0D, 0.0F, false);
+        if (!(rawHit instanceof net.minecraft.world.phys.BlockHitResult blockHit)) return;
+        Direction face = blockHit.getDirection().getOpposite();
+
+        java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
+        Direction right = (face.getAxis() == Direction.Axis.Y) ? Direction.EAST
+                : (face.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST);
+        Direction up = (face.getAxis() == Direction.Axis.Y) ? Direction.SOUTH : Direction.UP;
+
+        for (int depth = 0; depth < 15; depth++) {
+            BlockPos center = origin.relative(face, depth);
+            for (int width = -1; width <= 1; width++) targets.add(center.relative(right, width));
+        }
+
+        int broken = 0;
+        player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
+        try {
+            for (BlockPos pos : targets) {
+                var state = level.getBlockState(pos);
+                if (state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) continue;
+                if (!tool.isCorrectToolForDrops(state)) continue;
+                if (level.destroyBlock(pos, true, player)) broken++;
+            }
+        } finally {
+            player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
+        }
+
+        if (broken > 0) {
+            startCooldown(tool, player, "LinearPenetration3x15", cooldown);
+            int extraCost = (broken + 1) / 2;
+            if (tool.isDamageableItem())
+                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + extraCost));
+        }
+    }
+
     private static void blockLevitation(Player player, ItemStack tool, EffectTier tier) {
         BlockPos pos = lookedBlock(player, 6.0D);
         if (pos == null) return;
@@ -815,7 +859,7 @@ public final class ForgedActiveSkills {
             case FIREBALL_SHOOT, FRONT_DASH, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
                  STUN_TIME_STOP, GRAVATIONAL_SLAM, IRON_FORTRESS_GUARD, DIVINE_BEACON_LIGHT,
-                 ULTIMATE_LASER_BREAKER, BLOCK_LEVITATION, MAGNETIC_CLUMPING, OBSIDIAN_BREAKER,
+                 ULTIMATE_LASER_BREAKER, BLOCK_LEVITATION, MAGNETIC_CLUMPING, LINEAR_PENETRATION_3X15, OBSIDIAN_BREAKER,
                  NATURE_GOD_BLESS, LINE_BUILDER, EARTHY_WALL_RISE,
                  SKY_BRIDGE_WALK, POCKET_DIMENSION, INTERNAL_STORAGE -> true;
             default -> false;
@@ -868,6 +912,7 @@ public final class ForgedActiveSkills {
             case DIVINE_BEACON_LIGHT -> "DivineBeaconLight";
             case ULTIMATE_LASER_BREAKER -> "UltimateLaserBreaker";
             case MAGNETIC_CLUMPING -> "MagneticClumping";
+            case LINEAR_PENETRATION_3X15 -> "LinearPenetration3x15";
             case NATURE_GOD_BLESS -> "NatureGodBless";
             case LINE_BUILDER -> "LineBuilder";
             case EARTHY_WALL_RISE -> "EarthyWallRise";
