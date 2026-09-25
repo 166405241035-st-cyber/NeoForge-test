@@ -1,5 +1,11 @@
 package com.example.examplemod;
 
+import com.example.examplemod.block.*;
+import com.example.examplemod.entity.*;
+import com.example.examplemod.item.*;
+import com.example.examplemod.skill.*;
+import com.example.examplemod.skill.client.*;
+
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
