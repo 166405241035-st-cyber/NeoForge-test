@@ -653,7 +653,9 @@ public final class ForgedEffectEvents {
             if (penetration != null) {
                 long cd = switch (penetration) { case I -> 400L; case II -> 280L; case III -> 180L; };
                 if (canUseTimedTrigger(player, "LinearPenetration3x15", cd))
-                    breakPlane(player, event.getPos(), face, 3, 3, 15);
+                    // 3 blocks wide x 15 blocks deep. Height stays 1 block;
+                    // the previous 3x3x15 volume was larger than the skill specification.
+                    breakPlane(player, event.getPos(), face, 3, 1, 15);
             }
         }
 
