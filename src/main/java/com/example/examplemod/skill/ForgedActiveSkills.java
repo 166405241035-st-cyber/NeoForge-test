@@ -135,9 +135,15 @@ public final class ForgedActiveSkills {
     }
 
     private static void mobSwap(Player player, EffectTier tier) {
-        LivingEntity target = findLookTarget(player, 25.0D);
+        // Look farther than the usable range so we can distinguish "missed" from
+        // "you are aiming at a mob, but it is too far away".
+        LivingEntity target = findLookTarget(player, 64.0D);
+        if (target != null && player.getEyePosition().distanceTo(target.getBoundingBox().getCenter()) > 30.0D) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Target is out of range!"), true);
+            return;
+        }
         if (!(target instanceof Monster)) {
-            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: ต้องเล็งมอนสเตอร์"), true);
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: Aim at a monster."), true);
             return;
         }
 
@@ -165,11 +171,7 @@ public final class ForgedActiveSkills {
         long cooldown = ForgedSkillConfig.airSlash(tier);
         if (!ready(player, "AirSlashRupture", cooldown)) return;
 
-        double damage = switch (tier) {
-            case I -> 4.0D;
-            case II -> 6.0D;
-            case III -> 8.0D;
-        };
+        double damage = 6.0D; // 3 hearts for every Tier.
 
         AABB area = player.getBoundingBox().inflate(6.0D);
         for (LivingEntity target : player.level().getEntitiesOfClass(
@@ -196,6 +198,15 @@ public final class ForgedActiveSkills {
         Vec3 look = player.getLookAngle().normalize();
         for (int i = 1; i <= 5; i++) {
             Vec3 pos = player.position().add(look.scale(i * 1.5D));
+
+            // Orange/lava visual wave without placing real lava blocks, so the caster
+            // can never be burned by their own Lava Wave.
+            if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME,
+                        pos.x, pos.y + 0.25D, pos.z, 14, 0.9D, 0.25D, 0.9D, 0.025D);
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.LAVA,
+                        pos.x, pos.y + 0.15D, pos.z, 5, 0.8D, 0.12D, 0.8D, 0.0D);
+            }
             AABB area = new AABB(pos.x - 1.2D, pos.y - 1.0D, pos.z - 1.2D,
                     pos.x + 1.2D, pos.y + 1.5D, pos.z + 1.2D);
             for (LivingEntity target : player.level().getEntitiesOfClass(
@@ -335,29 +346,15 @@ public final class ForgedActiveSkills {
     }
 
     private static void divineBeaconLaser(Player player, EffectTier tier) {
-        long cooldown = ForgedSkillConfig.divine(tier); // Configurable; defaults 7.5/5/3 sec.
+        long cooldown = ForgedSkillConfig.divine(tier); // Defaults: 7.5 / 5 / 3 sec.
         if (!ready(player, "DivineBeaconLight", cooldown)) return;
 
-        Vec3 start = player.getEyePosition();
-        Vec3 look = player.getLookAngle().normalize();
-        LivingEntity target = findLookTarget(player, 24.0D);
-        if (target != null) {
-            player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
-            try {
-                target.hurt(player.damageSources().playerAttack(player), 12.0F);
-                target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(), 80));
-            } finally {
-                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
-            }
-        }
+        // Keep the beam active for 5 seconds. Damage is handled by tickWorldEffects
+        // every 6 ticks (0.3 sec), so the player can keep aiming during the beam.
+        long now = player.level().getGameTime();
+        player.getPersistentData().putLong("ForgedDivineBeaconUntil", now + 100L);
+        player.getPersistentData().putLong("ForgedDivineBeaconNextHit", now);
 
-        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
-            for (int i = 1; i <= 24; i++) {
-                Vec3 p = start.add(look.scale(i));
-                server.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                        p.x, p.y, p.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-            }
-        }
         startCooldown(player, "DivineBeaconLight", cooldown);
         damageEquipment(player, 6);
     }
@@ -480,6 +477,43 @@ public final class ForgedActiveSkills {
     public static void tickWorldEffects(Player player, ItemStack tool) {
         if (player.level().isClientSide()) return;
         long now = player.level().getGameTime();
+
+        // Divine Beacon Light: a dense 24-block beam that follows the crosshair for
+        // 5 seconds. The same target can be damaged again every 6 ticks (0.3 sec).
+        long divineUntil = player.getPersistentData().getLong("ForgedDivineBeaconUntil");
+        if (divineUntil > 0L) {
+            if (now >= divineUntil) {
+                player.getPersistentData().remove("ForgedDivineBeaconUntil");
+                player.getPersistentData().remove("ForgedDivineBeaconNextHit");
+            } else {
+                Vec3 beamStart = player.getEyePosition();
+                Vec3 beamLook = player.getLookAngle().normalize();
+
+                // Dense END_ROD particles form a bright beacon-like beam.
+                if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+                    for (double d = 0.5D; d <= 24.0D; d += 0.5D) {
+                        Vec3 p = beamStart.add(beamLook.scale(d));
+                        server.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                                p.x, p.y, p.z, 1, 0.015D, 0.015D, 0.015D, 0.0D);
+                    }
+                }
+
+                long nextHit = player.getPersistentData().getLong("ForgedDivineBeaconNextHit");
+                if (now >= nextHit) {
+                    LivingEntity target = findLookTarget(player, 24.0D);
+                    if (target != null) {
+                        player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                        try {
+                            target.hurt(player.damageSources().playerAttack(player), 12.0F);
+                            target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(), 80));
+                        } finally {
+                            player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                        }
+                    }
+                    player.getPersistentData().putLong("ForgedDivineBeaconNextHit", now + 6L);
+                }
+            }
+        }
 
         // Gravitational Slam: lock the caster for 5 seconds, continuously pull all
         // living entities within 10 blocks, and show rising smoke once per second.
