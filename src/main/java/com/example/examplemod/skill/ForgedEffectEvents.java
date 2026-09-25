@@ -690,33 +690,8 @@ public final class ForgedEffectEvents {
         if (!player.getPersistentData().getBoolean("ForgedMultiBreakGuard")) {
             Direction face = directionFromLook(player);
 
-            EffectTier rough = ForgedEffectRuntime.tier(tool, ForgingEffect.ROUGH_CLEAVE_3X3);
-            if (rough != null) {
-                long cd = switch (rough) { case I -> 160L; case II -> 120L; case III -> 80L; };
-                if (canUseTimedTrigger(player, "RoughCleave3x3", cd))
-                    breakPlane(player, event.getPos(), face, 3, 3, 1);
-            }
-
-            EffectTier tunnel = ForgedEffectRuntime.tier(tool, ForgingEffect.TUNNEL_CHARGE_3X1);
-            if (tunnel != null) {
-                long cd = switch (tunnel) { case I -> 160L; case II -> 120L; case III -> 80L; };
-                if (canUseTimedTrigger(player, "TunnelCharge3x1", cd))
-                    breakPlane(player, event.getPos(), face, 3, 1, 1);
-            }
-
-            EffectTier linearBlast = ForgedEffectRuntime.tier(tool, ForgingEffect.LINEAR_BLAST_1X5);
-            if (linearBlast != null) {
-                long cd = switch (linearBlast) { case I -> 200L; case II -> 140L; case III -> 100L; };
-                if (canUseTimedTrigger(player, "LinearBlast1x5", cd))
-                    breakLine(player, event.getPos(), face, 5);
-            }
-
-            EffectTier wide = ForgedEffectRuntime.tier(tool, ForgingEffect.WIDE_EXCAVATION_4X4);
-            if (wide != null) {
-                long cd = switch (wide) { case I -> 200L; case II -> 140L; case III -> 80L; };
-                if (canUseTimedTrigger(player, "WideExcavation4x4", cd))
-                    breakPlane(player, event.getPos(), face, 4, 4, 1);
-            }
+            // Rough Cleave, Tunnel Charge, Linear Blast and Wide Excavation are active R skills.
+            // Their old automatic-on-break triggers were removed to prevent double activation.
 
         }
 
