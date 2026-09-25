@@ -479,21 +479,39 @@ public final class ForgedActiveSkills {
         if (!ready(tool, player, "LinearPenetration3x15", cooldown)) return;
         if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
 
-        BlockPos origin = lookedBlock(player, 6.0D);
-        if (origin == null) return;
+        // Fire the mining laser from the player's view. It can travel up to 15 blocks,
+        // so R still gives visible feedback even when the first block is not within melee reach.
+        Vec3 startPos = player.getEyePosition();
+        Vec3 look = player.getLookAngle().normalize();
+        net.minecraft.world.phys.HitResult rawHit = player.pick(15.0D, 0.0F, false);
+        if (!(rawHit instanceof net.minecraft.world.phys.BlockHitResult blockHit)) {
+            // No block was hit: draw the laser anyway, but do not spend cooldown/durability.
+            for (double d = 0.5D; d <= 15.0D; d += 0.35D) {
+                Vec3 point = startPos.add(look.scale(d));
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                        point.x, point.y, point.z, 1, 0.015D, 0.015D, 0.015D, 0.0D);
+            }
+            return;
+        }
 
-        net.minecraft.world.phys.HitResult rawHit = player.pick(6.0D, 0.0F, false);
-        if (!(rawHit instanceof net.minecraft.world.phys.BlockHitResult blockHit)) return;
+        BlockPos origin = blockHit.getBlockPos();
         Direction face = blockHit.getDirection().getOpposite();
-
-        java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
         Direction right = (face.getAxis() == Direction.Axis.Y) ? Direction.EAST
                 : (face.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST);
-        Direction up = (face.getAxis() == Direction.Axis.Y) ? Direction.SOUTH : Direction.UP;
 
+        java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
         for (int depth = 0; depth < 15; depth++) {
             BlockPos center = origin.relative(face, depth);
             for (int width = -1; width <= 1; width++) targets.add(center.relative(right, width));
+        }
+
+        // Visible laser from the player's eyes to the target/maximum range.
+        Vec3 hitPoint = blockHit.getLocation();
+        double laserLength = Math.min(15.0D, startPos.distanceTo(hitPoint) + 14.0D);
+        for (double d = 0.5D; d <= laserLength; d += 0.35D) {
+            Vec3 point = startPos.add(look.scale(d));
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                    point.x, point.y, point.z, 1, 0.015D, 0.015D, 0.015D, 0.0D);
         }
 
         int broken = 0;
