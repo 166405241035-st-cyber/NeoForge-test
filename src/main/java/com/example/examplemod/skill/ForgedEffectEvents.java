@@ -497,6 +497,59 @@ public final class ForgedEffectEvents {
     }
 
     @SubscribeEvent
+    public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
+        Player player = event.getEntity();
+        ItemStack tool = player.getMainHandItem();
+        float speed = event.getNewSpeed();
+
+        EffectTier airborne = ForgedEffectRuntime.tier(tool, ForgingEffect.AIRBORNE_MINING);
+        if (airborne != null && !player.onGround()) {
+            double bonus = tierValue(airborne, AIRBORNE_MINING_SPEED);
+            speed = (float)(speed * 5.0D * (1.0D + bonus));
+        }
+
+        EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
+        if (frenzy != null
+                && player.getPersistentData().getInt("ForgedFrenzyChain") >= 5
+                && player.level().getGameTime() - player.getPersistentData().getLong("ForgedFrenzyLastMine") <= 100L) {
+            double bonus = switch (frenzy) {
+                case I -> 0.15D;
+                case II -> 0.30D;
+                case III -> 0.50D;
+            };
+            speed = (float)(speed * (1.0D + bonus));
+        }
+        event.setNewSpeed(speed);
+    }
+
+    @SubscribeEvent
+    public static void onBlockDrops(BlockDropsEvent event) {
+        if (!(event.getBreaker() instanceof Player player)) return;
+        ItemStack tool = event.getTool();
+        EffectTier autoSmelt = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_SMELT_MINING);
+        if (autoSmelt == null) return;
+
+        Item smelted = null;
+        if (event.getState().is(Blocks.IRON_ORE) || event.getState().is(Blocks.DEEPSLATE_IRON_ORE)) smelted = Items.IRON_INGOT;
+        else if (event.getState().is(Blocks.GOLD_ORE) || event.getState().is(Blocks.DEEPSLATE_GOLD_ORE)
+                || event.getState().is(Blocks.NETHER_GOLD_ORE)) smelted = Items.GOLD_INGOT;
+        else if (event.getState().is(Blocks.COPPER_ORE) || event.getState().is(Blocks.DEEPSLATE_COPPER_ORE)) smelted = Items.COPPER_INGOT;
+        if (smelted == null) return;
+
+        int output = switch (autoSmelt) {
+            case I -> 1;
+            case II -> 1 + (player.getRandom().nextBoolean() ? 1 : 0);
+            case III -> 2;
+        };
+
+        event.getDrops().clear();
+        BlockPos pos = event.getPos();
+        event.getDrops().add(new ItemEntity(event.getLevel(),
+                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                new ItemStack(smelted, output)));
+    }
+
+    @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || !(player.level() instanceof ServerLevel level)) return;
@@ -614,24 +667,6 @@ public final class ForgedEffectEvents {
             }
         }
 
-        EffectTier autoSmelt = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_SMELT_MINING);
-        if (autoSmelt != null) {
-            Item smelted = null;
-            if (event.getState().is(Blocks.IRON_ORE) || event.getState().is(Blocks.DEEPSLATE_IRON_ORE)) smelted = Items.IRON_INGOT;
-            else if (event.getState().is(Blocks.GOLD_ORE) || event.getState().is(Blocks.DEEPSLATE_GOLD_ORE)
-                    || event.getState().is(Blocks.NETHER_GOLD_ORE)) smelted = Items.GOLD_INGOT;
-            else if (event.getState().is(Blocks.COPPER_ORE) || event.getState().is(Blocks.DEEPSLATE_COPPER_ORE)) smelted = Items.COPPER_INGOT;
-            if (smelted != null) {
-                int output = switch (autoSmelt) {
-                    case I -> 1;
-                    case II -> 1 + (player.getRandom().nextBoolean() ? 1 : 0);
-                    case III -> 2;
-                };
-                // Tier I = 1x, Tier II = 1x plus a 50% chance for one extra, Tier III = 2x.
-                Block.popResource(player.level(), event.getPos(), new ItemStack(smelted, output));
-            }
-        }
-
         EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
         if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE))
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
@@ -680,16 +715,6 @@ public final class ForgedEffectEvents {
                 drop.setDeltaMovement(Vec3.ZERO);
             }
         }
-
-        EffectTier airborne = ForgedEffectRuntime.tier(tool, ForgingEffect.AIRBORNE_MINING);
-        if (airborne != null && !player.onGround()) {
-            // Strong, visible airborne mining boost. This is applied immediately
-            // after each airborne break and lasts long enough to affect the next block.
-            double bonus = tierValue(airborne, AIRBORNE_MINING_SPEED);
-            int amplifier = bonus >= 1.50D ? 4 : bonus >= 1.00D ? 2 : 1;
-            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 80, amplifier, false, false));
-        }
-
 
         EffectTier autoChest = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_CHEST_TRANSPORT);
         if (autoChest != null && isCrop(event.getState()) && player.level() instanceof ServerLevel serverLevel) {
