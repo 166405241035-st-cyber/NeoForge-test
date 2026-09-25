@@ -299,10 +299,38 @@ public final class ForgedActiveSkills {
         player.getPersistentData().putBoolean("ForgedGravitationalSlamOldInvulnerable", player.isInvulnerable());
         player.setInvulnerable(true);
         player.getPersistentData().putLong("ForgedGravitationalSlamBaseCooldown", cooldown);
+        // Bind this charge to the exact forged equipment stack that started it.
+        // The token is stored on the item, so hotbar switching cannot move the
+        // resulting cooldown/durability to a different weapon.
+        long chargeToken = now ^ player.getUUID().getLeastSignificantBits();
+        net.minecraft.world.item.component.CustomData.update(
+                net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                tool, tag -> tag.putLong("forgedGravitationalSlamCharge", chargeToken));
+        player.getPersistentData().putLong("ForgedGravitationalSlamChargeToken", chargeToken);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam: Charging..."), true);
     }
 
-    private static void releaseGravitationalSlam(Player player, ItemStack tool) {
+    private static ItemStack findGravitationalSlamTool(Player player, ItemStack currentTool) {
+        long token = player.getPersistentData().getLong("ForgedGravitationalSlamChargeToken");
+        if (token == 0L) return currentTool;
+
+        for (ItemStack stack : player.getInventory().items) {
+            net.minecraft.world.item.component.CustomData data =
+                    stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+            if (data != null && data.copyTag().getLong("forgedGravitationalSlamCharge") == token)
+                return stack;
+        }
+        if (!player.getOffhandItem().isEmpty()) {
+            net.minecraft.world.item.component.CustomData data =
+                    player.getOffhandItem().get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+            if (data != null && data.copyTag().getLong("forgedGravitationalSlamCharge") == token)
+                return player.getOffhandItem();
+        }
+        return ItemStack.EMPTY;
+    }
+
+    private static void releaseGravitationalSlam(Player player, ItemStack currentTool) {
+        ItemStack tool = findGravitationalSlamTool(player, currentTool);
         double x = player.getPersistentData().getDouble("ForgedGravitationalSlamX");
         double y = player.getPersistentData().getDouble("ForgedGravitationalSlamY");
         double z = player.getPersistentData().getDouble("ForgedGravitationalSlamZ");
@@ -328,8 +356,14 @@ public final class ForgedActiveSkills {
         // Cooldown begins only after the explosion has finished and the kill refund is known.
         long baseCooldown = player.getPersistentData().getLong("ForgedGravitationalSlamBaseCooldown");
         long finalCooldown = Math.max(0L, baseCooldown - killedBySlam * 200L);
-        setItemCooldownReadyAt(tool, "GravitationalSlam", player.level().getGameTime() + finalCooldown);
+        if (!tool.isEmpty()) {
+            setItemCooldownReadyAt(tool, "GravitationalSlam", player.level().getGameTime() + finalCooldown);
+            net.minecraft.world.item.component.CustomData.update(
+                    net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                    tool, tag -> tag.remove("forgedGravitationalSlamCharge"));
+        }
         player.getPersistentData().remove("ForgedGravitationalSlamBaseCooldown");
+        player.getPersistentData().remove("ForgedGravitationalSlamChargeToken");
         if (killedBySlam > 0) {
             player.displayClientMessage(net.minecraft.network.chat.Component.literal(
                     "Gravitational Slam cooldown reduced by " + (killedBySlam * 10) + "s!"), true);
@@ -345,7 +379,9 @@ public final class ForgedActiveSkills {
         player.setInvulnerable(player.getPersistentData().getBoolean("ForgedGravitationalSlamOldInvulnerable"));
         player.getPersistentData().remove("ForgedGravitationalSlamOldInvulnerable");
         player.getPersistentData().remove("ForgedGravitationalSlamUntil");
-        damageEquipment(player, 12);
+        if (!tool.isEmpty()) {
+            tool.hurtAndBreak(12, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        }
         syncHeldEquipmentHud(player);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam!"), true);
     }
