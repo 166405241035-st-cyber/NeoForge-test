@@ -71,20 +71,33 @@ public final class ForgedSkillHud {
         }
 
         GuiGraphics gui = event.getGuiGraphics();
-        int margin = 8;
-        int line = mc.font.lineHeight + 2;
-        String cycle = active.size() > 1 ? "[" + cycleKey + "] Change" : "";
-        int width = Math.max(mc.font.width(title), Math.max(mc.font.width(status), mc.font.width(cycle))) + 6;
-        int x = gui.guiWidth() - width - margin;
-        int y = gui.guiHeight() - (active.size() > 1 ? 46 : 34);
 
-        gui.fill(x - 2, y - 2, x + width, y + line * (active.size() > 1 ? 3 : 2), 0x78000000);
-        gui.drawString(mc.font, Component.literal(title), x, y, 0xFFFFFF, true);
-        gui.drawString(mc.font, Component.literal(status), x, y + line,
+        // Compact HUD: render at 75% scale and keep it tight to the bottom-right corner.
+        final float scale = 0.75F;
+        final int padding = 3;
+        final int line = mc.font.lineHeight + 1;
+        String cycle = active.size() > 1 ? "[Shift+R] Change" : "";
+
+        int contentWidth = Math.max(mc.font.width(title), Math.max(mc.font.width(status), mc.font.width(cycle)));
+        int rows = active.size() > 1 ? 3 : 2;
+        int boxWidth = contentWidth + padding * 2;
+        int boxHeight = rows * line + padding * 2;
+
+        int scaledScreenWidth = (int)(gui.guiWidth() / scale);
+        int scaledScreenHeight = (int)(gui.guiHeight() / scale);
+        int x = scaledScreenWidth - boxWidth - 4;
+        int y = scaledScreenHeight - boxHeight - 4;
+
+        gui.pose().pushPose();
+        gui.pose().scale(scale, scale, 1.0F);
+        gui.fill(x, y, x + boxWidth, y + boxHeight, 0x70000000);
+        gui.drawString(mc.font, Component.literal(title), x + padding, y + padding, 0xFFFFFF, true);
+        gui.drawString(mc.font, Component.literal(status), x + padding, y + padding + line,
                 status.equals("READY") || status.equals("ACTIVE") ? 0x55FF55 : 0xFFCC55, true);
         if (active.size() > 1) {
-            gui.drawString(mc.font, Component.literal(cycle), x, y + line * 2, 0xAAAAAA, true);
+            gui.drawString(mc.font, Component.literal(cycle), x + padding, y + padding + line * 2, 0xAAAAAA, true);
         }
+        gui.pose().popPose();
     }
 
     private static String keyName(KeyMapping mapping) {
