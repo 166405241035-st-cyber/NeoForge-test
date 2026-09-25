@@ -27,6 +27,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
@@ -432,18 +433,18 @@ public final class ForgedEffectEvents {
                     (int) player.getPersistentData().getLong("ForgedBlockLevitationX"),
                     (int) player.getPersistentData().getLong("ForgedBlockLevitationY"),
                     (int) player.getPersistentData().getLong("ForgedBlockLevitationZ"));
-            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
-                    new AABB(levPos).inflate(2.5D))) {
-                drop.setNoGravity(true);
-                drop.setDeltaMovement(0.0D, 0.06D, 0.0D);
+            for (FallingBlockEntity falling : player.level().getEntitiesOfClass(FallingBlockEntity.class,
+                    new AABB(levPos).inflate(4.0D))) {
+                falling.setNoGravity(true);
+                falling.setDeltaMovement(Vec3.ZERO);
             }
         } else if (blockLevitationUntil != 0L) {
             BlockPos levPos = new BlockPos(
                     (int) player.getPersistentData().getLong("ForgedBlockLevitationX"),
                     (int) player.getPersistentData().getLong("ForgedBlockLevitationY"),
                     (int) player.getPersistentData().getLong("ForgedBlockLevitationZ"));
-            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
-                    new AABB(levPos).inflate(4.0D))) drop.setNoGravity(false);
+            for (FallingBlockEntity falling : player.level().getEntitiesOfClass(FallingBlockEntity.class,
+                    new AABB(levPos).inflate(6.0D))) falling.setNoGravity(false);
             player.getPersistentData().putLong("ForgedBlockLevitationUntil", 0L);
         }
 
@@ -598,14 +599,12 @@ public final class ForgedEffectEvents {
         }
 
         EffectTier blockLevitation = ForgedEffectRuntime.tier(tool, ForgingEffect.BLOCK_LEVITATION);
-        if (blockLevitation != null && canUseTimedTrigger(player, "BlockLevitation", 60L)) {
+        if (blockLevitation != null) {
             int duration = switch (blockLevitation) { case I -> 40; case II -> 80; case III -> 120; };
             player.getPersistentData().putLong("ForgedBlockLevitationUntil", player.level().getGameTime() + duration);
             player.getPersistentData().putLong("ForgedBlockLevitationX", event.getPos().getX());
             player.getPersistentData().putLong("ForgedBlockLevitationY", event.getPos().getY());
             player.getPersistentData().putLong("ForgedBlockLevitationZ", event.getPos().getZ());
-            if (tool.isDamageableItem())
-                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
         }
 
         EffectTier ultimateLaserFortune = ForgedEffectRuntime.tier(tool, ForgingEffect.ULTIMATE_LASER_BREAKER);
