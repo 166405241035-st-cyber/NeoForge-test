@@ -704,25 +704,26 @@ public final class ForgedActiveSkills {
     }
 
     private static LivingEntity findLookTarget(Player player, double range) {
+        // True crosshair ray: choose the first living entity whose hitbox is actually
+        // intersected by the player's view ray instead of using a wide aim cone.
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getLookAngle().normalize();
-        AABB search = player.getBoundingBox().expandTowards(look.scale(range)).inflate(2.0D);
+        Vec3 end = eye.add(look.scale(range));
+        AABB search = player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0D);
 
         LivingEntity best = null;
         double bestDistance = range * range;
 
         for (LivingEntity entity : player.level().getEntitiesOfClass(
                 LivingEntity.class, search, e -> e != player && e.isAlive())) {
-            Vec3 toTarget = entity.getBoundingBox().getCenter().subtract(eye);
-            double distance = toTarget.length();
-            if (distance > range) continue;
+            AABB hitbox = entity.getBoundingBox().inflate(0.30D);
+            java.util.Optional<Vec3> hit = hitbox.clip(eye, end);
+            if (hit.isEmpty()) continue;
 
-            double dot = look.dot(toTarget.normalize());
-            if (dot < 0.80D) continue;
-
-            if (distance * distance < bestDistance) {
+            double distance = eye.distanceToSqr(hit.get());
+            if (distance < bestDistance) {
                 best = entity;
-                bestDistance = distance * distance;
+                bestDistance = distance;
             }
         }
         return best;
