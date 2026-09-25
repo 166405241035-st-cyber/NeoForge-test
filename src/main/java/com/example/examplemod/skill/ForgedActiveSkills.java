@@ -56,21 +56,21 @@ public final class ForgedActiveSkills {
         if (tier == null) return;
 
         switch (effect) {
-            case FIREBALL_SHOOT -> fireball(player, tier);
-            case FRONT_DASH -> frontDash(player, tier);
+            case FIREBALL_SHOOT -> fireball(player, tool, tier);
+            case FRONT_DASH -> frontDash(player, tool, tier);
             case AEGIS_SHIELD -> toggleAegis(player, tool, tier);
-            case HARPOON_PULL -> harpoonPull(player, tier);
-            case MOB_SWAP -> mobSwap(player, tier);
-            case AIR_SLASH_RUPTURE -> airSlashRupture(player, tier);
-            case LAVA_WAVE -> lavaWave(player, tier);
-            case STUN_TIME_STOP -> stunTimeStop(player, tier);
+            case HARPOON_PULL -> harpoonPull(player, tool, tier);
+            case MOB_SWAP -> mobSwap(player, tool, tier);
+            case AIR_SLASH_RUPTURE -> airSlashRupture(player, tool, tier);
+            case LAVA_WAVE -> lavaWave(player, tool, tier);
+            case STUN_TIME_STOP -> stunTimeStop(player, tool, tier);
             case GRAVATIONAL_SLAM -> gravitationalSlam(player, tier);
-            case IRON_FORTRESS_GUARD -> ironFortress(player, tier);
-            case DIVINE_BEACON_LIGHT -> divineBeaconLaser(player, tier);
-            case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tier);
-            case NATURE_GOD_BLESS -> natureGodBless(player, tier);
-            case LINE_BUILDER -> lineBuilder(player, tier);
-            case EARTHY_WALL_RISE -> earthyWallRise(player, tier);
+            case IRON_FORTRESS_GUARD -> ironFortress(player, tool, tier);
+            case DIVINE_BEACON_LIGHT -> divineBeaconLaser(player, tool, tier);
+            case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tool, tier);
+            case NATURE_GOD_BLESS -> natureGodBless(player, tool, tier);
+            case LINE_BUILDER -> lineBuilder(player, tool, tier);
+            case EARTHY_WALL_RISE -> earthyWallRise(player, tool, tier);
             case SKY_BRIDGE_WALK -> toggleSkyBridge(player, tier);
             case POCKET_DIMENSION, INTERNAL_STORAGE -> openStorage(player, tool);
             default -> {
@@ -79,9 +79,9 @@ public final class ForgedActiveSkills {
         }
     }
 
-    private static void fireball(Player player, EffectTier tier) {
+    private static void fireball(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.fireball(tier);
-        if (!ready(player, "FireballShoot", cooldown)) return;
+        if (!ready(tool, player, "FireballShoot", cooldown)) return;
 
         // Spawn slightly in front of the player's eyes so the projectile does not collide
         // with the caster immediately. Give it an explicit forward velocity for reliable firing.
@@ -92,13 +92,13 @@ public final class ForgedActiveSkills {
         fireball.setDeltaMovement(look.scale(1.35D));
         fireball.hurtMarked = true;
         player.level().addFreshEntity(fireball);
-        startCooldown(player, "FireballShoot", cooldown);
+        startCooldown(tool, player, "FireballShoot", cooldown);
         damageEquipment(player, 3);
     }
 
-    private static void frontDash(Player player, EffectTier tier) {
+    private static void frontDash(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.dash(tier);
-        if (!ready(player, "FrontDash", cooldown)) return;
+        if (!ready(tool, player, "FrontDash", cooldown)) return;
 
         Vec3 look = player.getLookAngle().normalize();
         double power = switch (tier) {
@@ -113,16 +113,16 @@ public final class ForgedActiveSkills {
                 look.z * power
         );
         player.hurtMarked = true;
-        startCooldown(player, "FrontDash", cooldown);
+        startCooldown(tool, player, "FrontDash", cooldown);
         damageEquipment(player, 2);
     }
 
-    private static void harpoonPull(Player player, EffectTier tier) {
+    private static void harpoonPull(Player player, ItemStack tool, EffectTier tier) {
         LivingEntity target = findLookTarget(player, 25.0D);
         if (target == null) return;
 
         long cooldown = ForgedSkillConfig.harpoon(tier);
-        if (!ready(player, "HarpoonPull", cooldown)) return;
+        if (!ready(tool, player, "HarpoonPull", cooldown)) return;
 
         Vec3 pull = player.position().subtract(target.position());
         if (pull.lengthSqr() < 0.01D) return;
@@ -130,11 +130,11 @@ public final class ForgedActiveSkills {
         Vec3 velocity = pull.normalize().scale(1.0D + tierIndex(tier) * 0.25D);
         target.setDeltaMovement(velocity.x, Math.max(velocity.y, 0.15D), velocity.z);
         target.hurtMarked = true;
-        startCooldown(player, "HarpoonPull", cooldown);
+        startCooldown(tool, player, "HarpoonPull", cooldown);
         damageEquipment(player, 2);
     }
 
-    private static void mobSwap(Player player, EffectTier tier) {
+    private static void mobSwap(Player player, ItemStack tool, EffectTier tier) {
         // Look farther than the usable range so we can distinguish "missed" from
         // "you are aiming at a mob, but it is too far away".
         LivingEntity target = findLookTarget(player, 64.0D);
@@ -148,7 +148,7 @@ public final class ForgedActiveSkills {
         }
 
         long cooldown = ForgedSkillConfig.swap(tier);
-        if (!ready(player, "MobSwap", cooldown)) return;
+        if (!ready(tool, player, "MobSwap", cooldown)) return;
 
         Vec3 playerPos = player.position();
         float playerYaw = player.getYRot();
@@ -162,14 +162,14 @@ public final class ForgedActiveSkills {
         target.setYRot(playerYaw);
         target.setXRot(playerPitch);
 
-        startCooldown(player, "MobSwap", cooldown);
+        startCooldown(tool, player, "MobSwap", cooldown);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: สำเร็จ"), true);
         damageEquipment(player, 3);
     }
 
-    private static void airSlashRupture(Player player, EffectTier tier) {
+    private static void airSlashRupture(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.airSlash(tier);
-        if (!ready(player, "AirSlashRupture", cooldown)) return;
+        if (!ready(tool, player, "AirSlashRupture", cooldown)) return;
 
         double damage = 6.0D; // 3 hearts for every Tier.
 
@@ -187,13 +187,13 @@ public final class ForgedActiveSkills {
             target.hurtMarked = true;
         }
 
-        startCooldown(player, "AirSlashRupture", cooldown);
+        startCooldown(tool, player, "AirSlashRupture", cooldown);
         damageEquipment(player, 4);
     }
 
-    private static void lavaWave(Player player, EffectTier tier) {
+    private static void lavaWave(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.lava(tier);
-        if (!ready(player, "LavaWave", cooldown)) return;
+        if (!ready(tool, player, "LavaWave", cooldown)) return;
 
         Vec3 view = player.getLookAngle();
         Vec3 look = new Vec3(view.x, 0.0D, view.z);
@@ -226,13 +226,13 @@ public final class ForgedActiveSkills {
                 target.hurtMarked = true;
             }
         }
-        startCooldown(player, "LavaWave", cooldown);
+        startCooldown(tool, player, "LavaWave", cooldown);
         damageEquipment(player, 6);
     }
 
-    private static void stunTimeStop(Player player, EffectTier tier) {
+    private static void stunTimeStop(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.timeStop(tier);
-        if (!ready(player, "StunTimeStop", cooldown)) return;
+        if (!ready(tool, player, "StunTimeStop", cooldown)) return;
 
         int duration = switch (tier) {
             case I -> 100;   // 5 sec
@@ -280,14 +280,14 @@ public final class ForgedActiveSkills {
             ForgedEffectNetwork.sendTimeStopShake(serverPlayer, 12); // ~0.6 sec
         }
 
-        startCooldown(player, "StunTimeStop", cooldown);
+        startCooldown(tool, player, "StunTimeStop", cooldown);
         damageEquipment(player, 8);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Stun Time Stop!"), true);
     }
 
-    private static void gravitationalSlam(Player player, EffectTier tier) {
+    private static void gravitationalSlam(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.gravitationalSlam(tier);
-        if (!ready(player, "GravitationalSlam", cooldown)) return;
+        if (!ready(tool, player, "GravitationalSlam", cooldown)) return;
         long now = player.level().getGameTime();
         if (player.getPersistentData().getLong("ForgedGravitationalSlamUntil") > now) return;
 
@@ -298,11 +298,11 @@ public final class ForgedActiveSkills {
         player.getPersistentData().putDouble("ForgedGravitationalSlamZ", player.getZ());
         player.getPersistentData().putBoolean("ForgedGravitationalSlamOldInvulnerable", player.isInvulnerable());
         player.setInvulnerable(true);
-        startCooldown(player, "GravitationalSlam", cooldown);
+        startCooldown(tool, player, "GravitationalSlam", cooldown);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam: Charging..."), true);
     }
 
-    private static void releaseGravitationalSlam(Player player) {
+    private static void releaseGravitationalSlam(Player player, ItemStack tool) {
         double x = player.getPersistentData().getDouble("ForgedGravitationalSlamX");
         double y = player.getPersistentData().getDouble("ForgedGravitationalSlamY");
         double z = player.getPersistentData().getDouble("ForgedGravitationalSlamZ");
@@ -324,10 +324,10 @@ public final class ForgedActiveSkills {
 
         // Each target killed by the Slam immediately refunds 10 seconds of its cooldown.
         if (killedBySlam > 0) {
-            String key = "ForgedActiveCooldown_GravitationalSlam";
-            long readyAt = player.getPersistentData().getLong(key);
+            String key = "GravitationalSlam";
+            long readyAt = itemCooldownReadyAt(tool, key);
             long reduced = Math.max(player.level().getGameTime(), readyAt - killedBySlam * 200L);
-            player.getPersistentData().putLong(key, reduced);
+            setItemCooldownReadyAt(tool, key, reduced);
             player.displayClientMessage(net.minecraft.network.chat.Component.literal(
                     "Gravitational Slam cooldown reduced by " + (killedBySlam * 10) + "s!"), true);
         }
@@ -346,9 +346,9 @@ public final class ForgedActiveSkills {
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam!"), true);
     }
 
-    private static void ironFortress(Player player, EffectTier tier) {
+    private static void ironFortress(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.fortress(tier);
-        if (!ready(player, "IronFortressGuard", cooldown)) return;
+        if (!ready(tool, player, "IronFortressGuard", cooldown)) return;
 
         long duration = switch (tier) {
             case I -> 40L;
@@ -357,13 +357,13 @@ public final class ForgedActiveSkills {
         };
         player.getPersistentData().putLong("ForgedIronFortressUntil", player.level().getGameTime() + duration);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Iron Fortress Guard: ON"), true);
-        startCooldown(player, "IronFortressGuard", cooldown + duration);
+        startCooldown(tool, player, "IronFortressGuard", cooldown + duration);
         damageEquipment(player, 8);
     }
 
-    private static void divineBeaconLaser(Player player, EffectTier tier) {
+    private static void divineBeaconLaser(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.divine(tier); // Defaults: 7.5 / 5 / 3 sec.
-        if (!ready(player, "DivineBeaconLight", cooldown)) return;
+        if (!ready(tool, player, "DivineBeaconLight", cooldown)) return;
 
         // Keep the beam active for 5 seconds. Damage is handled by tickWorldEffects
         // every 6 ticks (0.3 sec), so the player can keep aiming during the beam.
@@ -371,13 +371,13 @@ public final class ForgedActiveSkills {
         player.getPersistentData().putLong("ForgedDivineBeaconUntil", now + 100L);
         player.getPersistentData().putLong("ForgedDivineBeaconNextHit", now);
 
-        startCooldown(player, "DivineBeaconLight", cooldown);
+        startCooldown(tool, player, "DivineBeaconLight", cooldown);
         damageEquipment(player, 6);
     }
 
-    private static void ultimateLaser(Player player, EffectTier tier) {
+    private static void ultimateLaser(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.laser(tier);
-        if (!ready(player, "UltimateLaserBreaker", cooldown)) return;
+        if (!ready(tool, player, "UltimateLaserBreaker", cooldown)) return;
 
         Vec3 start = player.getEyePosition();
         Vec3 look = player.getLookAngle().normalize();
@@ -399,13 +399,13 @@ public final class ForgedActiveSkills {
         }
         player.level().addParticle(net.minecraft.core.particles.ParticleTypes.END_ROD,
                 start.x, start.y, start.z, look.x, look.y, look.z);
-        startCooldown(player, "UltimateLaserBreaker", cooldown);
+        startCooldown(tool, player, "UltimateLaserBreaker", cooldown);
         damageEquipment(player, 12);
     }
 
-    private static void natureGodBless(Player player, EffectTier tier) {
+    private static void natureGodBless(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.nature(tier);
-        if (!ready(player, "NatureGodBless", cooldown)) return;
+        if (!ready(tool, player, "NatureGodBless", cooldown)) return;
 
         int chance = tier == EffectTier.I ? 5 : tier == EffectTier.II ? 10 : 20;
         if (player.getRandom().nextInt(100) < chance) {
@@ -416,7 +416,7 @@ public final class ForgedActiveSkills {
         } else {
             player.displayClientMessage(net.minecraft.network.chat.Component.literal("Nature God Bless: ไม่ได้รับรางวัล"), true);
         }
-        startCooldown(player, "NatureGodBless", cooldown);
+        startCooldown(tool, player, "NatureGodBless", cooldown);
         damageEquipment(player, 8);
     }
 
@@ -428,9 +428,9 @@ public final class ForgedActiveSkills {
                 net.minecraft.network.chat.Component.literal("Forged Storage")));
     }
 
-    private static void lineBuilder(Player player, EffectTier tier) {
+    private static void lineBuilder(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = 40L; // fixed 2 sec
-        if (!ready(player, "LineBuilder", cooldown)) return;
+        if (!ready(tool, player, "LineBuilder", cooldown)) return;
         ItemStack offhand = player.getOffhandItem();
         if (!(offhand.getItem() instanceof net.minecraft.world.item.BlockItem blockItem) || offhand.isEmpty()) {
             player.displayClientMessage(net.minecraft.network.chat.Component.literal("Line Builder: ถือบล็อกไว้มือซ้าย"), true);
@@ -447,13 +447,13 @@ public final class ForgedActiveSkills {
             placed++;
         }
         if (placed == 0) return;
-        startCooldown(player, "LineBuilder", cooldown);
+        startCooldown(tool, player, "LineBuilder", cooldown);
         damageEquipment(player, switch (tier) { case I -> 5; case II -> 3; case III -> 1; });
     }
 
-    private static void earthyWallRise(Player player, EffectTier tier) {
+    private static void earthyWallRise(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = switch (tier) { case I -> 160L; case II -> 100L; case III -> 60L; };
-        if (!ready(player, "EarthyWallRise", cooldown)) return;
+        if (!ready(tool, player, "EarthyWallRise", cooldown)) return;
         net.minecraft.core.Direction forward = player.getDirection();
         net.minecraft.core.Direction side = forward.getClockWise();
         BlockPos center = player.blockPosition().relative(forward, 2);
@@ -466,7 +466,7 @@ public final class ForgedActiveSkills {
             }
         }
         if (placed == 0) return;
-        startCooldown(player, "EarthyWallRise", cooldown);
+        startCooldown(tool, player, "EarthyWallRise", cooldown);
         damageEquipment(player, 4);
     }
 
@@ -536,7 +536,7 @@ public final class ForgedActiveSkills {
         long slamUntil = player.getPersistentData().getLong("ForgedGravitationalSlamUntil");
         if (slamUntil > 0L) {
             if (now >= slamUntil) {
-                releaseGravitationalSlam(player);
+                releaseGravitationalSlam(player, tool);
             } else {
                 double x = player.getPersistentData().getDouble("ForgedGravitationalSlamX");
                 double y = player.getPersistentData().getDouble("ForgedGravitationalSlamY");
@@ -720,32 +720,43 @@ public final class ForgedActiveSkills {
     private static void syncHud(Player player, ForgingEffect effect, int selectedIndex) {
         if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return;
         String key = cooldownKey(effect);
-        long readyAt = key == null ? 0L
-                : player.getPersistentData().getLong("ForgedActiveCooldown_" + key);
+        ItemStack tool = player.getMainHandItem();
+        long readyAt = key == null ? 0L : itemCooldownReadyAt(tool, key);
         ForgedEffectNetwork.sendHudState(serverPlayer, selectedIndex, key, readyAt,
                 player.getPersistentData().getLong("ForgedGravitationalSlamUntil"),
                 player.getPersistentData().getBoolean("ForgedAegisActive"));
     }
 
-    public static long cooldownRemaining(Player player, ForgingEffect effect) {
+    public static long cooldownRemaining(Player player, ItemStack tool, ForgingEffect effect) {
         String key = cooldownKey(effect);
-        if (key == null) return 0L;
-        return Math.max(0L, player.getPersistentData().getLong("ForgedActiveCooldown_" + key)
-                - player.level().getGameTime());
+        if (key == null || tool.isEmpty()) return 0L;
+        return Math.max(0L, itemCooldownReadyAt(tool, key) - player.level().getGameTime());
     }
 
-    private static boolean ready(Player player, String key, long cooldownTicks) {
-        String dataKey = "ForgedActiveCooldown_" + key;
+    private static String itemCooldownKey(String key) {
+        return "forgedCooldown_" + key;
+    }
+
+    private static long itemCooldownReadyAt(ItemStack tool, String key) {
+        net.minecraft.world.item.component.CustomData data =
+                tool.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        return data == null ? 0L : data.copyTag().getLong(itemCooldownKey(key));
+    }
+
+    private static void setItemCooldownReadyAt(ItemStack tool, String key, long readyAt) {
+        net.minecraft.world.item.component.CustomData.update(
+                net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                tool,
+                tag -> tag.putLong(itemCooldownKey(key), readyAt));
+    }
+
+    private static boolean ready(ItemStack tool, Player player, String key, long cooldownTicks) {
         long now = player.level().getGameTime();
-        long readyAt = player.getPersistentData().getLong(dataKey);
-        return now >= readyAt;
+        return now >= itemCooldownReadyAt(tool, key);
     }
 
-    private static void startCooldown(Player player, String key, long cooldownTicks) {
-        player.getPersistentData().putLong(
-                "ForgedActiveCooldown_" + key,
-                player.level().getGameTime() + cooldownTicks
-        );
+    private static void startCooldown(ItemStack tool, Player player, String key, long cooldownTicks) {
+        setItemCooldownReadyAt(tool, key, player.level().getGameTime() + cooldownTicks);
     }
 
     private static void damageEquipment(Player player, int amount) {
