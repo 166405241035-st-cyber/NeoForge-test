@@ -65,7 +65,7 @@ public final class ForgedSkillHud {
         final float scale = 0.75F;
         final int padding = 3;
         final int line = mc.font.lineHeight + 1;
-        String cycle = active.size() > 1 ? "[Shift + R] Change" : "";
+        String controls = active.size() > 1 ? "[R] Use   [Shift+R] Change" : "[R] Use";
 
         List<String> rows = new java.util.ArrayList<>();
         List<Integer> colors = new java.util.ArrayList<>();
@@ -85,15 +85,16 @@ public final class ForgedSkillHud {
             }
 
             String marker = i == selected ? "> " : "  ";
-            rows.add(marker + "[R] " + skill.displayName() + "   " + status);
+            String shortName = skill == ForgingEffect.DIVINE_BEACON_LIGHT ? "Divine Beacon" : skill.displayName();
+            rows.add(marker + shortName + "   " + status);
             colors.add(i == selected ? 0xFFFFFF
                     : (status.equals("READY") || status.equals("ACTIVE") ? 0xB8FFB8 : 0xFFD27F));
         }
 
-        int contentWidth = mc.font.width(cycle);
+        int contentWidth = 0;
         for (String row : rows) contentWidth = Math.max(contentWidth, mc.font.width(row));
         int boxWidth = contentWidth + padding * 2;
-        int boxHeight = (rows.size() + (active.size() > 1 ? 1 : 0)) * line + padding * 2;
+        int boxHeight = rows.size() * line + padding * 2;
 
         int scaledScreenWidth = (int)(gui.guiWidth() / scale);
         int scaledScreenHeight = (int)(gui.guiHeight() / scale);
@@ -107,11 +108,13 @@ public final class ForgedSkillHud {
             gui.drawString(mc.font, Component.literal(rows.get(i)),
                     x + padding, y + padding + line * i, colors.get(i), true);
         }
-        if (active.size() > 1) {
-            gui.drawString(mc.font, Component.literal(cycle),
-                    x + padding, y + padding + line * rows.size(), 0xAAAAAA, true);
-        }
         gui.pose().popPose();
+
+        // Controls are separate from the skill list: centered just above the hunger bar.
+        int controlsWidth = mc.font.width(controls);
+        int controlsX = (gui.guiWidth() - controlsWidth) / 2;
+        int controlsY = gui.guiHeight() - 52;
+        gui.drawString(mc.font, Component.literal(controls), controlsX, controlsY, 0xFFFFFF, true);
     }
 
     private static String keyName(KeyMapping mapping) {
