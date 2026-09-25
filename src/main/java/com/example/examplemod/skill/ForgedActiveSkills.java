@@ -419,28 +419,48 @@ public final class ForgedActiveSkills {
         long cooldown = ForgedSkillConfig.laser(tier);
         if (!ready(tool, player, "UltimateLaserBreaker", cooldown)) return;
 
-        Vec3 start = player.getEyePosition();
-        Vec3 look = player.getLookAngle().normalize();
-        double damage = tier == EffectTier.I ? 8.0D : tier == EffectTier.II ? 12.0D : 16.0D;
+        // Mining-only laser: 3 blocks wide x 16 blocks forward. It never damages entities.
+        Direction forward = player.getDirection();
+        Direction side = forward.getClockWise();
+        BlockPos origin = player.blockPosition().above();
+        int broken = 0;
 
-        for (int i = 1; i <= 16; i++) {
-            Vec3 point = start.add(look.scale(i));
-            AABB area = new AABB(point.x - 0.8D, point.y - 0.8D, point.z - 0.8D,
-                    point.x + 0.8D, point.y + 0.8D, point.z + 0.8D);
-            for (LivingEntity target : player.level().getEntitiesOfClass(
-                    LivingEntity.class, area, e -> e != player && e.isAlive())) {
-                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
-                try {
-                    target.hurt(player.damageSources().playerAttack(player), (float) damage);
-                } finally {
-                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+        player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
+        try {
+            for (int distance = 1; distance <= 16; distance++) {
+                BlockPos center = origin.relative(forward, distance);
+                for (int width = -1; width <= 1; width++) {
+                    BlockPos pos = center.relative(side, width);
+                    if (player.level().getBlockState(pos).isAir()) continue;
+
+                    // Ultimate Laser Breaker is allowed to break every block, including
+                    // normally-unbreakable blocks. Drops are preserved where Minecraft permits them.
+                    if (player.level().destroyBlock(pos, true, player)) {
+                        broken++;
+                    } else {
+                        player.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                        broken++;
+                    }
                 }
             }
+        } finally {
+            player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
         }
-        player.level().addParticle(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                start.x, start.y, start.z, look.x, look.y, look.z);
-        startCooldown(tool, player, "UltimateLaserBreaker", cooldown);
-        damageEquipment(player, 12);
+
+        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+            Vec3 start = player.getEyePosition();
+            Vec3 look = player.getLookAngle().normalize();
+            for (double d = 0.5D; d <= 16.0D; d += 0.5D) {
+                Vec3 point = start.add(look.scale(d));
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                        point.x, point.y, point.z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
+            }
+        }
+
+        if (broken > 0) {
+            startCooldown(tool, player, "UltimateLaserBreaker", cooldown);
+            damageEquipment(player, 12);
+        }
     }
 
     private static void natureGodBless(Player player, ItemStack tool, EffectTier tier) {
