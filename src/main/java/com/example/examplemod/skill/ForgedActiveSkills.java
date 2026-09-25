@@ -71,6 +71,10 @@ public final class ForgedActiveSkills {
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tool, tier);
             case BLOCK_LEVITATION -> blockLevitation(player, tool, tier);
             case MAGNETIC_CLUMPING -> magneticClumping(player, tool, tier);
+            case ROUGH_CLEAVE_3X3 -> miningSweep(player, tool, tier, effect, 3, 3, 1, 160L, 120L, 80L);
+            case TUNNEL_CHARGE_3X1 -> miningSweep(player, tool, tier, effect, 3, 1, 1, 160L, 120L, 80L);
+            case LINEAR_BLAST_1X5 -> miningSweep(player, tool, tier, effect, 1, 1, 5, 200L, 140L, 100L);
+            case WIDE_EXCAVATION_4X4 -> miningSweep(player, tool, tier, effect, 4, 4, 1, 200L, 140L, 80L);
             case LINEAR_PENETRATION_3X15 -> linearPenetration(player, tool, tier);
             case OBSIDIAN_BREAKER -> obsidianBreaker(player, tool, tier);
             case NATURE_GOD_BLESS -> natureGodBless(player, tool, tier);
@@ -494,6 +498,80 @@ public final class ForgedActiveSkills {
         return ((net.minecraft.world.phys.BlockHitResult) hit).getBlockPos();
     }
 
+    /**
+     * Shared active R implementation for the four area-mining skills.
+     * A bright END_ROD trail sweeps from the player's view into the selected block volume,
+     * giving the moving-energy / Silver-Surfer-style visual requested for this family.
+     */
+    private static void miningSweep(Player player, ItemStack tool, EffectTier tier, ForgingEffect effect,
+                                    int width, int height, int depth,
+                                    long cooldownI, long cooldownII, long cooldownIII) {
+        String key = cooldownKey(effect);
+        long cooldown = switch (tier) { case I -> cooldownI; case II -> cooldownII; case III -> cooldownIII; };
+        if (key == null || !ready(tool, player, key, cooldown)) return;
+        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
+
+        net.minecraft.world.phys.HitResult rawHit = player.pick(8.0D, 0.0F, false);
+        if (!(rawHit instanceof net.minecraft.world.phys.BlockHitResult hit)) return;
+
+        BlockPos origin = hit.getBlockPos();
+        Direction depthDirection = hit.getDirection().getOpposite();
+        Direction right = depthDirection.getAxis() == Direction.Axis.Y ? Direction.EAST
+                : (depthDirection.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST);
+        Direction up = depthDirection.getAxis() == Direction.Axis.Y ? Direction.SOUTH : Direction.UP;
+
+        int w0 = -(width / 2);
+        int h0 = -(height / 2);
+        java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
+        for (int d = 0; d < depth; d++) {
+            BlockPos center = origin.relative(depthDirection, d);
+            for (int w = 0; w < width; w++) {
+                for (int h = 0; h < height; h++) {
+                    targets.add(center.relative(right, w0 + w).relative(up, h0 + h));
+                }
+            }
+        }
+
+        // Travelling energy trail from the player to the hit point, followed by a sweep
+        // across every affected block so the shape of the skill is visible.
+        Vec3 eye = player.getEyePosition();
+        Vec3 hitPoint = hit.getLocation();
+        Vec3 ray = hitPoint.subtract(eye);
+        double rayLength = ray.length();
+        if (rayLength > 0.01D) {
+            Vec3 rayDir = ray.normalize();
+            for (double d = 0.25D; d <= rayLength; d += 0.22D) {
+                Vec3 point = eye.add(rayDir.scale(d));
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                        point.x, point.y, point.z, 1, 0.025D, 0.025D, 0.025D, 0.0D);
+            }
+        }
+        for (BlockPos pos : targets) {
+            Vec3 point = Vec3.atCenterOf(pos);
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                    point.x, point.y, point.z, 3, 0.22D, 0.22D, 0.22D, 0.015D);
+        }
+
+        int broken = 0;
+        player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
+        try {
+            for (BlockPos pos : targets) {
+                var state = level.getBlockState(pos);
+                if (state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) continue;
+                if (level.destroyBlock(pos, true, player)) broken++;
+            }
+        } finally {
+            player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
+        }
+
+        if (broken > 0) {
+            startCooldown(tool, player, key, cooldown);
+            int extraCost = (broken + 1) / 2;
+            if (tool.isDamageableItem())
+                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + extraCost));
+        }
+    }
+
     private static void linearPenetration(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = switch (tier) { case I -> 400L; case II -> 280L; case III -> 180L; };
         if (!ready(tool, player, "LinearPenetration3x15", cooldown)) return;
@@ -899,7 +977,9 @@ public final class ForgedActiveSkills {
             case FIREBALL_SHOOT, FRONT_DASH, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
                  STUN_TIME_STOP, GRAVATIONAL_SLAM, IRON_FORTRESS_GUARD, DIVINE_BEACON_LIGHT,
-                 ULTIMATE_LASER_BREAKER, BLOCK_LEVITATION, MAGNETIC_CLUMPING, LINEAR_PENETRATION_3X15, OBSIDIAN_BREAKER,
+                 ULTIMATE_LASER_BREAKER, BLOCK_LEVITATION, MAGNETIC_CLUMPING,
+                 ROUGH_CLEAVE_3X3, TUNNEL_CHARGE_3X1, LINEAR_BLAST_1X5, WIDE_EXCAVATION_4X4,
+                 LINEAR_PENETRATION_3X15, OBSIDIAN_BREAKER,
                  NATURE_GOD_BLESS, LINE_BUILDER, EARTHY_WALL_RISE,
                  SKY_BRIDGE_WALK, POCKET_DIMENSION, INTERNAL_STORAGE -> true;
             default -> false;
@@ -952,6 +1032,10 @@ public final class ForgedActiveSkills {
             case DIVINE_BEACON_LIGHT -> "DivineBeaconLight";
             case ULTIMATE_LASER_BREAKER -> "UltimateLaserBreaker";
             case MAGNETIC_CLUMPING -> "MagneticClumping";
+            case ROUGH_CLEAVE_3X3 -> "RoughCleave3x3";
+            case TUNNEL_CHARGE_3X1 -> "TunnelCharge3x1";
+            case LINEAR_BLAST_1X5 -> "LinearBlast1x5";
+            case WIDE_EXCAVATION_4X4 -> "WideExcavation4x4";
             case LINEAR_PENETRATION_3X15 -> "LinearPenetration3x15";
             case NATURE_GOD_BLESS -> "NatureGodBless";
             case LINE_BUILDER -> "LineBuilder";
