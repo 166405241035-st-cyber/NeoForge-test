@@ -65,7 +65,7 @@ public final class ForgedEffectEvents {
     private static final float[] WITHER_DRAIN_HEAL = {1.0F, 2.0F, 3.0F};
     private static final double[] CRITICAL_BLAST_CHANCE = {0.15D, 0.25D, 0.40D};
     private static final double[] VELOCITY_STRIKE_MAX_BONUS = {0.30D, 0.60D, 1.00D};
-    private static final double[] AIRBORNE_MINING_SPEED = {0.50D, 1.00D, 1.50D};
+    private static final double[] AIRBORNE_MINING_SPEED = {0.25D, 0.45D, 0.70D};
     private static final int[] SELF_REPAIR_AMOUNT = {2, 5, 10};
     private static final double[] HEALING_HARVEST_CHANCE = {0.05D, 0.10D, 0.18D};
     private static final double[] MOISTURE_RETAIN_CHANCE = {0.25D, 0.50D, 0.75D};
@@ -506,9 +506,15 @@ public final class ForgedEffectEvents {
         }
 
         EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
-        if (frenzy != null && player.swinging) {
-            int amp = switch (frenzy) { case I -> 0; case II -> 1; case III -> 2; };
-            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 30, amp, false, false));
+        if (frenzy != null) {
+            long lastMine = player.getPersistentData().getLong("ForgedFrenzyLastMine");
+            // A successful block break keeps Frenzy alive. Five seconds without mining resets it.
+            if (lastMine > 0L && now - lastMine <= 100L) {
+                int amp = switch (frenzy) { case I -> 0; case II -> 1; case III -> 2; };
+                player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 10, amp, false, false));
+            } else if (lastMine > 0L) {
+                player.getPersistentData().remove("ForgedFrenzyLastMine");
+            }
         }
     }
 
@@ -536,6 +542,10 @@ public final class ForgedEffectEvents {
         Player player = event.getPlayer();
         if (player.level().isClientSide()) return;
         ItemStack tool = player.getMainHandItem();
+
+        if (ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING) != null) {
+            player.getPersistentData().putLong("ForgedFrenzyLastMine", player.level().getGameTime());
+        }
 
         // Multi-block mining skills. Generated block breaks are guarded so they do not
         // recursively trigger another forged mining skill.
@@ -640,13 +650,13 @@ public final class ForgedEffectEvents {
                     || event.getState().is(Blocks.NETHER_GOLD_ORE)) smelted = Items.GOLD_INGOT;
             else if (event.getState().is(Blocks.COPPER_ORE) || event.getState().is(Blocks.DEEPSLATE_COPPER_ORE)) smelted = Items.COPPER_INGOT;
             if (smelted != null) {
-                int bonus = switch (autoSmelt) {
-                    case I -> player.getRandom().nextDouble() < 0.20D ? 1 : 0;
-                    case II -> player.getRandom().nextDouble() < 0.40D ? 1 : 0;
-                    case III -> player.getRandom().nextDouble() < 0.60D ? 1 : 0;
+                int output = switch (autoSmelt) {
+                    case I -> 1;
+                    case II -> 1 + (player.getRandom().nextBoolean() ? 1 : 0);
+                    case III -> 2;
                 };
-                // Vanilla ore drop still occurs; this prototype adds the guaranteed smelted result.
-                Block.popResource(player.level(), event.getPos(), new ItemStack(smelted, 1 + bonus));
+                // Tier I = 1x, Tier II = 1x plus a 50% chance for one extra, Tier III = 2x.
+                Block.popResource(player.level(), event.getPos(), new ItemStack(smelted, output));
             }
         }
 
