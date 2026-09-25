@@ -308,11 +308,14 @@ public final class ForgedActiveSkills {
         double z = player.getPersistentData().getDouble("ForgedGravitationalSlamZ");
         Vec3 center = new Vec3(x, y, z);
 
-        // 3x3 horizontal blast area (1.5 blocks from center), 120 damage, no block damage.
+        // 18-block spherical blast radius, 120 damage, no block damage.
         int killedBySlam = 0;
-        AABB blast = new AABB(x - 1.5D, y - 1.5D, z - 1.5D, x + 1.5D, y + 1.5D, z + 1.5D);
+        double blastRadius = 18.0D;
+        AABB blast = new AABB(x - blastRadius, y - blastRadius, z - blastRadius,
+                x + blastRadius, y + blastRadius, z + blastRadius);
         for (LivingEntity target : player.level().getEntitiesOfClass(
-                LivingEntity.class, blast, e -> e != player && e.isAlive())) {
+                LivingEntity.class, blast,
+                e -> e != player && e.isAlive() && e.distanceToSqr(center) <= blastRadius * blastRadius)) {
             player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
             try {
                 target.hurt(player.damageSources().playerAttack(player), 120.0F);
