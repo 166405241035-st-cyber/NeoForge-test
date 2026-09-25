@@ -34,11 +34,11 @@ public final class ForgedSkillConfig {
          .push("active_skill_cooldowns");
 
         FIREBALL_I = value(b,"fireball_shoot","tier_i",4.0); FIREBALL_II=value(b,"fireball_shoot","tier_ii",2.5); FIREBALL_III=value(b,"fireball_shoot","tier_iii",1.5);
-        DASH_I=value(b,"front_dash","tier_i",3.5); DASH_II=value(b,"front_dash","tier_ii",2.25); DASH_III=value(b,"front_dash","tier_iii",1.5);
+        DASH_I=value(b,"front_dash","tier_i",7.0); DASH_II=value(b,"front_dash","tier_ii",4.5); DASH_III=value(b,"front_dash","tier_iii",3.0);
         WITHER_I=value(b,"wither_curse_power","tier_i",10.0); WITHER_II=value(b,"wither_curse_power","tier_ii",10.0); WITHER_III=value(b,"wither_curse_power","tier_iii",10.0);
         HARPOON_I=value(b,"harpoon_pull","tier_i",3.0); HARPOON_II=value(b,"harpoon_pull","tier_ii",2.0); HARPOON_III=value(b,"harpoon_pull","tier_iii",1.25);
         SWAP_I=value(b,"mob_swap","tier_i",6.0); SWAP_II=value(b,"mob_swap","tier_ii",4.0); SWAP_III=value(b,"mob_swap","tier_iii",2.5);
-        AIR_SLASH_I=value(b,"air_slash_rupture","tier_i",5.0); AIR_SLASH_II=value(b,"air_slash_rupture","tier_ii",3.5); AIR_SLASH_III=value(b,"air_slash_rupture","tier_iii",2.0);
+        AIR_SLASH_I=value(b,"air_slash_rupture","tier_i",10.0); AIR_SLASH_II=value(b,"air_slash_rupture","tier_ii",7.0); AIR_SLASH_III=value(b,"air_slash_rupture","tier_iii",4.0);
         LAVA_I=value(b,"lava_wave","tier_i",7.5); LAVA_II=value(b,"lava_wave","tier_ii",5.0); LAVA_III=value(b,"lava_wave","tier_iii",3.5);
         TIME_STOP_I=value(b,"stun_time_stop","tier_i",7.5); TIME_STOP_II=value(b,"stun_time_stop","tier_ii",7.5); TIME_STOP_III=value(b,"stun_time_stop","tier_iii",7.5);
         FORTRESS_I=value(b,"iron_fortress_guard","tier_i",7.5); FORTRESS_II=value(b,"iron_fortress_guard","tier_ii",7.5); FORTRESS_III=value(b,"iron_fortress_guard","tier_iii",7.5);
