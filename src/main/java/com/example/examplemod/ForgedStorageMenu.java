@@ -53,7 +53,7 @@ public class ForgedStorageMenu extends AbstractContainerMenu {
         EffectTier pocket = ForgedEffectRuntime.tier(tool, ForgingEffect.POCKET_DIMENSION);
         EffectTier internal = ForgedEffectRuntime.tier(tool, ForgingEffect.INTERNAL_STORAGE);
         int size = 0;
-        if (pocket != null) size = Math.max(size, switch(pocket){case I->9;case II->18;case III->27;});
+        if (pocket != null) size = Math.max(size, switch(pocket){case I->4;case II->8;case III->15;});
         if (internal != null) size = Math.max(size, switch(internal){case I->18;case II->27;case III->36;});
         return size;
     }
