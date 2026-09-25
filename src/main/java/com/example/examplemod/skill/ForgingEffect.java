@@ -47,13 +47,13 @@ public enum ForgingEffect {
     RIFT_TELEPORT_ATTACK("Rift Teleport Attack", MonsterMaterial.ENDER, EffectCategory.ATTACK),
     VOID_VACUUM_PICK("Void Vacuum Pick", MonsterMaterial.ENDER, EffectCategory.MINING),
     LINE_BUILDER("Line Builder", MonsterMaterial.ENDER, EffectCategory.MINING),
-    POCKET_DIMENSION("Pocket Dimension", MonsterMaterial.ENDER, EffectCategory.FARMING),
+    POCKET_DIMENSION("Pocket Dimension", MonsterMaterial.ENDER, EffectCategory.MINING),
 
     FIREBALL_SHOOT("Fireball Shoot", MonsterMaterial.BLAZE_ROD, EffectCategory.ATTACK),
     LAVA_WAVE("Lava Wave", MonsterMaterial.BLAZE_ROD, EffectCategory.ATTACK),
     FRENZY_DIGGING("Frenzy Digging", MonsterMaterial.BLAZE_ROD, EffectCategory.MINING),
     THERMAL_CROP_BARRIER("Thermal Crop Barrier", MonsterMaterial.BLAZE_ROD, EffectCategory.MINING),
-    AUTO_SMELT_MINING("Auto-Smelt Mining", MonsterMaterial.BLAZE_ROD, EffectCategory.FARMING),
+    AUTO_SMELT_MINING("Auto-Smelt Mining", MonsterMaterial.BLAZE_ROD, EffectCategory.MINING),
 
     AEGIS_SHIELD("Aegis Shield", MonsterMaterial.GHAST_TEAR, EffectCategory.ATTACK),
     VAMPIRIC_VITALITY("Vampiric Vitality", MonsterMaterial.GHAST_TEAR, EffectCategory.ATTACK),
