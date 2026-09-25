@@ -624,6 +624,29 @@ public final class ForgedEffectEvents {
     }
 
     @SubscribeEvent
+    public static void onUltimateBedrockLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) return;
+
+        ItemStack tool = player.getMainHandItem();
+        if (ForgedEffectRuntime.tier(tool, ForgingEffect.ULTIMATE_LASER_BREAKER) == null) return;
+
+        BlockPos pos = event.getPos();
+        if (!player.level().getBlockState(pos).is(Blocks.BEDROCK)) return;
+
+        // Vanilla never reaches BreakEvent for Bedrock in Survival because hardness is -1.
+        // Ultimate therefore handles the mining action at left-click, removes the block,
+        // and explicitly drops the collectible Bedrock item.
+        event.setCanceled(true);
+        player.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        Block.popResource(player.level(), pos, new ItemStack(Blocks.BEDROCK));
+
+        if (!player.getAbilities().instabuild && tool.isDamageableItem()) {
+            tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
+        }
+    }
+
+    @SubscribeEvent
     public static void onUltimateBedrockBreak(BlockEvent.BreakEvent event) {
         if (!(event.getPlayer() instanceof Player player)) return;
         ItemStack tool = player.getMainHandItem();
