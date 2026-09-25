@@ -303,6 +303,18 @@ public final class ForgedEffectEvents {
         ItemStack tool = player.getMainHandItem();
         long now = player.level().getGameTime();
 
+        // Refresh HUD when the actual held ItemStack changes. Each forged item owns
+        // its selected active skill and its cooldown timestamps.
+        int heldSlot = player.getInventory().selected;
+        int lastSlot = player.getPersistentData().getInt("ForgedHudLastHeldSlot");
+        int currentHash = System.identityHashCode(tool);
+        int lastHash = player.getPersistentData().getInt("ForgedHudLastHeldHash");
+        if (heldSlot != lastSlot || currentHash != lastHash) {
+            player.getPersistentData().putInt("ForgedHudLastHeldSlot", heldSlot);
+            player.getPersistentData().putInt("ForgedHudLastHeldHash", currentHash);
+            ForgedActiveSkills.syncHeldEquipmentHud(player);
+        }
+
         // Poison Gas Cloud owner immunity. The cloud itself remains a normal
         // lingering-style AreaEffectCloud for every other living entity.
         AABB gasCheck = player.getBoundingBox().inflate(5.5D);
