@@ -550,6 +550,16 @@ public final class ForgedEffectEvents {
     }
 
     @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        var oldData = event.getOriginal().getPersistentData();
+        if (oldData.contains("forgedPocketDimension", net.minecraft.nbt.Tag.TAG_LIST)) {
+            event.getEntity().getPersistentData().put(
+                    "forgedPocketDimension",
+                    oldData.getList("forgedPocketDimension", net.minecraft.nbt.Tag.TAG_COMPOUND).copy());
+        }
+    }
+
+    @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof Player player) || !(player.level() instanceof ServerLevel level)) return;
