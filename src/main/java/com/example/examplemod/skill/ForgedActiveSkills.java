@@ -495,13 +495,16 @@ public final class ForgedActiveSkills {
         }
 
         BlockPos origin = blockHit.getBlockPos();
-        Direction face = blockHit.getDirection().getOpposite();
-        Direction right = (face.getAxis() == Direction.Axis.Y) ? Direction.EAST
-                : (face.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST);
+
+        // The hit face points OUT of the wall. Penetration must travel INTO the wall,
+        // so use the opposite direction for depth.
+        Direction depthDirection = blockHit.getDirection().getOpposite();
+        Direction right = (depthDirection.getAxis() == Direction.Axis.Y) ? Direction.EAST
+                : (depthDirection.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST);
 
         java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
         for (int depth = 0; depth < 15; depth++) {
-            BlockPos center = origin.relative(face, depth);
+            BlockPos center = origin.relative(depthDirection, depth);
             for (int width = -1; width <= 1; width++) targets.add(center.relative(right, width));
         }
 
@@ -520,7 +523,6 @@ public final class ForgedActiveSkills {
             for (BlockPos pos : targets) {
                 var state = level.getBlockState(pos);
                 if (state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) continue;
-                if (!tool.isCorrectToolForDrops(state)) continue;
                 if (level.destroyBlock(pos, true, player)) broken++;
             }
         } finally {
