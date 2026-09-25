@@ -70,6 +70,7 @@ public final class ForgedActiveSkills {
             case DIVINE_BEACON_LIGHT -> divineBeaconLaser(player, tool, tier);
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tool, tier);
             case BLOCK_LEVITATION -> blockLevitation(player, tool, tier);
+            case MAGNETIC_CLUMPING -> magneticClumping(player, tool, tier);
             case OBSIDIAN_BREAKER -> obsidianBreaker(player, tool, tier);
             case NATURE_GOD_BLESS -> natureGodBless(player, tool, tier);
             case LINE_BUILDER -> lineBuilder(player, tool, tier);
@@ -489,6 +490,36 @@ public final class ForgedActiveSkills {
         damageEquipment(player, cost);
     }
 
+    private static void magneticClumping(Player player, ItemStack tool, EffectTier tier) {
+        long cooldown = ForgedSkillConfig.magneticClumping(tier);
+        if (!ready(tool, player, "MagneticClumping", cooldown)) return;
+
+        var data = player.getPersistentData();
+        if (!data.contains("ForgedLastMinedX") || !data.contains("ForgedLastMinedY")
+                || !data.contains("ForgedLastMinedZ")) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                    "Magnetic Clumping: ขุดบล็อกก่อนใช้งาน"), true);
+            return;
+        }
+
+        BlockPos centerPos = new BlockPos(
+                data.getInt("ForgedLastMinedX"),
+                data.getInt("ForgedLastMinedY"),
+                data.getInt("ForgedLastMinedZ"));
+        Vec3 center = Vec3.atCenterOf(centerPos);
+
+        // Gather nearby dropped items onto the most recently mined block.
+        // Tier changes cooldown only: 30 / 15 / 8 seconds.
+        for (net.minecraft.world.entity.item.ItemEntity drop : player.level().getEntitiesOfClass(
+                net.minecraft.world.entity.item.ItemEntity.class,
+                new AABB(centerPos).inflate(4.0D))) {
+            drop.setPos(center.x, center.y, center.z);
+            drop.setDeltaMovement(Vec3.ZERO);
+        }
+
+        startCooldown(tool, player, "MagneticClumping", cooldown);
+    }
+
     private static void obsidianBreaker(Player player, ItemStack tool, EffectTier tier) {
         BlockPos pos = lookedBlock(player, 6.0D);
         if (pos == null) return;
@@ -784,7 +815,7 @@ public final class ForgedActiveSkills {
             case FIREBALL_SHOOT, FRONT_DASH, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
                  STUN_TIME_STOP, GRAVATIONAL_SLAM, IRON_FORTRESS_GUARD, DIVINE_BEACON_LIGHT,
-                 ULTIMATE_LASER_BREAKER, BLOCK_LEVITATION, OBSIDIAN_BREAKER,
+                 ULTIMATE_LASER_BREAKER, BLOCK_LEVITATION, MAGNETIC_CLUMPING, OBSIDIAN_BREAKER,
                  NATURE_GOD_BLESS, LINE_BUILDER, EARTHY_WALL_RISE,
                  SKY_BRIDGE_WALK, POCKET_DIMENSION, INTERNAL_STORAGE -> true;
             default -> false;
@@ -836,6 +867,7 @@ public final class ForgedActiveSkills {
             case IRON_FORTRESS_GUARD -> "IronFortressGuard";
             case DIVINE_BEACON_LIGHT -> "DivineBeaconLight";
             case ULTIMATE_LASER_BREAKER -> "UltimateLaserBreaker";
+            case MAGNETIC_CLUMPING -> "MagneticClumping";
             case NATURE_GOD_BLESS -> "NatureGodBless";
             case LINE_BUILDER -> "LineBuilder";
             case EARTHY_WALL_RISE -> "EarthyWallRise";
