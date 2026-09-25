@@ -423,48 +423,58 @@ public final class ForgedActiveSkills {
     private static void ultimateLaser(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.laser(tier);
         if (!ready(tool, player, "UltimateLaserBreaker", cooldown)) return;
+        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
 
-        // Mining-only laser: 3 blocks wide x 16 blocks forward. It never damages entities.
-        Direction forward = player.getDirection();
-        Direction side = forward.getClockWise();
-        BlockPos origin = player.blockPosition().above();
+        // Ultimate mining laser: R fires a visible beam along the player's exact look direction.
+        // It mines a 3-block-wide tunnel up to 16 blocks long, breaks even normally
+        // unbreakable blocks, and never damages living entities.
+        Vec3 start = player.getEyePosition();
+        Vec3 look = player.getLookAngle().normalize();
+        Vec3 horizontal = new Vec3(look.x, 0.0D, look.z);
+        if (horizontal.lengthSqr() < 0.0001D) horizontal = new Vec3(0.0D, 0.0D, 1.0D);
+        horizontal = horizontal.normalize();
+        Vec3 sideVec = new Vec3(-horizontal.z, 0.0D, horizontal.x);
+
+        java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
+        for (int distance = 1; distance <= 16; distance++) {
+            Vec3 center = start.add(look.scale(distance));
+            for (int width = -1; width <= 1; width++) {
+                Vec3 sample = center.add(sideVec.scale(width));
+                targets.add(BlockPos.containing(sample));
+            }
+        }
+
+        // Beam is always visible when R is pressed, including when firing into the air.
+        for (double d = 0.5D; d <= 16.0D; d += 0.25D) {
+            Vec3 point = start.add(look.scale(d));
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                    point.x, point.y, point.z, 1, 0.025D, 0.025D, 0.025D, 0.0D);
+        }
+
         int broken = 0;
-
         player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
         try {
-            for (int distance = 1; distance <= 16; distance++) {
-                BlockPos center = origin.relative(forward, distance);
-                for (int width = -1; width <= 1; width++) {
-                    BlockPos pos = center.relative(side, width);
-                    if (player.level().getBlockState(pos).isAir()) continue;
+            for (BlockPos pos : targets) {
+                var state = level.getBlockState(pos);
+                if (state.isAir()) continue;
 
-                    // Ultimate Laser Breaker is allowed to break every block, including
-                    // normally-unbreakable blocks. Drops are preserved where Minecraft permits them.
-                    if (player.level().destroyBlock(pos, true, player)) {
-                        broken++;
-                    } else {
-                        player.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-                        broken++;
-                    }
+                // Ultimate ignores hardness/unbreakable status. Normal drops are kept
+                // whenever Minecraft allows them; otherwise the block is still removed.
+                if (level.destroyBlock(pos, true, player)) {
+                    broken++;
+                } else {
+                    level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                    broken++;
                 }
             }
         } finally {
             player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
         }
 
-        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
-            Vec3 start = player.getEyePosition();
-            Vec3 look = player.getLookAngle().normalize();
-            for (double d = 0.5D; d <= 16.0D; d += 0.5D) {
-                Vec3 point = start.add(look.scale(d));
-                server.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                        point.x, point.y, point.z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
-            }
-        }
-
+        // The documented skill has cooldown but no extra durability activation cost.
+        // Start cooldown only when the beam actually mined at least one block.
         if (broken > 0) {
             startCooldown(tool, player, "UltimateLaserBreaker", cooldown);
-            damageEquipment(player, 12);
         }
     }
 
