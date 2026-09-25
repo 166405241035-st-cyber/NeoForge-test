@@ -479,14 +479,13 @@ public final class ForgedActiveSkills {
         if (state.isAir() || state.is(ExampleMod.INVISIBLE_SUPPORT_BLOCK.get())) return;
         if (state.getDestroySpeed(player.level(), pos) < 0.0F) return;
 
-        int duration = switch (tier) { case I -> 40; case II -> 80; case III -> 120; };
         int cost = switch (tier) { case I -> 5; case II -> 3; case III -> 1; };
         if (tool.isDamageableItem() && tool.getDamageValue() + cost >= tool.getMaxDamage()) return;
 
         if (!player.level().destroyBlock(pos, true, player)) return;
+        // The invisible support is permanent. It only disappears when a player
+        // deliberately breaks it; Tier affects durability cost only.
         player.level().setBlockAndUpdate(pos, ExampleMod.INVISIBLE_SUPPORT_BLOCK.get().defaultBlockState());
-        if (player.level() instanceof net.minecraft.server.level.ServerLevel server)
-            server.scheduleTick(pos, ExampleMod.INVISIBLE_SUPPORT_BLOCK.get(), duration);
         damageEquipment(player, cost);
     }
 
