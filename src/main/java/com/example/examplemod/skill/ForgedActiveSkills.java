@@ -40,11 +40,14 @@ public final class ForgedActiveSkills {
         if (action == 0) {
             selected = (selected + 1) % active.size();
             player.getPersistentData().putInt(SELECTED_INDEX, selected);
+            syncHud(player, active.get(selected), selected);
             return;
         }
 
         if (action == 1) {
-            use(player, tool, active.get(selected));
+            ForgingEffect effect = active.get(selected);
+            use(player, tool, effect);
+            syncHud(player, effect, selected);
         }
     }
 
@@ -655,6 +658,16 @@ public final class ForgedActiveSkills {
             case EARTHY_WALL_RISE -> "EarthyWallRise";
             default -> null;
         };
+    }
+
+    private static void syncHud(Player player, ForgingEffect effect, int selectedIndex) {
+        if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return;
+        String key = cooldownKey(effect);
+        long readyAt = key == null ? 0L
+                : player.getPersistentData().getLong("ForgedActiveCooldown_" + key);
+        ForgedEffectNetwork.sendHudState(serverPlayer, selectedIndex, key, readyAt,
+                player.getPersistentData().getLong("ForgedGravitationalSlamUntil"),
+                player.getPersistentData().getBoolean("ForgedAegisActive"));
     }
 
     public static long cooldownRemaining(Player player, ForgingEffect effect) {
