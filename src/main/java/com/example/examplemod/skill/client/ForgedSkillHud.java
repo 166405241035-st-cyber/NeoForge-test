@@ -22,7 +22,22 @@ import java.util.Locale;
 
 @EventBusSubscriber(modid = ExampleMod.MODID, value = Dist.CLIENT)
 public final class ForgedSkillHud {
+    private static int serverSelectedIndex;
+    private static String serverCooldownKey = "";
+    private static long serverReadyAt;
+    private static long serverSlamUntil;
+    private static boolean serverAegisActive;
+
     private ForgedSkillHud() {}
+
+    public static void updateServerState(int selectedIndex, String cooldownKey, long readyAt,
+                                         long slamUntil, boolean aegisActive) {
+        serverSelectedIndex = Math.max(0, selectedIndex);
+        serverCooldownKey = cooldownKey == null ? "" : cooldownKey;
+        serverReadyAt = Math.max(0L, readyAt);
+        serverSlamUntil = Math.max(0L, slamUntil);
+        serverAegisActive = aegisActive;
+    }
 
     @SubscribeEvent
     public static void render(RenderGuiEvent.Post event) {
@@ -33,34 +48,37 @@ public final class ForgedSkillHud {
         List<ForgingEffect> active = ForgedActiveSkills.getActiveEffects(tool);
         if (active.isEmpty()) return;
 
-        int selected = ForgedActiveSkills.normalizeSelected(mc.player, active.size());
+        int selected = Math.min(serverSelectedIndex, active.size() - 1);
         ForgingEffect skill = active.get(selected);
 
-        String useKey = keyName(ForgedEffectKeybinds.USE_SKILL.get());
-        String cycleKey = keyName(ForgedEffectKeybinds.CYCLE_SKILL.get());
+        // Show the physical key name (R), not the localized typed character (e.g. Thai พ).
+        String useKey = "R";
+        String cycleKey = "Shift + R";
         String title = "[" + useKey + "] " + skill.displayName();
 
         String status;
-        long slamUntil = mc.player.getPersistentData().getLong("ForgedGravitationalSlamUntil");
+        long slamUntil = serverSlamUntil;
         if (skill == ForgingEffect.GRAVATIONAL_SLAM && slamUntil > mc.player.level().getGameTime()) {
             double seconds = (slamUntil - mc.player.level().getGameTime()) / 20.0D;
             status = String.format(Locale.ROOT, "Charging: %.1fs", seconds);
         } else if (skill == ForgingEffect.AEGIS_SHIELD) {
-            status = mc.player.getPersistentData().getBoolean("ForgedAegisActive") ? "ACTIVE" : "READY";
+            status = serverAegisActive ? "ACTIVE" : "READY";
         } else {
-            long remaining = ForgedActiveSkills.cooldownRemaining(mc.player, skill);
-            status = remaining <= 0L ? "READY" : "Cooldown: " + formatTime(remaining);
+            String expectedKey = ForgedActiveSkills.cooldownKey(skill);
+            long remaining = expectedKey != null && expectedKey.equals(serverCooldownKey)
+                    ? Math.max(0L, serverReadyAt - mc.player.level().getGameTime()) : 0L;
+            status = remaining <= 0L ? "READY" : "CD " + formatTime(remaining);
         }
 
         GuiGraphics gui = event.getGuiGraphics();
         int margin = 8;
         int line = mc.font.lineHeight + 2;
-        String cycle = active.size() > 1 ? "[" + cycleKey + "] Change Skill" : "";
-        int width = Math.max(mc.font.width(title), Math.max(mc.font.width(status), mc.font.width(cycle))) + 12;
+        String cycle = active.size() > 1 ? "[" + cycleKey + "] Change" : "";
+        int width = Math.max(mc.font.width(title), Math.max(mc.font.width(status), mc.font.width(cycle))) + 6;
         int x = gui.guiWidth() - width - margin;
-        int y = gui.guiHeight() - 58;
+        int y = gui.guiHeight() - (active.size() > 1 ? 46 : 34);
 
-        gui.fill(x - 4, y - 4, x + width, y + line * (active.size() > 1 ? 3 : 2) + 2, 0x90000000);
+        gui.fill(x - 2, y - 2, x + width, y + line * (active.size() > 1 ? 3 : 2), 0x78000000);
         gui.drawString(mc.font, Component.literal(title), x, y, 0xFFFFFF, true);
         gui.drawString(mc.font, Component.literal(status), x, y + line,
                 status.equals("READY") || status.equals("ACTIVE") ? 0x55FF55 : 0xFFCC55, true);
