@@ -24,10 +24,10 @@ import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
@@ -38,6 +38,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent.EntityPlaceEvent;
 
 /** Server-side entry point for forged equipment effects. */
@@ -427,27 +428,6 @@ public final class ForgedEffectEvents {
             player.getPersistentData().putLong("ForgedStaticHoverUntil", 0L);
         }
 
-        long blockLevitationUntil = player.getPersistentData().getLong("ForgedBlockLevitationUntil");
-        if (blockLevitationUntil > now) {
-            BlockPos levPos = new BlockPos(
-                    (int) player.getPersistentData().getLong("ForgedBlockLevitationX"),
-                    (int) player.getPersistentData().getLong("ForgedBlockLevitationY"),
-                    (int) player.getPersistentData().getLong("ForgedBlockLevitationZ"));
-            for (FallingBlockEntity falling : player.level().getEntitiesOfClass(FallingBlockEntity.class,
-                    new AABB(levPos).inflate(4.0D))) {
-                falling.setNoGravity(true);
-                falling.setDeltaMovement(Vec3.ZERO);
-            }
-        } else if (blockLevitationUntil != 0L) {
-            BlockPos levPos = new BlockPos(
-                    (int) player.getPersistentData().getLong("ForgedBlockLevitationX"),
-                    (int) player.getPersistentData().getLong("ForgedBlockLevitationY"),
-                    (int) player.getPersistentData().getLong("ForgedBlockLevitationZ"));
-            for (FallingBlockEntity falling : player.level().getEntitiesOfClass(FallingBlockEntity.class,
-                    new AABB(levPos).inflate(6.0D))) falling.setNoGravity(false);
-            player.getPersistentData().putLong("ForgedBlockLevitationUntil", 0L);
-        }
-
         EffectTier thermalBarrier = ForgedEffectRuntime.tier(tool, ForgingEffect.THERMAL_CROP_BARRIER);
         if (thermalBarrier != null && now % 10L == 0L) {
             int burnSeconds = switch (thermalBarrier) { case I -> 3; case II -> 5; case III -> 8; };
@@ -509,12 +489,9 @@ public final class ForgedEffectEvents {
         EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
         if (frenzy != null) {
             long lastMine = player.getPersistentData().getLong("ForgedFrenzyLastMine");
-            // A successful block break keeps Frenzy alive. Five seconds without mining resets it.
-            if (lastMine > 0L && now - lastMine <= 100L) {
-                int amp = switch (frenzy) { case I -> 0; case II -> 1; case III -> 2; };
-                player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 10, amp, false, false));
-            } else if (lastMine > 0L) {
+            if (lastMine > 0L && now - lastMine > 100L) {
                 player.getPersistentData().remove("ForgedFrenzyLastMine");
+                player.getPersistentData().remove("ForgedFrenzyChain");
             }
         }
     }
@@ -545,7 +522,12 @@ public final class ForgedEffectEvents {
         ItemStack tool = player.getMainHandItem();
 
         if (ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING) != null) {
-            player.getPersistentData().putLong("ForgedFrenzyLastMine", player.level().getGameTime());
+            long now = player.level().getGameTime();
+            long last = player.getPersistentData().getLong("ForgedFrenzyLastMine");
+            int chain = (last > 0L && now - last <= 100L)
+                    ? player.getPersistentData().getInt("ForgedFrenzyChain") + 1 : 1;
+            player.getPersistentData().putInt("ForgedFrenzyChain", Math.min(chain, 5));
+            player.getPersistentData().putLong("ForgedFrenzyLastMine", now);
         }
 
         // Multi-block mining skills. Generated block breaks are guarded so they do not
@@ -596,15 +578,6 @@ public final class ForgedEffectEvents {
             player.getPersistentData().putLong("ForgedStaticHoverX", event.getPos().getX());
             player.getPersistentData().putLong("ForgedStaticHoverY", event.getPos().getY());
             player.getPersistentData().putLong("ForgedStaticHoverZ", event.getPos().getZ());
-        }
-
-        EffectTier blockLevitation = ForgedEffectRuntime.tier(tool, ForgingEffect.BLOCK_LEVITATION);
-        if (blockLevitation != null) {
-            int duration = switch (blockLevitation) { case I -> 40; case II -> 80; case III -> 120; };
-            player.getPersistentData().putLong("ForgedBlockLevitationUntil", player.level().getGameTime() + duration);
-            player.getPersistentData().putLong("ForgedBlockLevitationX", event.getPos().getX());
-            player.getPersistentData().putLong("ForgedBlockLevitationY", event.getPos().getY());
-            player.getPersistentData().putLong("ForgedBlockLevitationZ", event.getPos().getZ());
         }
 
         EffectTier ultimateLaserFortune = ForgedEffectRuntime.tier(tool, ForgingEffect.ULTIMATE_LASER_BREAKER);
