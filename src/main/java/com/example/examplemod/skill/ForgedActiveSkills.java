@@ -421,7 +421,13 @@ public final class ForgedActiveSkills {
     }
 
     private static void ultimateLaser(Player player, ItemStack tool, EffectTier tier) {
-        long cooldown = ForgedSkillConfig.laser(tier);
+        // Fixed design values: I 300s, II 210s, III 120s.
+        // Keep these authoritative here so old generated config files cannot retain stale cooldowns.
+        long cooldown = switch (tier) {
+            case I -> 6000L;
+            case II -> 4200L;
+            case III -> 2400L;
+        };
         if (!ready(tool, player, "UltimateLaserBreaker", cooldown)) return;
         if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
 
