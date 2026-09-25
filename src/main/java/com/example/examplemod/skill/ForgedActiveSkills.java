@@ -83,7 +83,14 @@ public final class ForgedActiveSkills {
         long cooldown = ForgedSkillConfig.fireball(tier);
         if (!ready(player, "FireballShoot", cooldown)) return;
 
-        SmallFireball fireball = new SmallFireball(player.level(), player, player.getLookAngle());
+        // Spawn slightly in front of the player's eyes so the projectile does not collide
+        // with the caster immediately. Give it an explicit forward velocity for reliable firing.
+        Vec3 look = player.getLookAngle().normalize();
+        SmallFireball fireball = new SmallFireball(player.level(), player, look);
+        Vec3 spawn = player.getEyePosition().add(look.scale(0.8D));
+        fireball.setPos(spawn.x, spawn.y - 0.10D, spawn.z);
+        fireball.setDeltaMovement(look.scale(1.35D));
+        fireball.hurtMarked = true;
         player.level().addFreshEntity(fireball);
         startCooldown(player, "FireballShoot", cooldown);
         damageEquipment(player, 3);
