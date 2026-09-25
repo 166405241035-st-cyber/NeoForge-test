@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ForgedActiveSkills {
-    private static final String SELECTED_INDEX = "ForgedActiveSkillIndex";
+    private static final String SELECTED_INDEX = "forgedSelectedActiveSkill";
 
     private static final int[] AEGIS_DRAIN = {8, 5, 3};
 
@@ -35,11 +35,11 @@ public final class ForgedActiveSkills {
         List<ForgingEffect> active = getActiveEffects(tool);
         if (active.isEmpty()) return;
 
-        int selected = normalizeSelected(player, active.size());
+        int selected = normalizeSelected(tool, active.size());
 
         if (action == 0) {
             selected = (selected + 1) % active.size();
-            player.getPersistentData().putInt(SELECTED_INDEX, selected);
+            setSelectedIndex(tool, selected);
             syncHud(player, active.get(selected), selected);
             return;
         }
@@ -298,7 +298,7 @@ public final class ForgedActiveSkills {
         player.getPersistentData().putDouble("ForgedGravitationalSlamZ", player.getZ());
         player.getPersistentData().putBoolean("ForgedGravitationalSlamOldInvulnerable", player.isInvulnerable());
         player.setInvulnerable(true);
-        startCooldown(tool, player, "GravitationalSlam", cooldown);
+        player.getPersistentData().putLong("ForgedGravitationalSlamBaseCooldown", cooldown);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam: Charging..."), true);
     }
 
@@ -322,12 +322,12 @@ public final class ForgedActiveSkills {
             if (!target.isAlive()) killedBySlam++;
         }
 
-        // Each target killed by the Slam immediately refunds 10 seconds of its cooldown.
+        // Cooldown begins only after the explosion has finished and the kill refund is known.
+        long baseCooldown = player.getPersistentData().getLong("ForgedGravitationalSlamBaseCooldown");
+        long finalCooldown = Math.max(0L, baseCooldown - killedBySlam * 200L);
+        setItemCooldownReadyAt(tool, "GravitationalSlam", player.level().getGameTime() + finalCooldown);
+        player.getPersistentData().remove("ForgedGravitationalSlamBaseCooldown");
         if (killedBySlam > 0) {
-            String key = "GravitationalSlam";
-            long readyAt = itemCooldownReadyAt(tool, key);
-            long reduced = Math.max(player.level().getGameTime(), readyAt - killedBySlam * 200L);
-            setItemCooldownReadyAt(tool, key, reduced);
             player.displayClientMessage(net.minecraft.network.chat.Component.literal(
                     "Gravitational Slam cooldown reduced by " + (killedBySlam * 10) + "s!"), true);
         }
@@ -343,6 +343,7 @@ public final class ForgedActiveSkills {
         player.getPersistentData().remove("ForgedGravitationalSlamOldInvulnerable");
         player.getPersistentData().remove("ForgedGravitationalSlamUntil");
         damageEquipment(player, 12);
+        syncHeldEquipmentHud(player);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam!"), true);
     }
 
@@ -690,11 +691,36 @@ public final class ForgedActiveSkills {
         };
     }
 
-    public static int normalizeSelected(Player player, int size) {
-        int selected = player.getPersistentData().getInt(SELECTED_INDEX);
+    public static int normalizeSelected(ItemStack tool, int size) {
+        if (tool.isEmpty() || size <= 0) return 0;
+        net.minecraft.world.item.component.CustomData data =
+                tool.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        int selected = data == null ? 0 : data.copyTag().getInt(SELECTED_INDEX);
         if (selected < 0 || selected >= size) selected = 0;
-        player.getPersistentData().putInt(SELECTED_INDEX, selected);
+        setSelectedIndex(tool, selected);
         return selected;
+    }
+
+    private static void setSelectedIndex(ItemStack tool, int selected) {
+        if (tool.isEmpty()) return;
+        net.minecraft.world.item.component.CustomData.update(
+                net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                tool,
+                tag -> tag.putInt(SELECTED_INDEX, selected));
+    }
+
+    /** Refresh the client HUD from the equipment currently held in the main hand. */
+    public static void syncHeldEquipmentHud(Player player) {
+        if (player.level().isClientSide()) return;
+        ItemStack tool = player.getMainHandItem();
+        List<ForgingEffect> active = getActiveEffects(tool);
+        if (active.isEmpty()) {
+            if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+                ForgedEffectNetwork.sendHudState(serverPlayer, 0, "", 0L, 0L, false);
+            return;
+        }
+        int selected = normalizeSelected(tool, active.size());
+        syncHud(player, active.get(selected), selected);
     }
 
     public static String cooldownKey(ForgingEffect effect) {
