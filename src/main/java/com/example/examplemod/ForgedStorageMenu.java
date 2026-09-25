@@ -24,6 +24,7 @@ public class ForgedStorageMenu extends AbstractContainerMenu {
     private final ItemStack tool;
     private final SimpleContainer storage;
     private final int storageSlotCount;
+    private final boolean pocketDimension;
 
     public ForgedStorageMenu(int id, Inventory inv) {
         this(id, inv, inv.player.getMainHandItem());
@@ -33,6 +34,7 @@ public class ForgedStorageMenu extends AbstractContainerMenu {
         super(ExampleMod.FORGED_STORAGE_MENU.get(), id);
         this.tool = tool;
         this.storageOwner = inv.player;
+        this.pocketDimension = ForgedEffectRuntime.tier(tool, ForgingEffect.POCKET_DIMENSION) != null;
         this.storageSlotCount = storageSize(tool);
         this.storage = new SimpleContainer(Math.max(1, storageSlotCount));
         load();
@@ -57,10 +59,18 @@ public class ForgedStorageMenu extends AbstractContainerMenu {
     }
 
     private void load() {
-        CustomData data=tool.get(DataComponents.CUSTOM_DATA); if(data==null)return;
-        CompoundTag root=data.copyTag();
-        if(!root.contains("forgedStorage", Tag.TAG_LIST))return;
-        ListTag list=root.getList("forgedStorage", Tag.TAG_COMPOUND);
+        CompoundTag root;
+        String key;
+        if (pocketDimension) {
+            root = storageOwner.getPersistentData();
+            key = "forgedPocketDimension";
+        } else {
+            CustomData data=tool.get(DataComponents.CUSTOM_DATA); if(data==null)return;
+            root=data.copyTag();
+            key = "forgedStorage";
+        }
+        if(!root.contains(key, Tag.TAG_LIST))return;
+        ListTag list=root.getList(key, Tag.TAG_COMPOUND);
         for(int i=0;i<list.size();i++){
             CompoundTag e=list.getCompound(i); int slot=e.getInt("slot");
             if(slot>=0&&slot<storage.getContainerSize())
@@ -69,16 +79,18 @@ public class ForgedStorageMenu extends AbstractContainerMenu {
     }
 
     private void save() {
-        CustomData.update(DataComponents.CUSTOM_DATA, tool, root->{
-            ListTag list=new ListTag();
-            for(int i=0;i<storage.getContainerSize();i++){
-                ItemStack s=storage.getItem(i); if(s.isEmpty())continue;
-                CompoundTag e=new CompoundTag(); e.putInt("slot",i);
-                e.put("item",s.save(invRegistryAccess()));
-                list.add(e);
-            }
-            root.put("forgedStorage",list);
-        });
+        ListTag list=new ListTag();
+        for(int i=0;i<storage.getContainerSize();i++){
+            ItemStack s=storage.getItem(i); if(s.isEmpty())continue;
+            CompoundTag e=new CompoundTag(); e.putInt("slot",i);
+            e.put("item",s.save(invRegistryAccess()));
+            list.add(e);
+        }
+        if (pocketDimension) {
+            storageOwner.getPersistentData().put("forgedPocketDimension", list);
+        } else {
+            CustomData.update(DataComponents.CUSTOM_DATA, tool, root->root.put("forgedStorage",list));
+        }
     }
 
     private net.minecraft.core.HolderLookup.Provider invRegistryAccess() {
