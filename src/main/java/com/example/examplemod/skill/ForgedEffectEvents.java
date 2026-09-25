@@ -385,11 +385,21 @@ public final class ForgedEffectEvents {
         boolean wasGrounded = player.getPersistentData().getBoolean("ForgedWasGrounded");
         boolean groundedNow = player.onGround();
         EffectTier shockwave = ForgedEffectRuntime.tier(tool, ForgingEffect.EARTHY_SHOCKWAVE);
-        if (shockwave != null && groundedNow && !wasGrounded && player.fallDistance > 0.0F
+
+        // fallDistance can be reset by vanilla on the landing tick, so remember whether
+        // the player was genuinely airborne/falling before touching the ground.
+        if (!groundedNow && player.fallDistance > 0.0F) {
+            player.getPersistentData().putBoolean("ForgedEarthyWasFalling", true);
+        }
+
+        boolean landedFromFall = groundedNow && !wasGrounded
+                && player.getPersistentData().getBoolean("ForgedEarthyWasFalling");
+        if (shockwave != null && landedFromFall
                 && canUseTimedTrigger(player, "EarthyShockwave", 60L)) {
             float damage = tierValue(shockwave, EARTHY_SHOCKWAVE_DAMAGE);
             double radius = 3.0D; // Fixed AoE; Tier changes damage only.
             AABB area = player.getBoundingBox().inflate(radius, 1.5D, radius);
+
             for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area,
                     e -> e.isAlive() && e.distanceToSqr(player) <= radius * radius)) {
                 player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
@@ -398,16 +408,38 @@ public final class ForgedEffectEvents {
                 } finally {
                     player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
                 }
+
                 Vec3 away = mob.position().subtract(player.position());
                 if (away.lengthSqr() > 0.01D) {
                     away = away.normalize();
-                    mob.setDeltaMovement(mob.getDeltaMovement().add(away.x * 0.6D, 0.35D, away.z * 0.6D));
+                    mob.setDeltaMovement(mob.getDeltaMovement().add(away.x * 0.85D, 0.42D, away.z * 0.85D));
                     mob.hurtMarked = true;
                 }
             }
+
+            // Visible ground shockwave: two expanding rings of dust/electric impact
+            // around the landing point. This does not break terrain.
+            if (player.level() instanceof ServerLevel serverLevel) {
+                double y = player.getY() + 0.12D;
+                for (double ring : new double[]{1.5D, 3.0D}) {
+                    int points = ring < 2.0D ? 20 : 36;
+                    for (int i = 0; i < points; i++) {
+                        double angle = (Math.PI * 2.0D * i) / points;
+                        double x = player.getX() + Math.cos(angle) * ring;
+                        double z = player.getZ() + Math.sin(angle) * ring;
+                        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
+                                x, y, z, 1, 0.08D, 0.03D, 0.08D, 0.01D);
+                        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
+                                x, y + 0.05D, z, 1, 0.04D, 0.02D, 0.04D, 0.02D);
+                    }
+                }
+            }
+
             if (tool.isDamageableItem())
                 tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 2));
         }
+
+        if (groundedNow) player.getPersistentData().putBoolean("ForgedEarthyWasFalling", false);
         player.getPersistentData().putBoolean("ForgedWasGrounded", groundedNow);
 
         // Restore gravity independently for each Static Hover drop when its own timer expires.
