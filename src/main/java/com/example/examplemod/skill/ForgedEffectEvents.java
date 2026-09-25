@@ -584,6 +584,11 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
         ItemStack tool = player.getMainHandItem();
 
+        // Remember the latest mined block for the active Magnetic Clumping skill.
+        player.getPersistentData().putInt("ForgedLastMinedX", event.getPos().getX());
+        player.getPersistentData().putInt("ForgedLastMinedY", event.getPos().getY());
+        player.getPersistentData().putInt("ForgedLastMinedZ", event.getPos().getZ());
+
         if (ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING) != null) {
             long now = player.level().getGameTime();
             long last = player.getPersistentData().getLong("ForgedFrenzyLastMine");
@@ -712,16 +717,6 @@ public final class ForgedEffectEvents {
             for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
                     new net.minecraft.world.phys.AABB(event.getPos()).inflate(3.0D))) {
                 drop.setPos(player.getX(), player.getY() + 0.5D, player.getZ());
-                drop.setDeltaMovement(Vec3.ZERO);
-            }
-        }
-
-        EffectTier magnetic = ForgedEffectRuntime.tier(tool, ForgingEffect.MAGNETIC_CLUMPING);
-        if (magnetic != null) {
-            Vec3 center = Vec3.atCenterOf(event.getPos());
-            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
-                    new net.minecraft.world.phys.AABB(event.getPos()).inflate(4.0D))) {
-                drop.setPos(center.x, center.y, center.z);
                 drop.setDeltaMovement(Vec3.ZERO);
             }
         }
