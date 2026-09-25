@@ -69,6 +69,8 @@ public final class ForgedActiveSkills {
             case IRON_FORTRESS_GUARD -> ironFortress(player, tool, tier);
             case DIVINE_BEACON_LIGHT -> divineBeaconLaser(player, tool, tier);
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tool, tier);
+            case BLOCK_LEVITATION -> blockLevitation(player, tool, tier);
+            case OBSIDIAN_BREAKER -> obsidianBreaker(player, tool, tier);
             case NATURE_GOD_BLESS -> natureGodBless(player, tool, tier);
             case LINE_BUILDER -> lineBuilder(player, tool, tier);
             case EARTHY_WALL_RISE -> earthyWallRise(player, tool, tier);
@@ -464,6 +466,44 @@ public final class ForgedActiveSkills {
         }
     }
 
+    private static BlockPos lookedBlock(Player player, double range) {
+        net.minecraft.world.phys.HitResult hit = player.pick(range, 0.0F, false);
+        if (hit.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) return null;
+        return ((net.minecraft.world.phys.BlockHitResult) hit).getBlockPos();
+    }
+
+    private static void blockLevitation(Player player, ItemStack tool, EffectTier tier) {
+        BlockPos pos = lookedBlock(player, 6.0D);
+        if (pos == null) return;
+        var state = player.level().getBlockState(pos);
+        if (state.isAir() || state.is(ExampleMod.INVISIBLE_SUPPORT_BLOCK.get())) return;
+        if (state.getDestroySpeed(player.level(), pos) < 0.0F) return;
+
+        int duration = switch (tier) { case I -> 40; case II -> 80; case III -> 120; };
+        int cost = switch (tier) { case I -> 5; case II -> 3; case III -> 1; };
+        if (tool.isDamageableItem() && tool.getDamageValue() + cost >= tool.getMaxDamage()) return;
+
+        if (!player.level().destroyBlock(pos, true, player)) return;
+        player.level().setBlockAndUpdate(pos, ExampleMod.INVISIBLE_SUPPORT_BLOCK.get().defaultBlockState());
+        if (player.level() instanceof net.minecraft.server.level.ServerLevel server)
+            server.scheduleTick(pos, ExampleMod.INVISIBLE_SUPPORT_BLOCK.get(), duration);
+        damageEquipment(player, cost);
+    }
+
+    private static void obsidianBreaker(Player player, ItemStack tool, EffectTier tier) {
+        BlockPos pos = lookedBlock(player, 6.0D);
+        if (pos == null) return;
+        var state = player.level().getBlockState(pos);
+        if (state.isAir()) return;
+
+        int cost = switch (tier) { case I -> 10; case II -> 6; case III -> 3; };
+        if (tool.isDamageableItem() && tool.getDamageValue() + cost >= tool.getMaxDamage()) return;
+
+        boolean broken = player.level().destroyBlock(pos, true, player);
+        if (!broken) player.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        damageEquipment(player, cost);
+    }
+
     private static void natureGodBless(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = ForgedSkillConfig.nature(tier);
         if (!ready(tool, player, "NatureGodBless", cooldown)) return;
@@ -745,8 +785,9 @@ public final class ForgedActiveSkills {
             case FIREBALL_SHOOT, FRONT_DASH, AEGIS_SHIELD,
                  HARPOON_PULL, MOB_SWAP, AIR_SLASH_RUPTURE, LAVA_WAVE,
                  STUN_TIME_STOP, GRAVATIONAL_SLAM, IRON_FORTRESS_GUARD, DIVINE_BEACON_LIGHT,
-                 ULTIMATE_LASER_BREAKER, NATURE_GOD_BLESS, LINE_BUILDER,
-                 EARTHY_WALL_RISE, SKY_BRIDGE_WALK, POCKET_DIMENSION, INTERNAL_STORAGE -> true;
+                 ULTIMATE_LASER_BREAKER, BLOCK_LEVITATION, OBSIDIAN_BREAKER,
+                 NATURE_GOD_BLESS, LINE_BUILDER, EARTHY_WALL_RISE,
+                 SKY_BRIDGE_WALK, POCKET_DIMENSION, INTERNAL_STORAGE -> true;
             default -> false;
         };
     }
