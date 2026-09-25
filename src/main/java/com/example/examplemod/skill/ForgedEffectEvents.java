@@ -713,11 +713,19 @@ public final class ForgedEffectEvents {
 
         EffectTier vacuum = ForgedEffectRuntime.tier(tool, ForgingEffect.VOID_VACUUM_PICK);
         if (vacuum != null) {
-            // Pull nearby item entities directly to the player immediately after a block break.
+            // Pull nearby dropped items directly to the player after mining.
+            // Tier changes the extra durability cost only: 5 / 3 / 1.
+            boolean pulledAny = false;
             for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
                     new net.minecraft.world.phys.AABB(event.getPos()).inflate(3.0D))) {
                 drop.setPos(player.getX(), player.getY() + 0.5D, player.getZ());
                 drop.setDeltaMovement(Vec3.ZERO);
+                pulledAny = true;
+            }
+
+            if (pulledAny && tool.isDamageableItem()) {
+                int cost = switch (vacuum) { case I -> 5; case II -> 3; case III -> 1; };
+                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + cost));
             }
         }
 
