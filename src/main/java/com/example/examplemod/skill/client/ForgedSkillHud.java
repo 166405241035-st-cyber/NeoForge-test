@@ -87,8 +87,8 @@ public final class ForgedSkillHud {
             String marker = i == selected ? "> " : "  ";
             String shortName = skill == ForgingEffect.DIVINE_BEACON_LIGHT ? "Divine Beacon" : skill.displayName();
             rows.add(marker + shortName + "   " + status);
-            colors.add(i == selected ? 0xFFFFFF
-                    : (status.equals("READY") || status.equals("ACTIVE") ? 0xB8FFB8 : 0xFFD27F));
+            // Normal skills stay white; the currently selected skill is yellow.
+            colors.add(i == selected ? 0xFFFF55 : 0xFFFFFF);
         }
 
         String header = "Active Skill";
