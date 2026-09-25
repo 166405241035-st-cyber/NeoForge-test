@@ -36,7 +36,6 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
@@ -149,29 +148,6 @@ public class ForgedEquipmentItem extends Item {
     }
 
     /** Expose the same NeoForge ItemAbilities as the vanilla tool selected by the Head. */
-    /**
-     * Obsidian Breaker overrides normal destroy speed, including blocks with negative
-     * vanilla hardness such as Bedrock. Tier penalties are -60% / -40% / -20%.
-     */
-    @Override
-    public float getDestroySpeed(ItemStack stack, BlockState state) {
-        EffectTier breaker = ForgedEffectRuntime.tier(stack, ForgingEffect.OBSIDIAN_BREAKER);
-        if (breaker == null) return super.getDestroySpeed(stack, state);
-
-        float base = super.getDestroySpeed(stack, state);
-        // Unbreakable blocks normally report no useful tool speed; give them a
-        // deliberate baseline so the skill can mine them instead of instant-breaking.
-        if (state.is(Blocks.BEDROCK) || state.getDestroySpeed(null, net.minecraft.core.BlockPos.ZERO) < 0.0F)
-            base = 8.0F;
-
-        double efficiency = switch (breaker) {
-            case I -> 0.40D;
-            case II -> 0.60D;
-            case III -> 0.80D;
-        };
-        return Math.max(0.1F, (float)(base * efficiency));
-    }
-
     @Override
     public boolean canPerformAction(ItemStack stack, ItemAbility ability) {
         HeadBlueprintType type = readBlueprint(stack);
