@@ -64,7 +64,7 @@ public final class ForgedActiveSkills {
             case AIR_SLASH_RUPTURE -> airSlashRupture(player, tool, tier);
             case LAVA_WAVE -> lavaWave(player, tool, tier);
             case STUN_TIME_STOP -> stunTimeStop(player, tool, tier);
-            case GRAVATIONAL_SLAM -> gravitationalSlam(player, tier);
+            case GRAVATIONAL_SLAM -> gravitationalSlam(player, tool, tier);
             case IRON_FORTRESS_GUARD -> ironFortress(player, tool, tier);
             case DIVINE_BEACON_LIGHT -> divineBeaconLaser(player, tool, tier);
             case ULTIMATE_LASER_BREAKER -> ultimateLaser(player, tool, tier);
