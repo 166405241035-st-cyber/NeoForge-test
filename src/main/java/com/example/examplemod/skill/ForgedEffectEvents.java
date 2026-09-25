@@ -410,25 +410,21 @@ public final class ForgedEffectEvents {
         }
         player.getPersistentData().putBoolean("ForgedWasGrounded", groundedNow);
 
-        long staticHoverUntil = player.getPersistentData().getLong("ForgedStaticHoverUntil");
-        if (staticHoverUntil > now) {
-            BlockPos hoverPos = new BlockPos(
-                    (int) player.getPersistentData().getLong("ForgedStaticHoverX"),
-                    (int) player.getPersistentData().getLong("ForgedStaticHoverY"),
-                    (int) player.getPersistentData().getLong("ForgedStaticHoverZ"));
-            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
-                    new AABB(hoverPos).inflate(2.5D))) {
-                drop.setNoGravity(true);
-                drop.setDeltaMovement(Vec3.ZERO);
+        // Restore gravity independently for each Static Hover drop when its own timer expires.
+        // This avoids affecting unrelated nearby drops and also works if the player moves away.
+        if (now % 2L == 0L && player.level() instanceof ServerLevel serverLevel) {
+            for (ItemEntity drop : serverLevel.getEntitiesOfClass(ItemEntity.class,
+                    player.getBoundingBox().inflate(64.0D),
+                    item -> item.getPersistentData().getLong("ForgedStaticHoverUntil") > 0L)) {
+                long until = drop.getPersistentData().getLong("ForgedStaticHoverUntil");
+                if (now >= until) {
+                    drop.setNoGravity(false);
+                    drop.getPersistentData().remove("ForgedStaticHoverUntil");
+                } else {
+                    drop.setNoGravity(true);
+                    drop.setDeltaMovement(Vec3.ZERO);
+                }
             }
-        } else if (staticHoverUntil != 0L) {
-            BlockPos hoverPos = new BlockPos(
-                    (int) player.getPersistentData().getLong("ForgedStaticHoverX"),
-                    (int) player.getPersistentData().getLong("ForgedStaticHoverY"),
-                    (int) player.getPersistentData().getLong("ForgedStaticHoverZ"));
-            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
-                    new AABB(hoverPos).inflate(3.0D))) drop.setNoGravity(false);
-            player.getPersistentData().putLong("ForgedStaticHoverUntil", 0L);
         }
 
         EffectTier thermalBarrier = ForgedEffectRuntime.tier(tool, ForgingEffect.THERMAL_CROP_BARRIER);
@@ -574,6 +570,19 @@ public final class ForgedEffectEvents {
                 event.getDrops().add(new ItemEntity(event.getLevel(),
                         pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                         new ItemStack(smelted, output)));
+            }
+        }
+
+        // Static Hover Drop: freeze only the item entities produced by THIS block.
+        // Tier controls hover duration only: I = 5s, II = 10s, III = 20s.
+        EffectTier staticHover = ForgedEffectRuntime.tier(tool, ForgingEffect.STATIC_HOVER_DROP);
+        if (staticHover != null && !event.getDrops().isEmpty()) {
+            int duration = switch (staticHover) { case I -> 100; case II -> 200; case III -> 400; };
+            long hoverUntil = player.level().getGameTime() + duration;
+            for (ItemEntity drop : event.getDrops()) {
+                drop.setNoGravity(true);
+                drop.setDeltaMovement(Vec3.ZERO);
+                drop.getPersistentData().putLong("ForgedStaticHoverUntil", hoverUntil);
             }
         }
 
