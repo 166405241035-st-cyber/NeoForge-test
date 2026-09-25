@@ -30,6 +30,22 @@ public final class ForgedEffectNetwork {
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
+    public record SkillHudStatePayload(int selectedIndex, String cooldownKey, long readyAt, long slamUntil, boolean aegisActive)
+            implements CustomPacketPayload {
+        public static final Type<SkillHudStatePayload> TYPE =
+                new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "skill_hud_state"));
+        public static final StreamCodec<ByteBuf, SkillHudStatePayload> STREAM_CODEC =
+                StreamCodec.composite(
+                        ByteBufCodecs.VAR_INT, SkillHudStatePayload::selectedIndex,
+                        ByteBufCodecs.STRING_UTF8, SkillHudStatePayload::cooldownKey,
+                        ByteBufCodecs.VAR_LONG, SkillHudStatePayload::readyAt,
+                        ByteBufCodecs.VAR_LONG, SkillHudStatePayload::slamUntil,
+                        ByteBufCodecs.BOOL, SkillHudStatePayload::aegisActive,
+                        SkillHudStatePayload::new
+                );
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
     public record ActiveSkillPayload(int action) implements CustomPacketPayload {
         public static final Type<ActiveSkillPayload> TYPE =
                 new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "active_skill"));
@@ -55,6 +71,13 @@ public final class ForgedEffectNetwork {
                 TimeStopShakePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> ForgedEffectKeybinds.startTimeStopShake(payload.ticks()))
         );
+        registrar.playToClient(
+                SkillHudStatePayload.TYPE,
+                SkillHudStatePayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> ForgedSkillHud.updateServerState(
+                        payload.selectedIndex(), payload.cooldownKey(), payload.readyAt(),
+                        payload.slamUntil(), payload.aegisActive()))
+        );
         registrar.playToServer(
                 ActiveSkillPayload.TYPE,
                 ActiveSkillPayload.STREAM_CODEC,
@@ -68,6 +91,14 @@ public final class ForgedEffectNetwork {
 
     public static void sendTimeStopShake(net.minecraft.server.level.ServerPlayer player, int ticks) {
         PacketDistributor.sendToPlayer(player, new TimeStopShakePayload(ticks));
+    }
+
+    public static void sendHudState(net.minecraft.server.level.ServerPlayer player,
+                                    int selectedIndex, String cooldownKey, long readyAt,
+                                    long slamUntil, boolean aegisActive) {
+        PacketDistributor.sendToPlayer(player,
+                new SkillHudStatePayload(selectedIndex, cooldownKey == null ? "" : cooldownKey,
+                        Math.max(0L, readyAt), Math.max(0L, slamUntil), aegisActive));
     }
 
     public static void sendAction(int action) {
