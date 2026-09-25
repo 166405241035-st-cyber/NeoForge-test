@@ -649,14 +649,6 @@ public final class ForgedEffectEvents {
                     breakPlane(player, event.getPos(), face, 4, 4, 1);
             }
 
-            EffectTier penetration = ForgedEffectRuntime.tier(tool, ForgingEffect.LINEAR_PENETRATION_3X15);
-            if (penetration != null) {
-                long cd = switch (penetration) { case I -> 400L; case II -> 280L; case III -> 180L; };
-                if (canUseTimedTrigger(player, "LinearPenetration3x15", cd))
-                    // 3 blocks wide x 15 blocks deep. Height stays 1 block;
-                    // the previous 3x3x15 volume was larger than the skill specification.
-                    breakPlane(player, event.getPos(), face, 3, 1, 15);
-            }
         }
 
         EffectTier staticHover = ForgedEffectRuntime.tier(tool, ForgingEffect.STATIC_HOVER_DROP);
