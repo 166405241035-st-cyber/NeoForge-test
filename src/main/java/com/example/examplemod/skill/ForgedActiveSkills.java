@@ -138,12 +138,12 @@ public final class ForgedActiveSkills {
         // Look farther than the usable range so we can distinguish "missed" from
         // "you are aiming at a mob, but it is too far away".
         LivingEntity target = findLookTarget(player, 64.0D);
-        if (target != null && player.getEyePosition().distanceTo(target.getBoundingBox().getCenter()) > 30.0D) {
+        if (target != null && player.getEyePosition().distanceTo(target.getBoundingBox().getCenter()) > 32.0D) {
             player.displayClientMessage(net.minecraft.network.chat.Component.literal("Target is out of range!"), true);
             return;
         }
-        if (!(target instanceof Monster)) {
-            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: Aim at a monster."), true);
+        if (target == null) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: Aim at a living target."), true);
             return;
         }
 
@@ -195,9 +195,13 @@ public final class ForgedActiveSkills {
         long cooldown = ForgedSkillConfig.lava(tier);
         if (!ready(player, "LavaWave", cooldown)) return;
 
-        Vec3 look = player.getLookAngle().normalize();
+        Vec3 view = player.getLookAngle();
+        Vec3 look = new Vec3(view.x, 0.0D, view.z);
+        if (look.lengthSqr() < 0.0001D) look = new Vec3(0.0D, 0.0D, 1.0D);
+        look = look.normalize();
+        Vec3 feet = new Vec3(player.getX(), player.getY(), player.getZ());
         for (int i = 1; i <= 5; i++) {
-            Vec3 pos = player.position().add(look.scale(i * 1.5D));
+            Vec3 pos = feet.add(look.scale(i * 1.5D));
 
             // Orange/lava visual wave without placing real lava blocks, so the caster
             // can never be burned by their own Lava Wave.
@@ -304,16 +308,28 @@ public final class ForgedActiveSkills {
         double z = player.getPersistentData().getDouble("ForgedGravitationalSlamZ");
         Vec3 center = new Vec3(x, y, z);
 
-        // 3x3 horizontal blast area (1.5 blocks from center), 80 damage, no block damage.
+        // 3x3 horizontal blast area (1.5 blocks from center), 120 damage, no block damage.
+        int killedBySlam = 0;
         AABB blast = new AABB(x - 1.5D, y - 1.5D, z - 1.5D, x + 1.5D, y + 1.5D, z + 1.5D);
         for (LivingEntity target : player.level().getEntitiesOfClass(
                 LivingEntity.class, blast, e -> e != player && e.isAlive())) {
             player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
             try {
-                target.hurt(player.damageSources().playerAttack(player), 80.0F);
+                target.hurt(player.damageSources().playerAttack(player), 120.0F);
             } finally {
                 player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
             }
+            if (!target.isAlive()) killedBySlam++;
+        }
+
+        // Each target killed by the Slam immediately refunds 10 seconds of its cooldown.
+        if (killedBySlam > 0) {
+            String key = "ForgedSkillCooldown_GravitationalSlam";
+            long readyAt = player.getPersistentData().getLong(key);
+            long reduced = Math.max(player.level().getGameTime(), readyAt - killedBySlam * 200L);
+            player.getPersistentData().putLong(key, reduced);
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                    "Gravitational Slam cooldown reduced by " + (killedBySlam * 10) + "s!"), true);
         }
 
         if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
