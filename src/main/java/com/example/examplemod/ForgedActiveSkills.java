@@ -600,7 +600,7 @@ public final class ForgedActiveSkills {
         return player.getPersistentData().getBoolean("ForgedAegisActive");
     }
 
-    private static List<ForgingEffect> getActiveEffects(ItemStack tool) {
+    public static List<ForgingEffect> getActiveEffects(ItemStack tool) {
         List<ForgingEffect> result = new ArrayList<>();
         int count = ForgedEquipmentItem.effectCount(tool);
         for (int i = 0; i < count; i++) {
@@ -623,11 +623,38 @@ public final class ForgedActiveSkills {
         };
     }
 
-    private static int normalizeSelected(Player player, int size) {
+    public static int normalizeSelected(Player player, int size) {
         int selected = player.getPersistentData().getInt(SELECTED_INDEX);
         if (selected < 0 || selected >= size) selected = 0;
         player.getPersistentData().putInt(SELECTED_INDEX, selected);
         return selected;
+    }
+
+    public static String cooldownKey(ForgingEffect effect) {
+        return switch (effect) {
+            case FIREBALL_SHOOT -> "FireballShoot";
+            case FRONT_DASH -> "FrontDash";
+            case HARPOON_PULL -> "HarpoonPull";
+            case MOB_SWAP -> "MobSwap";
+            case AIR_SLASH_RUPTURE -> "AirSlashRupture";
+            case LAVA_WAVE -> "LavaWave";
+            case STUN_TIME_STOP -> "StunTimeStop";
+            case GRAVATIONAL_SLAM -> "GravitationalSlam";
+            case IRON_FORTRESS_GUARD -> "IronFortressGuard";
+            case DIVINE_BEACON_LIGHT -> "DivineBeaconLight";
+            case ULTIMATE_LASER_BREAKER -> "UltimateLaserBreaker";
+            case NATURE_GOD_BLESS -> "NatureGodBless";
+            case LINE_BUILDER -> "LineBuilder";
+            case EARTHY_WALL_RISE -> "EarthyWallRise";
+            default -> null;
+        };
+    }
+
+    public static long cooldownRemaining(Player player, ForgingEffect effect) {
+        String key = cooldownKey(effect);
+        if (key == null) return 0L;
+        return Math.max(0L, player.getPersistentData().getLong("ForgedActiveCooldown_" + key)
+                - player.level().getGameTime());
     }
 
     private static boolean ready(Player player, String key, long cooldownTicks) {
