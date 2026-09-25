@@ -74,7 +74,7 @@ public final class ForgedSkillHud {
         for (int i = 0; i < active.size(); i++) {
             ForgingEffect skill = active.get(i);
             String status;
-            if (skill == ForgingEffect.GRAVITATIONAL_SLAM && serverSlamUntil > now) {
+            if (skill == ForgingEffect.GRAVATIONAL_SLAM && serverSlamUntil > now) {
                 double seconds = (serverSlamUntil - now) / 20.0D;
                 status = String.format(Locale.ROOT, "Charging %.1fs", seconds);
             } else if (skill == ForgingEffect.AEGIS_SHIELD && serverAegisActive) {
