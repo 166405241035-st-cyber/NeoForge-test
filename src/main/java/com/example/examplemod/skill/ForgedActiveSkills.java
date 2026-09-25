@@ -425,26 +425,33 @@ public final class ForgedActiveSkills {
         if (!ready(tool, player, "UltimateLaserBreaker", cooldown)) return;
         if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
 
-        // Ultimate mining laser: R fires a visible beam along the player's exact look direction.
-        // It mines a 3-block-wide tunnel up to 16 blocks long, breaks even normally
-        // unbreakable blocks, and never damages living entities.
+        // Active R laser: fixed 3 x 3 x 16 volume following the player's look direction.
+        // Bedrock is deliberately protected from the laser; the normal mining ability
+        // of the Ultimate tool is handled separately.
         Vec3 start = player.getEyePosition();
         Vec3 look = player.getLookAngle().normalize();
-        Vec3 horizontal = new Vec3(look.x, 0.0D, look.z);
-        if (horizontal.lengthSqr() < 0.0001D) horizontal = new Vec3(0.0D, 0.0D, 1.0D);
-        horizontal = horizontal.normalize();
-        Vec3 sideVec = new Vec3(-horizontal.z, 0.0D, horizontal.x);
 
+        Direction depthDirection;
+        double ax = Math.abs(look.x), ay = Math.abs(look.y), az = Math.abs(look.z);
+        if (ay >= ax && ay >= az) depthDirection = look.y >= 0.0D ? Direction.UP : Direction.DOWN;
+        else if (ax >= az) depthDirection = look.x >= 0.0D ? Direction.EAST : Direction.WEST;
+        else depthDirection = look.z >= 0.0D ? Direction.SOUTH : Direction.NORTH;
+
+        Direction right = depthDirection.getAxis() == Direction.Axis.Y ? Direction.EAST
+                : depthDirection.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST;
+        Direction up = depthDirection.getAxis() == Direction.Axis.Y ? Direction.SOUTH : Direction.UP;
+
+        BlockPos origin = BlockPos.containing(start.add(look.scale(1.0D)));
         java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
-        for (int distance = 1; distance <= 16; distance++) {
-            Vec3 center = start.add(look.scale(distance));
+        for (int depth = 0; depth < 16; depth++) {
+            BlockPos center = origin.relative(depthDirection, depth);
             for (int width = -1; width <= 1; width++) {
-                Vec3 sample = center.add(sideVec.scale(width));
-                targets.add(BlockPos.containing(sample));
+                for (int height = -1; height <= 1; height++) {
+                    targets.add(center.relative(right, width).relative(up, height));
+                }
             }
         }
 
-        // Beam is always visible when R is pressed, including when firing into the air.
         for (double d = 0.5D; d <= 16.0D; d += 0.25D) {
             Vec3 point = start.add(look.scale(d));
             level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
@@ -456,26 +463,14 @@ public final class ForgedActiveSkills {
         try {
             for (BlockPos pos : targets) {
                 var state = level.getBlockState(pos);
-                if (state.isAir()) continue;
-
-                // Ultimate ignores hardness/unbreakable status. Normal drops are kept
-                // whenever Minecraft allows them; otherwise the block is still removed.
-                if (level.destroyBlock(pos, true, player)) {
-                    broken++;
-                } else {
-                    level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-                    broken++;
-                }
+                if (state.isAir() || state.is(Blocks.BEDROCK)) continue;
+                if (level.destroyBlock(pos, true, player)) broken++;
             }
         } finally {
             player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
         }
 
-        // The documented skill has cooldown but no extra durability activation cost.
-        // Start cooldown only when the beam actually mined at least one block.
-        if (broken > 0) {
-            startCooldown(tool, player, "UltimateLaserBreaker", cooldown);
-        }
+        if (broken > 0) startCooldown(tool, player, "UltimateLaserBreaker", cooldown);
     }
 
     private static BlockPos lookedBlock(Player player, double range) {
