@@ -23,6 +23,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Holder;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.world.level.block.Block;
@@ -527,6 +530,30 @@ public final class ForgedEffectEvents {
         if (!(event.getBreaker() instanceof Player player)) return;
         ItemStack tool = event.getTool();
 
+        // Ultimate Laser Breaker behaves as Fortune V for normal mining.
+        // Rebuild this block's vanilla loot with a temporary Fortune V copy of the forged tool,
+        // so every block uses Minecraft's own Fortune loot table instead of our old 0..5 bonus.
+        EffectTier ultimate = ForgedEffectRuntime.tier(tool, ForgingEffect.ULTIMATE_LASER_BREAKER);
+        if (ultimate != null && event.getLevel() instanceof ServerLevel serverLevel
+                && !event.getState().is(Blocks.BEDROCK)) {
+            ItemStack fortuneTool = tool.copy();
+            Holder<Enchantment> fortune = serverLevel.registryAccess()
+                    .registryOrThrow(Registries.ENCHANTMENT)
+                    .getHolderOrThrow(Enchantments.FORTUNE);
+            fortuneTool.enchant(fortune, 5);
+
+            java.util.List<ItemStack> fortuneDrops = Block.getDrops(
+                    event.getState(), serverLevel, event.getPos(), event.getBlockEntity(), player, fortuneTool);
+            event.getDrops().clear();
+            for (ItemStack dropStack : fortuneDrops) {
+                if (!dropStack.isEmpty()) {
+                    BlockPos pos = event.getPos();
+                    event.getDrops().add(new ItemEntity(serverLevel,
+                            pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, dropStack));
+                }
+            }
+        }
+
         EffectTier autoSmelt = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_SMELT_MINING);
         if (autoSmelt != null) {
             Item smelted = null;
@@ -597,6 +624,25 @@ public final class ForgedEffectEvents {
     }
 
     @SubscribeEvent
+    public static void onUltimateBedrockBreak(BlockEvent.BreakEvent event) {
+        if (!(event.getPlayer() instanceof Player player)) return;
+        ItemStack tool = player.getMainHandItem();
+        if (ForgedEffectRuntime.tier(tool, ForgingEffect.ULTIMATE_LASER_BREAKER) == null) return;
+        if (!event.getState().is(Blocks.BEDROCK)) return;
+
+        // Bedrock normally has destroy speed -1 and no loot table. Ultimate normal mining
+        // explicitly turns it into a collectible Bedrock item. The R laser still skips it.
+        event.setCanceled(true);
+        if (!player.level().isClientSide()) {
+            player.level().setBlockAndUpdate(event.getPos(), Blocks.AIR.defaultBlockState());
+            Block.popResource(player.level(), event.getPos(), new ItemStack(Blocks.BEDROCK));
+            if (!player.getAbilities().instabuild && tool.isDamageableItem()) {
+                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         Player player = event.getPlayer();
         if (player.level().isClientSide()) return;
@@ -660,39 +706,6 @@ public final class ForgedEffectEvents {
             player.getPersistentData().putLong("ForgedStaticHoverZ", event.getPos().getZ());
         }
 
-        EffectTier ultimateLaserFortune = ForgedEffectRuntime.tier(tool, ForgingEffect.ULTIMATE_LASER_BREAKER);
-        if (ultimateLaserFortune != null) {
-            // Ultimate Laser Breaker has a fixed Fortune V passive while mining.
-            // NeoForge's normal block drops still happen; this adds Fortune-style bonus
-            // drops for the common vanilla raw-ore blocks without changing the tool NBT.
-            ItemStack bonusDrop = ItemStack.EMPTY;
-            if (event.getState().is(Blocks.COAL_ORE) || event.getState().is(Blocks.DEEPSLATE_COAL_ORE)) {
-                bonusDrop = new ItemStack(Items.COAL);
-            } else if (event.getState().is(Blocks.DIAMOND_ORE) || event.getState().is(Blocks.DEEPSLATE_DIAMOND_ORE)) {
-                bonusDrop = new ItemStack(Items.DIAMOND);
-            } else if (event.getState().is(Blocks.EMERALD_ORE) || event.getState().is(Blocks.DEEPSLATE_EMERALD_ORE)) {
-                bonusDrop = new ItemStack(Items.EMERALD);
-            } else if (event.getState().is(Blocks.LAPIS_ORE) || event.getState().is(Blocks.DEEPSLATE_LAPIS_ORE)) {
-                bonusDrop = new ItemStack(Items.LAPIS_LAZULI);
-            } else if (event.getState().is(Blocks.REDSTONE_ORE) || event.getState().is(Blocks.DEEPSLATE_REDSTONE_ORE)) {
-                bonusDrop = new ItemStack(Items.REDSTONE);
-            } else if (event.getState().is(Blocks.IRON_ORE) || event.getState().is(Blocks.DEEPSLATE_IRON_ORE)) {
-                bonusDrop = new ItemStack(Items.RAW_IRON);
-            } else if (event.getState().is(Blocks.COPPER_ORE) || event.getState().is(Blocks.DEEPSLATE_COPPER_ORE)) {
-                bonusDrop = new ItemStack(Items.RAW_COPPER);
-            } else if (event.getState().is(Blocks.GOLD_ORE) || event.getState().is(Blocks.DEEPSLATE_GOLD_ORE)
-                    || event.getState().is(Blocks.NETHER_GOLD_ORE)) {
-                bonusDrop = new ItemStack(Items.RAW_GOLD);
-            }
-            if (!bonusDrop.isEmpty()) {
-                // Fortune V: bonus 0..5 units; base vanilla drop remains untouched.
-                int bonus = player.getRandom().nextInt(6);
-                if (bonus > 0) {
-                    bonusDrop.setCount(bonus);
-                    Block.popResource(player.level(), event.getPos(), bonusDrop);
-                }
-            }
-        }
 
         EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
         if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE))
