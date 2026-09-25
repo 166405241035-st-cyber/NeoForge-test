@@ -118,7 +118,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void harpoonPull(Player player, EffectTier tier) {
-        LivingEntity target = findLookTarget(player, 12.0D);
+        LivingEntity target = findLookTarget(player, 25.0D);
         if (target == null) return;
 
         long cooldown = ForgedSkillConfig.harpoon(tier);
@@ -135,7 +135,7 @@ public final class ForgedActiveSkills {
     }
 
     private static void mobSwap(Player player, EffectTier tier) {
-        LivingEntity target = findLookTarget(player, 16.0D);
+        LivingEntity target = findLookTarget(player, 25.0D);
         if (!(target instanceof Monster)) {
             player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: ต้องเล็งมอนสเตอร์"), true);
             return;
@@ -171,7 +171,7 @@ public final class ForgedActiveSkills {
             case III -> 8.0D;
         };
 
-        AABB area = player.getBoundingBox().inflate(3.0D);
+        AABB area = player.getBoundingBox().inflate(6.0D);
         for (LivingEntity target : player.level().getEntitiesOfClass(
                 LivingEntity.class, area, entity -> entity != player && entity.isAlive())) {
             player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
