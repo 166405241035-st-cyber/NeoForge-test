@@ -91,10 +91,11 @@ public final class ForgedSkillHud {
                     : (status.equals("READY") || status.equals("ACTIVE") ? 0xB8FFB8 : 0xFFD27F));
         }
 
-        int contentWidth = 0;
+        String header = "Active Skill";
+        int contentWidth = Math.max(mc.font.width(header), mc.font.width(controls));
         for (String row : rows) contentWidth = Math.max(contentWidth, mc.font.width(row));
         int boxWidth = contentWidth + padding * 2;
-        int boxHeight = rows.size() * line + padding * 2;
+        int boxHeight = (rows.size() + 2) * line + padding * 2;
 
         int scaledScreenWidth = (int)(gui.guiWidth() / scale);
         int scaledScreenHeight = (int)(gui.guiHeight() / scale);
@@ -104,17 +105,15 @@ public final class ForgedSkillHud {
         gui.pose().pushPose();
         gui.pose().scale(scale, scale, 1.0F);
         gui.fill(x, y, x + boxWidth, y + boxHeight, 0x70000000);
+        gui.drawString(mc.font, Component.literal(header),
+                x + padding, y + padding, 0xFFFFFF, true);
+        gui.drawString(mc.font, Component.literal(controls),
+                x + padding, y + padding + line, 0xAAAAAA, true);
         for (int i = 0; i < rows.size(); i++) {
             gui.drawString(mc.font, Component.literal(rows.get(i)),
-                    x + padding, y + padding + line * i, colors.get(i), true);
+                    x + padding, y + padding + line * (i + 2), colors.get(i), true);
         }
         gui.pose().popPose();
-
-        // Controls are separate from the skill list: centered just above the hunger bar.
-        int controlsWidth = mc.font.width(controls);
-        int controlsX = (gui.guiWidth() - controlsWidth) / 2;
-        int controlsY = gui.guiHeight() - 52;
-        gui.drawString(mc.font, Component.literal(controls), controlsX, controlsY, 0xFFFFFF, true);
     }
 
     private static String keyName(KeyMapping mapping) {
