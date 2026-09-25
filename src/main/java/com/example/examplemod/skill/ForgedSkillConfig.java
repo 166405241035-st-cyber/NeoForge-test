@@ -42,7 +42,7 @@ public final class ForgedSkillConfig {
         LAVA_I=value(b,"lava_wave","tier_i",7.5); LAVA_II=value(b,"lava_wave","tier_ii",5.0); LAVA_III=value(b,"lava_wave","tier_iii",3.5);
         TIME_STOP_I=value(b,"stun_time_stop","tier_i",7.5); TIME_STOP_II=value(b,"stun_time_stop","tier_ii",7.5); TIME_STOP_III=value(b,"stun_time_stop","tier_iii",7.5);
         FORTRESS_I=value(b,"iron_fortress_guard","tier_i",7.5); FORTRESS_II=value(b,"iron_fortress_guard","tier_ii",7.5); FORTRESS_III=value(b,"iron_fortress_guard","tier_iii",7.5);
-        LASER_I=value(b,"ultimate_laser_breaker","tier_i",12.5); LASER_II=value(b,"ultimate_laser_breaker","tier_ii",8.5); LASER_III=value(b,"ultimate_laser_breaker","tier_iii",5.0);
+        LASER_I=value(b,"ultimate_laser_breaker","tier_i",300.0); LASER_II=value(b,"ultimate_laser_breaker","tier_ii",210.0); LASER_III=value(b,"ultimate_laser_breaker","tier_iii",120.0);
         NATURE_I=value(b,"nature_god_bless","tier_i",10.0); NATURE_II=value(b,"nature_god_bless","tier_ii",10.0); NATURE_III=value(b,"nature_god_bless","tier_iii",10.0);
         BOOMERANG_I=value(b,"boomerang_weapon","tier_i",6.0); BOOMERANG_II=value(b,"boomerang_weapon","tier_ii",6.0); BOOMERANG_III=value(b,"boomerang_weapon","tier_iii",6.0);
         DIVINE_I=value(b,"divine_beacon_light","tier_i",300.0); DIVINE_II=value(b,"divine_beacon_light","tier_ii",210.0); DIVINE_III=value(b,"divine_beacon_light","tier_iii",120.0);
