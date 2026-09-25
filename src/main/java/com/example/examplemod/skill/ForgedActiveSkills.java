@@ -452,10 +452,19 @@ public final class ForgedActiveSkills {
             }
         }
 
-        for (double d = 0.5D; d <= 16.0D; d += 0.25D) {
-            Vec3 point = start.add(look.scale(d));
-            level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                    point.x, point.y, point.z, 1, 0.025D, 0.025D, 0.025D, 0.0D);
+        // Render the laser as a visible 3x3 beam instead of a single thin line.
+        // The particle cross-section follows the same right/up axes as the 3x3 mining volume.
+        Vec3 rightVec = new Vec3(right.getStepX(), right.getStepY(), right.getStepZ());
+        Vec3 upVec = new Vec3(up.getStepX(), up.getStepY(), up.getStepZ());
+        for (double d = 0.5D; d <= 16.0D; d += 0.35D) {
+            Vec3 centerPoint = start.add(look.scale(d));
+            for (int px = -1; px <= 1; px++) {
+                for (int py = -1; py <= 1; py++) {
+                    Vec3 point = centerPoint.add(rightVec.scale(px * 0.65D)).add(upVec.scale(py * 0.65D));
+                    level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                            point.x, point.y, point.z, 1, 0.015D, 0.015D, 0.015D, 0.0D);
+                }
+            }
         }
 
         int broken = 0;
