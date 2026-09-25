@@ -526,27 +526,45 @@ public final class ForgedEffectEvents {
     public static void onBlockDrops(BlockDropsEvent event) {
         if (!(event.getBreaker() instanceof Player player)) return;
         ItemStack tool = event.getTool();
+
         EffectTier autoSmelt = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_SMELT_MINING);
-        if (autoSmelt == null) return;
+        if (autoSmelt != null) {
+            Item smelted = null;
+            if (event.getState().is(Blocks.IRON_ORE) || event.getState().is(Blocks.DEEPSLATE_IRON_ORE)) smelted = Items.IRON_INGOT;
+            else if (event.getState().is(Blocks.GOLD_ORE) || event.getState().is(Blocks.DEEPSLATE_GOLD_ORE)
+                    || event.getState().is(Blocks.NETHER_GOLD_ORE)) smelted = Items.GOLD_INGOT;
+            else if (event.getState().is(Blocks.COPPER_ORE) || event.getState().is(Blocks.DEEPSLATE_COPPER_ORE)) smelted = Items.COPPER_INGOT;
 
-        Item smelted = null;
-        if (event.getState().is(Blocks.IRON_ORE) || event.getState().is(Blocks.DEEPSLATE_IRON_ORE)) smelted = Items.IRON_INGOT;
-        else if (event.getState().is(Blocks.GOLD_ORE) || event.getState().is(Blocks.DEEPSLATE_GOLD_ORE)
-                || event.getState().is(Blocks.NETHER_GOLD_ORE)) smelted = Items.GOLD_INGOT;
-        else if (event.getState().is(Blocks.COPPER_ORE) || event.getState().is(Blocks.DEEPSLATE_COPPER_ORE)) smelted = Items.COPPER_INGOT;
-        if (smelted == null) return;
+            if (smelted != null) {
+                int output = switch (autoSmelt) {
+                    case I -> 1;
+                    case II -> 1 + (player.getRandom().nextBoolean() ? 1 : 0);
+                    case III -> 2;
+                };
 
-        int output = switch (autoSmelt) {
-            case I -> 1;
-            case II -> 1 + (player.getRandom().nextBoolean() ? 1 : 0);
-            case III -> 2;
-        };
+                event.getDrops().clear();
+                BlockPos pos = event.getPos();
+                event.getDrops().add(new ItemEntity(event.getLevel(),
+                        pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                        new ItemStack(smelted, output)));
+            }
+        }
 
-        event.getDrops().clear();
-        BlockPos pos = event.getPos();
-        event.getDrops().add(new ItemEntity(event.getLevel(),
-                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-                new ItemStack(smelted, output)));
+        // BlockDropsEvent already contains the drops from THIS block. Moving these
+        // entities here makes Void Vacuum work on the same mining action instead of
+        // waiting until the next block break.
+        EffectTier vacuum = ForgedEffectRuntime.tier(tool, ForgingEffect.VOID_VACUUM_PICK);
+        if (vacuum != null && !event.getDrops().isEmpty()) {
+            for (ItemEntity drop : event.getDrops()) {
+                drop.setPos(player.getX(), player.getY() + 0.5D, player.getZ());
+                drop.setDeltaMovement(Vec3.ZERO);
+            }
+
+            if (tool.isDamageableItem()) {
+                int cost = switch (vacuum) { case I -> 5; case II -> 3; case III -> 1; };
+                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + cost));
+            }
+        }
     }
 
     @SubscribeEvent
@@ -709,24 +727,6 @@ public final class ForgedEffectEvents {
                 default -> Items.RAW_GOLD;
             };
             Block.popResource(player.level(), event.getPos(), new ItemStack(rawOre));
-        }
-
-        EffectTier vacuum = ForgedEffectRuntime.tier(tool, ForgingEffect.VOID_VACUUM_PICK);
-        if (vacuum != null) {
-            // Pull nearby dropped items directly to the player after mining.
-            // Tier changes the extra durability cost only: 5 / 3 / 1.
-            boolean pulledAny = false;
-            for (ItemEntity drop : player.level().getEntitiesOfClass(ItemEntity.class,
-                    new net.minecraft.world.phys.AABB(event.getPos()).inflate(3.0D))) {
-                drop.setPos(player.getX(), player.getY() + 0.5D, player.getZ());
-                drop.setDeltaMovement(Vec3.ZERO);
-                pulledAny = true;
-            }
-
-            if (pulledAny && tool.isDamageableItem()) {
-                int cost = switch (vacuum) { case I -> 5; case II -> 3; case III -> 1; };
-                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + cost));
-            }
         }
 
         EffectTier autoChest = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_CHEST_TRANSPORT);
