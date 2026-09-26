@@ -740,7 +740,9 @@ public final class ForgedActiveSkills {
 
         // Vertical columns are offset TWO blocks forward. One block forward can still
         // intersect the player's bounding box near a block edge and Minecraft rejects/blocks placement.
-        BlockPos start = vertical ? feet.relative(forward, 2) : feet.relative(forward);
+        // Keep both modes consistent: the first block always starts two blocks
+        // in front of the player's feet.
+        BlockPos start = feet.relative(forward, 2);
 
         int placed = 0;
         for (int i = 0; i < maxBlocks && (!offhand.isEmpty() || player.getAbilities().instabuild); i++) {
