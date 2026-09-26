@@ -193,6 +193,18 @@ public class ForgedEquipmentItem extends Item {
                 }
 
                 context.getLevel().setBlock(context.getClickedPos(), modified, 11);
+
+                // Healing Harvest belongs to the plot that was actually tilled, not to
+                // whatever tool the player happens to hold later while harvesting.
+                if (type == HeadBlueprintType.HOE && action == ItemAbilities.HOE_TILL
+                        && context.getLevel() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                    EffectTier healingTier = ForgedEffectRuntime.tier(stack, ForgingEffect.HEALING_HARVEST);
+                    if (healingTier != null) {
+                        ForgedFarmingPlotData.get(serverLevel).set(
+                                context.getClickedPos(), ForgingEffect.HEALING_HARVEST, healingTier);
+                    }
+                }
+
                 if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
                     stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
                 }
