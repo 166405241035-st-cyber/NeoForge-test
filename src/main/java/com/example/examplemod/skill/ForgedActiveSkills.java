@@ -722,28 +722,29 @@ public final class ForgedActiveSkills {
             return;
         }
 
-        // Two placement modes:
-        // - Look mostly horizontal: build five blocks forward.
-        // - Look mostly vertical: build five blocks upward/downward from the adjacent block.
+        // Tier controls the maximum line length.
+        int maxBlocks = switch (tier) {
+            case I -> 5;
+            case II -> 9;
+            case III -> 14;
+        };
+
         Vec3 look = player.getLookAngle();
         boolean vertical = Math.abs(look.y) >= 0.65D;
-        net.minecraft.core.Direction dir;
-        if (vertical) {
-            dir = look.y >= 0.0D ? net.minecraft.core.Direction.UP : net.minecraft.core.Direction.DOWN;
-        } else {
-            dir = player.getDirection();
-        }
-
-        // Anchor placement to the player's feet. Horizontal mode starts one block
-        // in front at foot level; vertical mode starts at the feet and grows up/down.
-        BlockPos feet = player.blockPosition();
-        // Both modes start one block in front of the player's feet.
-        // Vertical mode then grows UP/DOWN from that front position instead of spawning inside the player.
         net.minecraft.core.Direction forward = player.getDirection();
-        BlockPos start = vertical ? feet.relative(forward) : feet.relative(dir);
+        net.minecraft.core.Direction buildDir = vertical
+                ? (look.y >= 0.0D ? net.minecraft.core.Direction.UP : net.minecraft.core.Direction.DOWN)
+                : forward;
+
+        BlockPos feet = player.blockPosition();
+
+        // Vertical columns are offset TWO blocks forward. One block forward can still
+        // intersect the player's bounding box near a block edge and Minecraft rejects/blocks placement.
+        BlockPos start = vertical ? feet.relative(forward, 2) : feet.relative(forward);
+
         int placed = 0;
-        for (int i = 0; i < 5 && (!offhand.isEmpty() || player.getAbilities().instabuild); i++) {
-            BlockPos pos = start.relative(dir, i);
+        for (int i = 0; i < maxBlocks && (!offhand.isEmpty() || player.getAbilities().instabuild); i++) {
+            BlockPos pos = start.relative(buildDir, i);
             if (!player.level().getBlockState(pos).canBeReplaced()) break;
 
             player.level().setBlockAndUpdate(pos, blockItem.getBlock().defaultBlockState());
@@ -761,9 +762,12 @@ public final class ForgedActiveSkills {
 
         if (placed == 0) return;
         player.displayClientMessage(net.minecraft.network.chat.Component.literal(
-                "Line Builder: " + (vertical ? "VERTICAL" : "HORIZONTAL")), true);
+                "Line Builder: " + (vertical ? "VERTICAL" : "HORIZONTAL")
+                        + " (" + placed + "/" + maxBlocks + ")"), true);
         startCooldown(tool, player, "LineBuilder", cooldown);
-        damageEquipment(player, switch (tier) { case I -> 5; case II -> 3; case III -> 1; });
+
+        // One activation costs one durability; Tier strength is represented by line length.
+        damageEquipment(player, 1);
     }
 
     private static void earthyWallRise(Player player, ItemStack tool, EffectTier tier) {
