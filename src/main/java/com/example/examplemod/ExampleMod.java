@@ -53,6 +53,8 @@ public class ExampleMod {
     public static final DeferredItem<BlockItem> FORGING_ANVIL_ITEM = ITEMS.registerSimpleBlockItem("forging_anvil", FORGING_ANVIL);
     public static final DeferredBlock<Block> EQUIPMENT_TEST_BLOCK = BLOCKS.register("equipment_test_block", registryName -> new EquipmentTestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(3.5F)));
     public static final DeferredBlock<Block> INVISIBLE_SUPPORT_BLOCK = BLOCKS.register("invisible_support", registryName -> new InvisibleSupportBlock(BlockBehaviour.Properties.of().strength(0.2F).noCollission().noOcclusion()));
+    public static final DeferredBlock<Block> MOISTURE_RETAIN_FARMLAND = BLOCKS.register("moisture_retain_farmland",
+            registryName -> new MoistureRetainFarmlandBlock(BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.FARMLAND)));
     public static final DeferredItem<BlockItem> EQUIPMENT_TEST_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("equipment_test_block", EQUIPMENT_TEST_BLOCK);
     public static final DeferredHolder<EntityType<?>, EntityType<ForgedBoomerangEntity>> FORGED_BOOMERANG = ENTITY_TYPES.register("forged_boomerang",
             () -> EntityType.Builder.<ForgedBoomerangEntity>of(ForgedBoomerangEntity::new, MobCategory.MISC)
