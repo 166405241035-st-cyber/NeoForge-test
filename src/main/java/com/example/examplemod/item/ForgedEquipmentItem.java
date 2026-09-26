@@ -238,6 +238,11 @@ public class ForgedEquipmentItem extends Item {
                         ForgedFarmingPlotData.get(serverLevel).set(
                                 context.getClickedPos(), ForgingEffect.AUTO_CHEST_TRANSPORT, autoChestTier);
                     }
+                    EffectTier natureBlessTier = ForgedEffectRuntime.tier(stack, ForgingEffect.NATURE_GOD_BLESS);
+                    if (natureBlessTier != null) {
+                        ForgedFarmingPlotData.get(serverLevel).set(
+                                context.getClickedPos(), ForgingEffect.NATURE_GOD_BLESS, natureBlessTier);
+                    }
                 }
 
                 if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
