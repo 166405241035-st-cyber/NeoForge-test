@@ -307,24 +307,6 @@ public final class ForgedEffectEvents {
         ItemStack tool = player.getMainHandItem();
         long now = player.level().getGameTime();
 
-        // Refresh every Moisture Retain plot from world saved data. Do it once per
-        // second; this is far faster than vanilla farmland can visibly dry out.
-        if (player.level() instanceof ServerLevel moistureLevel && now % 20L == 0L) {
-            ForgedMoistureData.get(moistureLevel).refresh(moistureLevel);
-        }
-
-        // Keep the stamped Moisture Retain plot fully hydrated after the immediate tilling trigger.
-        long moisturePos = player.getPersistentData().getLong("ForgedPermanentMoisturePos");
-        if (moisturePos != 0L) {
-            BlockPos pos = BlockPos.of(moisturePos);
-            net.minecraft.world.level.block.state.BlockState state = player.level().getBlockState(pos);
-            if (state.is(Blocks.FARMLAND)
-                    && state.getValue(net.minecraft.world.level.block.FarmBlock.MOISTURE) != 7) {
-                player.level().setBlockAndUpdate(pos,
-                        state.setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
-            }
-        }
-
         // Refresh HUD when the actual held ItemStack changes. Each forged item owns
         // its selected active skill and its cooldown timestamps.
         int heldSlot = player.getInventory().selected;
@@ -925,14 +907,6 @@ public final class ForgedEffectEvents {
                 || player.level().getBlockState(clicked).is(Blocks.GRASS_BLOCK)
                 || player.level().getBlockState(clicked).is(Blocks.DIRT_PATH)
                 || player.level().getBlockState(clicked).is(Blocks.FARMLAND);
-
-        // Farming effects trigger on the same hoe click that tills the soil.
-        EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
-        if (moisture != null && tillableSoil) {
-            player.level().setBlockAndUpdate(clicked, Blocks.FARMLAND.defaultBlockState()
-                    .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
-            player.getPersistentData().putLong("ForgedPermanentMoisturePos", clicked.asLong());
-        }
 
         // Rotten Compost no longer hydrates farmland. It only rolls a bonus soil-block drop on tilling.
         EffectTier rottenCompost = ForgedEffectRuntime.tier(tool, ForgingEffect.ROTTEN_COMPOST);
