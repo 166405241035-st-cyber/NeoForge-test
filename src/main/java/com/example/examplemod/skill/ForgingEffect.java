@@ -16,7 +16,7 @@ public enum ForgingEffect {
     ZOMBIE_MINION_CALLING("Zombie Minion Calling", MonsterMaterial.ROTTEN_FLESH, EffectCategory.ATTACK),
     CRIPPLING_STRIKE("Crippling Strike", MonsterMaterial.ROTTEN_FLESH, EffectCategory.ATTACK),
     SCAVENGER_DIG("Scavenger Dig", MonsterMaterial.ROTTEN_FLESH, EffectCategory.MINING),
-    ROTTEN_COMPOST("Rotten Compost", MonsterMaterial.ROTTEN_FLESH, EffectCategory.MINING),
+    ROTTEN_COMPOST("Rotten Compost", MonsterMaterial.ROTTEN_FLESH, EffectCategory.FARMING),
     UNREFINED_ORE_DISCOVERY("Unrefined Ore Discovery", MonsterMaterial.ROTTEN_FLESH, EffectCategory.FARMING),
 
     SPINE_SPIKE("Spine Spike", MonsterMaterial.BONE, EffectCategory.ATTACK),
@@ -52,7 +52,7 @@ public enum ForgingEffect {
     FIREBALL_SHOOT("Fireball Shoot", MonsterMaterial.BLAZE_ROD, EffectCategory.ATTACK),
     LAVA_WAVE("Lava Wave", MonsterMaterial.BLAZE_ROD, EffectCategory.ATTACK),
     FRENZY_DIGGING("Frenzy Digging", MonsterMaterial.BLAZE_ROD, EffectCategory.MINING),
-    THERMAL_CROP_BARRIER("Thermal Crop Barrier", MonsterMaterial.BLAZE_ROD, EffectCategory.MINING),
+    THERMAL_CROP_BARRIER("Thermal Crop Barrier", MonsterMaterial.BLAZE_ROD, EffectCategory.FARMING),
     AUTO_SMELT_MINING("Auto-Smelt Mining", MonsterMaterial.BLAZE_ROD, EffectCategory.MINING),
 
     AEGIS_SHIELD("Aegis Shield", MonsterMaterial.GHAST_TEAR, EffectCategory.ATTACK),
