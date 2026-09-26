@@ -73,7 +73,7 @@ public final class ForgedEffectEvents {
     private static final double[] AIRBORNE_MINING_SPEED = {0.25D, 0.45D, 0.70D};
     private static final int[] SELF_REPAIR_AMOUNT = {2, 5, 10};
     private static final double[] HEALING_HARVEST_CHANCE = {0.05D, 0.10D, 0.18D};
-    private static final double[] MOISTURE_RETAIN_CHANCE = {0.25D, 0.50D, 0.75D};
+    private static final int[] MOISTURE_RETAIN_DURABILITY = {6, 4, 2};
     private static final double[] ROTTEN_COMPOST_CHANCE = {0.15D, 0.25D, 0.35D};
     private static final double[] ORGANIC_CATALYST_COOLDOWN = {200.0D, 140.0D, 100.0D};
     private static final double[] NETHER_MUTATION_CHANCE = {0.05D, 0.10D, 0.20D};
@@ -773,14 +773,18 @@ public final class ForgedEffectEvents {
             Block.popResource(player.level(), event.getPos(), new ItemStack(bonus));
         }
 
+        // Unrefined Ore Discovery: bonus ore comes out as nuggets, not raw ore.
         EffectTier unrefined = ForgedEffectRuntime.tier(tool, ForgingEffect.UNREFINED_ORE_DISCOVERY);
         if (unrefined != null && player.getRandom().nextDouble() < tierValue(unrefined, UNREFINED_ORE_CHANCE)) {
-            Item rawOre = switch (player.getRandom().nextInt(3)) {
-                case 0 -> Items.RAW_IRON;
-                case 1 -> Items.RAW_COPPER;
-                default -> Items.RAW_GOLD;
-            };
-            Block.popResource(player.level(), event.getPos(), new ItemStack(rawOre));
+            Item nugget = player.getRandom().nextBoolean() ? Items.IRON_NUGGET : Items.GOLD_NUGGET;
+            Block.popResource(player.level(), event.getPos(), new ItemStack(nugget));
+        }
+
+        // Rotten Compost: mining has a tiered chance to uncover one piece of rotten compost.
+        // Rotten Flesh is used as the compost item until a dedicated compost item is registered.
+        EffectTier rottenCompost = ForgedEffectRuntime.tier(tool, ForgingEffect.ROTTEN_COMPOST);
+        if (rottenCompost != null && player.getRandom().nextDouble() < tierValue(rottenCompost, ROTTEN_COMPOST_CHANCE)) {
+            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.ROTTEN_FLESH));
         }
 
         EffectTier autoChest = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_CHEST_TRANSPORT);
@@ -870,7 +874,8 @@ public final class ForgedEffectEvents {
                 Direction horizontal = player.getDirection();
                 Direction side = horizontal.getClockWise();
                 int changed = 0;
-                for (int offset = -1; offset <= 1; offset++) {
+                // Radius 3: till a 7-block-wide line centered on the clicked block.
+                for (int offset = -3; offset <= 3; offset++) {
                     BlockPos pos = clicked.relative(side, offset);
                     net.minecraft.world.level.block.state.BlockState state = player.level().getBlockState(pos);
                     if ((state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH))
@@ -911,23 +916,19 @@ public final class ForgedEffectEvents {
         EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
         if (moisture != null) {
             BlockPos farmlandPos = player.level().getBlockState(clicked).is(Blocks.FARMLAND) ? clicked : clicked.below();
-            if (player.level().getBlockState(farmlandPos).is(Blocks.FARMLAND)
-                    && player.getRandom().nextDouble() < tierValue(moisture, MOISTURE_RETAIN_CHANCE)) {
+            if (player.level().getBlockState(farmlandPos).is(Blocks.FARMLAND)) {
+                // Always succeeds: fully hydrate nearby farmland and pay durability instead of rolling a chance.
                 for (BlockPos pos : BlockPos.betweenClosed(farmlandPos.offset(-2, 0, -2), farmlandPos.offset(2, 0, 2))) {
                     if (player.level().getBlockState(pos).is(Blocks.FARMLAND)) {
                         player.level().setBlockAndUpdate(pos, player.level().getBlockState(pos)
                                 .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
                     }
                 }
+                if (!player.getAbilities().instabuild && tool.isDamageableItem()) {
+                    int cost = tierValue(moisture, MOISTURE_RETAIN_DURABILITY);
+                    tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + cost));
+                }
             }
-        }
-
-        EffectTier rottenCompost = ForgedEffectRuntime.tier(tool, ForgingEffect.ROTTEN_COMPOST);
-        if (rottenCompost != null && player.level().getBlockState(clicked).is(Blocks.FARMLAND)
-                && player.getRandom().nextDouble() < tierValue(rottenCompost, ROTTEN_COMPOST_CHANCE)) {
-            player.level().setBlockAndUpdate(clicked, Blocks.FARMLAND.defaultBlockState()
-                    .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
-            BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player.level(), clicked.above(), player);
         }
 
         EffectTier organic = ForgedEffectRuntime.tier(tool, ForgingEffect.ORGANIC_CATALYST);
