@@ -743,11 +743,21 @@ public final class ForgedActiveSkills {
         // Keep both modes consistent: the first block always starts two blocks
         // in front of the player's feet.
         // Both modes begin two blocks in front of the player's feet.
-        // When looking down, build upward from that foot-level anchor too.
-        // Building DOWN immediately hits the ground after the first block.
+        // Looking up builds upward. Looking down builds downward only when there is
+        // empty space below the front anchor (for example at an edge or over a gap).
         BlockPos start = feet.relative(forward, 2);
         if (vertical) {
-            buildDir = net.minecraft.core.Direction.UP;
+            if (look.y < 0.0D) {
+                BlockPos belowStart = start.below();
+                buildDir = player.level().getBlockState(belowStart).canBeReplaced()
+                        ? net.minecraft.core.Direction.DOWN
+                        : net.minecraft.core.Direction.UP;
+                if (buildDir == net.minecraft.core.Direction.DOWN) {
+                    start = belowStart;
+                }
+            } else {
+                buildDir = net.minecraft.core.Direction.UP;
+            }
         }
 
         int placed = 0;
