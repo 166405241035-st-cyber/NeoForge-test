@@ -8,6 +8,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +19,7 @@ import java.util.Map;
  */
 public final class ForgedFarmingPlotData extends SavedData {
     private static final String NAME = "forged_farming_plots";
-    private final Map<Long, PlotEffect> plots = new HashMap<>();
-
-    public record PlotEffect(ForgingEffect effect, EffectTier tier) {}
+    private final Map<Long, EnumMap<ForgingEffect, EffectTier>> plots = new HashMap<>();
 
     public static ForgedFarmingPlotData get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(
@@ -28,13 +27,14 @@ public final class ForgedFarmingPlotData extends SavedData {
     }
 
     public void set(BlockPos pos, ForgingEffect effect, EffectTier tier) {
-        plots.put(pos.asLong(), new PlotEffect(effect, tier));
+        plots.computeIfAbsent(pos.asLong(), key -> new EnumMap<>(ForgingEffect.class))
+                .put(effect, tier);
         setDirty();
     }
 
     public EffectTier tier(BlockPos pos, ForgingEffect effect) {
-        PlotEffect plot = plots.get(pos.asLong());
-        return plot != null && plot.effect() == effect ? plot.tier() : null;
+        Map<ForgingEffect, EffectTier> effects = plots.get(pos.asLong());
+        return effects == null ? null : effects.get(effect);
     }
 
     public void remove(BlockPos pos) {
@@ -44,12 +44,14 @@ public final class ForgedFarmingPlotData extends SavedData {
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         ListTag list = new ListTag();
-        for (Map.Entry<Long, PlotEffect> entry : plots.entrySet()) {
-            CompoundTag plot = new CompoundTag();
-            plot.putLong("Pos", entry.getKey());
-            plot.putString("Effect", entry.getValue().effect().name());
-            plot.putString("Tier", entry.getValue().tier().name());
-            list.add(plot);
+        for (Map.Entry<Long, EnumMap<ForgingEffect, EffectTier>> entry : plots.entrySet()) {
+            for (Map.Entry<ForgingEffect, EffectTier> effect : entry.getValue().entrySet()) {
+                CompoundTag plot = new CompoundTag();
+                plot.putLong("Pos", entry.getKey());
+                plot.putString("Effect", effect.getKey().name());
+                plot.putString("Tier", effect.getValue().name());
+                list.add(plot);
+            }
         }
         tag.put("Plots", list);
         return tag;
@@ -61,9 +63,10 @@ public final class ForgedFarmingPlotData extends SavedData {
         for (int i = 0; i < list.size(); i++) {
             CompoundTag plot = list.getCompound(i);
             try {
-                data.plots.put(plot.getLong("Pos"), new PlotEffect(
-                        ForgingEffect.valueOf(plot.getString("Effect")),
-                        EffectTier.valueOf(plot.getString("Tier"))));
+                ForgingEffect effect = ForgingEffect.valueOf(plot.getString("Effect"));
+                EffectTier tier = EffectTier.valueOf(plot.getString("Tier"));
+                data.plots.computeIfAbsent(plot.getLong("Pos"), key -> new EnumMap<>(ForgingEffect.class))
+                        .put(effect, tier);
             } catch (IllegalArgumentException ignored) {
                 // Ignore data from effects/tier names that no longer exist.
             }
