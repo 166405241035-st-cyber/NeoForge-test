@@ -737,7 +737,10 @@ public final class ForgedActiveSkills {
         // Anchor placement to the player's feet. Horizontal mode starts one block
         // in front at foot level; vertical mode starts at the feet and grows up/down.
         BlockPos feet = player.blockPosition();
-        BlockPos start = vertical ? feet : feet.relative(dir);
+        // Both modes start one block in front of the player's feet.
+        // Vertical mode then grows UP/DOWN from that front position instead of spawning inside the player.
+        net.minecraft.core.Direction forward = player.getDirection();
+        BlockPos start = vertical ? feet.relative(forward) : feet.relative(dir);
         int placed = 0;
         for (int i = 0; i < 5 && (!offhand.isEmpty() || player.getAbilities().instabuild); i++) {
             BlockPos pos = start.relative(dir, i);
