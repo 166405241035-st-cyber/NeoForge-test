@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -924,6 +925,23 @@ public final class ForgedEffectEvents {
 
     }
 
+
+    @SubscribeEvent
+    public static void onHyperGrowthPlotParticles(LevelTickEvent.Post event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
+        if (serverLevel.getGameTime() % 10L != 0L) return;
+
+        for (BlockPos farmlandPos : ForgedFarmingPlotData.get(serverLevel)
+                .positionsWith(ForgingEffect.HYPER_GROWTH_SOIL)) {
+            if (!serverLevel.isLoaded(farmlandPos)) continue;
+            BlockState soil = serverLevel.getBlockState(farmlandPos);
+            if (!soil.is(Blocks.FARMLAND) && !soil.is(ExampleMod.MOISTURE_RETAIN_FARMLAND.get())) continue;
+
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL,
+                    farmlandPos.getX() + 0.5D, farmlandPos.getY() + 1.08D, farmlandPos.getZ() + 0.5D,
+                    2, 0.30D, 0.03D, 0.30D, 0.005D);
+        }
+    }
 
     @SubscribeEvent
     public static void onHyperGrowth(CropGrowEvent.Pre event) {
