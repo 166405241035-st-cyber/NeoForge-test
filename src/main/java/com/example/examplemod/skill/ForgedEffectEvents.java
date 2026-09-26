@@ -492,9 +492,13 @@ public final class ForgedEffectEvents {
             }
         }
 
+        // Self-Repairing: every 30 seconds while the forged equipment is held,
+        // restore durability according to tier without exceeding full durability.
         EffectTier selfRepair = ForgedEffectRuntime.tier(tool, ForgingEffect.SELF_REPAIRING);
-        if (selfRepair != null && tool.isDamaged() && now % 600L == 0L)
-            tool.setDamageValue(Math.max(0, tool.getDamageValue() - tierValue(selfRepair, SELF_REPAIR_AMOUNT)));
+        if (selfRepair != null && tool.isDamaged() && now % 600L == 0L) {
+            int repair = tierValue(selfRepair, SELF_REPAIR_AMOUNT);
+            tool.setDamageValue(Math.max(0, tool.getDamageValue() - repair));
+        }
 
         ForgedActiveSkills.tickAegis(player, tool);
         ForgedActiveSkills.tickWorldEffects(player, tool);
@@ -746,13 +750,17 @@ public final class ForgedEffectEvents {
         }
 
 
+        // Bone Dust Extract: each successfully mined block can create one bonus Bone Meal.
         EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
-        if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE))
+        if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE)) {
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
+        }
 
+        // Soul Sand Extraction: each successfully mined block can create one bonus Soul Sand.
         EffectTier soulSand = ForgedEffectRuntime.tier(tool, ForgingEffect.SOUL_SAND_EXTRACTION);
-        if (soulSand != null && player.getRandom().nextDouble() < tierValue(soulSand, SOUL_SAND_CHANCE))
+        if (soulSand != null && player.getRandom().nextDouble() < tierValue(soulSand, SOUL_SAND_CHANCE)) {
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.SOUL_SAND));
+        }
 
         EffectTier scavenger = ForgedEffectRuntime.tier(tool, ForgingEffect.SCAVENGER_DIG);
         if (scavenger != null && player.getRandom().nextDouble() < tierValue(scavenger, SCAVENGER_CHANCE)) {
