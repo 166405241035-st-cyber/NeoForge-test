@@ -972,14 +972,26 @@ public final class ForgedActiveSkills {
             if (sky == null) {
                 player.getPersistentData().putBoolean("ForgedSkyBridgeActive", false);
             } else {
+                // Create the bridge one block below the player's feet while walking over air.
+                // Tier changes durability cost per generated bridge block.
                 BlockPos below = player.blockPosition().below();
                 if (player.level().getBlockState(below).canBeReplaced()) {
                     int cost = switch (sky) { case I -> 3; case II -> 2; case III -> 1; };
                     if (!tool.isDamageableItem() || tool.getDamageValue() + cost < tool.getMaxDamage()) {
                         player.level().setBlockAndUpdate(below, Blocks.COBBLESTONE.defaultBlockState());
+
+                        if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                            Vec3 point = Vec3.atCenterOf(below);
+                            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
+                                    point.x, point.y + 0.45D, point.z, 4,
+                                    0.22D, 0.04D, 0.22D, 0.015D);
+                        }
+
                         damageEquipment(player, cost);
                     } else {
                         player.getPersistentData().putBoolean("ForgedSkyBridgeActive", false);
+                        player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                                "Sky Bridge Walk: OFF (durability too low)"), true);
                     }
                 }
             }
