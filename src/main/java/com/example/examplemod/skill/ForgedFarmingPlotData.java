@@ -41,6 +41,16 @@ public final class ForgedFarmingPlotData extends SavedData {
         if (plots.remove(pos.asLong()) != null) setDirty();
     }
 
+    public java.util.List<BlockPos> positionsWith(ForgingEffect effect) {
+        java.util.List<BlockPos> result = new java.util.ArrayList<>();
+        for (Map.Entry<Long, EnumMap<ForgingEffect, EffectTier>> entry : plots.entrySet()) {
+            if (entry.getValue().containsKey(effect)) {
+                result.add(BlockPos.of(entry.getKey()));
+            }
+        }
+        return result;
+    }
+
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         ListTag list = new ListTag();
