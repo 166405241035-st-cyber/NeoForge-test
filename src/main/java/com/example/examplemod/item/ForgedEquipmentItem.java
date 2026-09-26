@@ -233,6 +233,11 @@ public class ForgedEquipmentItem extends Item {
                         ForgedFarmingPlotData.get(serverLevel).set(
                                 context.getClickedPos(), ForgingEffect.HYPER_GROWTH_SOIL, hyperGrowthTier);
                     }
+                    EffectTier autoChestTier = ForgedEffectRuntime.tier(stack, ForgingEffect.AUTO_CHEST_TRANSPORT);
+                    if (autoChestTier != null) {
+                        ForgedFarmingPlotData.get(serverLevel).set(
+                                context.getClickedPos(), ForgingEffect.AUTO_CHEST_TRANSPORT, autoChestTier);
+                    }
                 }
 
                 if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
