@@ -789,8 +789,14 @@ public final class ForgedActiveSkills {
     }
 
     private static void earthyWallRise(Player player, ItemStack tool, EffectTier tier) {
-        long cooldown = switch (tier) { case I -> 160L; case II -> 100L; case III -> 60L; };
+        long cooldown = 300L; // fixed 15 sec for every tier
         if (!ready(tool, player, "EarthyWallRise", cooldown)) return;
+
+        net.minecraft.world.level.block.Block wallBlock = switch (tier) {
+            case I -> Blocks.STONE;
+            case II -> Blocks.DEEPSLATE;
+            case III -> Blocks.OBSIDIAN;
+        };
 
         net.minecraft.core.Direction forward = player.getDirection();
         net.minecraft.core.Direction side = forward.getClockWise();
@@ -815,9 +821,8 @@ public final class ForgedActiveSkills {
             for (int i = -1; i <= 1; i++) {
                 BlockPos sidePos = center.relative(side, i);
                 BlockPos pos = new BlockPos(sidePos.getX(), baseY + y, sidePos.getZ());
-                if (!player.level().getBlockState(pos).canBeReplaced()) continue;
-
-                player.level().setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
+                // Earthy Wall intentionally replaces existing blocks in its 3x3x1 area.
+                player.level().setBlockAndUpdate(pos, wallBlock.defaultBlockState());
                 placed++;
 
                 if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
