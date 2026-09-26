@@ -611,6 +611,61 @@ public final class ForgedEffectEvents {
             }
         }
 
+        // Auto Chest Transport belongs to the tilled plot, so the harvesting tool
+        // does not matter. Crop drops from this exact plot are inserted directly into
+        // the nearest container within the tier range.
+        if (event.getLevel() instanceof ServerLevel farmingLevel && isCrop(event.getState())) {
+            BlockPos farmlandPos = event.getPos().below();
+            EffectTier autoChest = ForgedFarmingPlotData.get(farmingLevel)
+                    .tier(farmlandPos, ForgingEffect.AUTO_CHEST_TRANSPORT);
+            if (autoChest != null && !event.getDrops().isEmpty()) {
+                int range = switch (autoChest) { case I -> 8; case II -> 16; case III -> 32; };
+                net.minecraft.world.Container destination = null;
+                double best = Double.MAX_VALUE;
+                for (BlockPos pos : BlockPos.betweenClosed(
+                        farmlandPos.offset(-range, -4, -range), farmlandPos.offset(range, 4, range))) {
+                    net.minecraft.world.level.block.entity.BlockEntity be = farmingLevel.getBlockEntity(pos);
+                    if (be instanceof net.minecraft.world.Container container) {
+                        double dist = pos.distSqr(farmlandPos);
+                        if (dist <= (double) range * range && dist < best) {
+                            best = dist;
+                            destination = container;
+                        }
+                    }
+                }
+
+                if (destination != null) {
+                    for (java.util.Iterator<ItemEntity> it = event.getDrops().iterator(); it.hasNext();) {
+                        ItemEntity drop = it.next();
+                        ItemStack remaining = drop.getItem().copy();
+                        for (int slot = 0; slot < destination.getContainerSize() && !remaining.isEmpty(); slot++) {
+                            ItemStack existing = destination.getItem(slot);
+                            if (existing.isEmpty()) {
+                                int move = Math.min(remaining.getCount(), remaining.getMaxStackSize());
+                                ItemStack inserted = remaining.copy();
+                                inserted.setCount(move);
+                                destination.setItem(slot, inserted);
+                                remaining.shrink(move);
+                            } else if (ItemStack.isSameItemSameComponents(existing, remaining)
+                                    && existing.getCount() < existing.getMaxStackSize()) {
+                                int move = Math.min(remaining.getCount(),
+                                        existing.getMaxStackSize() - existing.getCount());
+                                existing.grow(move);
+                                remaining.shrink(move);
+                                destination.setItem(slot, existing);
+                            }
+                        }
+                        if (remaining.isEmpty()) {
+                            it.remove();
+                        } else {
+                            drop.setItem(remaining);
+                        }
+                    }
+                    destination.setChanged();
+                }
+            }
+        }
+
         // Static Hover Drop: freeze only the item entities produced by THIS block.
         // Tier controls hover duration only: I = 5s, II = 10s, III = 20s.
         EffectTier staticHover = ForgedEffectRuntime.tier(tool, ForgingEffect.STATIC_HOVER_DROP);
@@ -787,41 +842,6 @@ public final class ForgedEffectEvents {
         if (unrefined != null && player.getRandom().nextDouble() < tierValue(unrefined, UNREFINED_ORE_CHANCE)) {
             Item nugget = player.getRandom().nextBoolean() ? Items.IRON_NUGGET : Items.GOLD_NUGGET;
             Block.popResource(player.level(), event.getPos(), new ItemStack(nugget));
-        }
-
-        EffectTier autoChest = ForgedEffectRuntime.tier(tool, ForgingEffect.AUTO_CHEST_TRANSPORT);
-        if (autoChest != null && isCrop(event.getState()) && player.level() instanceof ServerLevel serverLevel) {
-            int range = switch (autoChest) { case I -> 8; case II -> 16; case III -> 32; };
-            net.minecraft.world.Container destination = null;
-            double best = Double.MAX_VALUE;
-            BlockPos center = event.getPos();
-            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-range, -4, -range), center.offset(range, 4, range))) {
-                net.minecraft.world.level.block.entity.BlockEntity be = serverLevel.getBlockEntity(pos);
-                if (be instanceof net.minecraft.world.Container container) {
-                    double dist = pos.distSqr(center);
-                    if (dist < best) { best = dist; destination = container; }
-                }
-            }
-            if (destination != null) {
-                for (ItemEntity drop : serverLevel.getEntitiesOfClass(ItemEntity.class, new AABB(center).inflate(3.0D))) {
-                    ItemStack stack = drop.getItem();
-                    for (int slot = 0; slot < destination.getContainerSize() && !stack.isEmpty(); slot++) {
-                        ItemStack existing = destination.getItem(slot);
-                        if (existing.isEmpty()) {
-                            destination.setItem(slot, stack.copy());
-                            stack.setCount(0);
-                        } else if (ItemStack.isSameItemSameComponents(existing, stack)
-                                && existing.getCount() < existing.getMaxStackSize()) {
-                            int move = Math.min(stack.getCount(), existing.getMaxStackSize() - existing.getCount());
-                            existing.grow(move); stack.shrink(move);
-                            destination.setItem(slot, existing);
-                        }
-                    }
-                    if (stack.isEmpty()) drop.discard(); else drop.setItem(stack);
-                }
-                if (tool.isDamageableItem())
-                    tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
-            }
         }
 
         EffectTier natureBless = ForgedEffectRuntime.tier(tool, ForgingEffect.NATURE_GOD_BLESS);
