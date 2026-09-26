@@ -861,35 +861,6 @@ public final class ForgedEffectEvents {
         ItemStack tool = player.getMainHandItem();
         BlockPos clicked = event.getPos();
 
-        EffectTier extendedReach = ForgedEffectRuntime.tier(tool, ForgingEffect.EXTENDED_REACH_TILLING);
-        if (extendedReach != null) {
-            int extraReach = switch (extendedReach) { case I -> 2; case II -> 4; case III -> 6; };
-            Vec3 eye = player.getEyePosition();
-            Vec3 look = player.getLookAngle().normalize();
-            double maxReach = player.blockInteractionRange() + extraReach;
-            net.minecraft.world.phys.BlockHitResult hit = player.level().clip(
-                    new net.minecraft.world.level.ClipContext(
-                            eye,
-                            eye.add(look.scale(maxReach)),
-                            net.minecraft.world.level.ClipContext.Block.OUTLINE,
-                            net.minecraft.world.level.ClipContext.Fluid.NONE,
-                            player));
-
-            if (hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) {
-                BlockPos pos = hit.getBlockPos();
-                net.minecraft.world.level.block.state.BlockState state = player.level().getBlockState(pos);
-                if ((state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH))
-                        && player.level().getBlockState(pos.above()).isAir()) {
-                    player.level().setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
-                    if (!player.getAbilities().instabuild && tool.isDamageableItem()) {
-                        tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
-                    }
-                    event.setCanceled(true);
-                    return;
-                }
-            }
-        }
-
         EffectTier explosiveTilling = ForgedEffectRuntime.tier(tool, ForgingEffect.EXPLOSIVE_TILLING);
         if (explosiveTilling != null) {
             long cd = switch (explosiveTilling) { case I -> 120L; case II -> 80L; case III -> 40L; };
