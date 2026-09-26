@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
  * never ticks down because the random-tick drying logic is intentionally disabled.
  */
 public class MoistureRetainFarmlandBlock extends FarmBlock {
-    public static final MapCodec<MoistureRetainFarmlandBlock> CODEC =
-            simpleCodec(MoistureRetainFarmlandBlock::new);
+    public static final MapCodec<FarmBlock> CODEC =
+            simpleCodec(properties -> new MoistureRetainFarmlandBlock(properties));
 
     public MoistureRetainFarmlandBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -19,7 +19,7 @@ public class MoistureRetainFarmlandBlock extends FarmBlock {
     }
 
     @Override
-    public MapCodec<? extends FarmBlock> codec() {
+    public MapCodec<FarmBlock> codec() {
         return CODEC;
     }
 
