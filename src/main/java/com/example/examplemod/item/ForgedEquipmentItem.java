@@ -183,6 +183,14 @@ public class ForgedEquipmentItem extends Item {
         for (ItemAbility action : actions) {
             BlockState modified = original.getToolModifiedState(context, action, false);
             if (modified != null) {
+                // Moisture Retain must apply in the actual HOE_TILL path. The generic
+                // RightClickBlock event runs before this custom forged hoe performs its till action.
+                if (type == HeadBlueprintType.HOE && action == ItemAbilities.HOE_TILL
+                        && ForgedEffectRuntime.tier(stack, ForgingEffect.MOISTURE_RETAIN) != null
+                        && modified.is(net.minecraft.world.level.block.Blocks.FARMLAND)) {
+                    modified = modified.setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7);
+                }
+
                 context.getLevel().setBlock(context.getClickedPos(), modified, 11);
                 if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
                     stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
