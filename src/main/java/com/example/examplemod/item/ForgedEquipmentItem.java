@@ -43,6 +43,7 @@ import net.neoforged.neoforge.common.ItemAbility;
 /** Prototype final equipment item produced after the anvil Rhythm minigame. */
 public class ForgedEquipmentItem extends Item {
     private static final ResourceLocation FORGED_ATTACK_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "forged_attack_damage");
+    private static final ResourceLocation EXTENDED_REACH_ID = ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "extended_reach_tilling");
 
     public ForgedEquipmentItem(Properties properties) { super(properties); }
 
@@ -77,12 +78,30 @@ public class ForgedEquipmentItem extends Item {
         configureMiningTool(stack, assembly.blueprint(), assembly.headMetal());
 
         double modifierDamage = Math.max(0.0D, attackDamage - 1.0D);
-        ItemAttributeModifiers attributes = ItemAttributeModifiers.builder()
+        ItemAttributeModifiers.Builder attributeBuilder = ItemAttributeModifiers.builder()
                 .add(Attributes.ATTACK_DAMAGE,
                         new AttributeModifier(FORGED_ATTACK_DAMAGE_ID, modifierDamage, AttributeModifier.Operation.ADD_VALUE),
-                        EquipmentSlotGroup.MAINHAND)
-                .build();
-        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attributes);
+                        EquipmentSlotGroup.MAINHAND);
+
+        EffectTier extendedReachTier = null;
+        for (AnvilAssemblyResult.FinalEffect effect : assembly.effects()) {
+            if (effect.effect() == ForgingEffect.EXTENDED_REACH_TILLING) {
+                extendedReachTier = effect.tier();
+                break;
+            }
+        }
+        if (assembly.blueprint() == HeadBlueprintType.HOE && extendedReachTier != null) {
+            double extraReach = switch (extendedReachTier) {
+                case I -> 2.0D;
+                case II -> 4.0D;
+                case III -> 6.0D;
+            };
+            attributeBuilder.add(Attributes.BLOCK_INTERACTION_RANGE,
+                    new AttributeModifier(EXTENDED_REACH_ID, extraReach, AttributeModifier.Operation.ADD_VALUE),
+                    EquipmentSlotGroup.MAINHAND);
+        }
+
+        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attributeBuilder.build());
 
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(equipmentName(assembly.blueprint()) + " "
                 + shortName(headMaterial) + "+" + shortName(coreMaterial) + "+" + shortName(rodMaterial)));
