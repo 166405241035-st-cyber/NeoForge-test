@@ -203,6 +203,11 @@ public class ForgedEquipmentItem extends Item {
                         ForgedFarmingPlotData.get(serverLevel).set(
                                 context.getClickedPos(), ForgingEffect.HEALING_HARVEST, healingTier);
                     }
+                    EffectTier mutationTier = ForgedEffectRuntime.tier(stack, ForgingEffect.NETHER_MUTATION);
+                    if (mutationTier != null) {
+                        ForgedFarmingPlotData.get(serverLevel).set(
+                                context.getClickedPos(), ForgingEffect.NETHER_MUTATION, mutationTier);
+                    }
                 }
 
                 if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
