@@ -982,7 +982,7 @@ public final class ForgedActiveSkills {
                         // the player's feet and schedules itself to disappear shortly afterwards.
                         player.level().setBlockAndUpdate(below, ExampleMod.INVISIBLE_SUPPORT_BLOCK.get().defaultBlockState());
                         if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-                            serverLevel.scheduleTick(below, ExampleMod.INVISIBLE_SUPPORT_BLOCK.get(), 40);
+                            serverLevel.scheduleTick(below, ExampleMod.INVISIBLE_SUPPORT_BLOCK.get(), 120);
                             Vec3 point = Vec3.atCenterOf(below);
                             serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
                                     point.x, point.y + 0.45D, point.z, 3,
