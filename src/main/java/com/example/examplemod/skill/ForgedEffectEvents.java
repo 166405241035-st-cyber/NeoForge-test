@@ -844,17 +844,21 @@ public final class ForgedEffectEvents {
             Block.popResource(player.level(), event.getPos(), new ItemStack(nugget));
         }
 
-        EffectTier natureBless = ForgedEffectRuntime.tier(tool, ForgingEffect.NATURE_GOD_BLESS);
-        if (natureBless != null && isCrop(event.getState())) {
-            double rewardChance = switch (natureBless) {
-                case I -> 0.05D;
-                case II -> 0.10D;
-                case III -> 0.20D;
-            };
-            if (player.getRandom().nextDouble() < rewardChance) {
-                ItemStack reward = new ItemStack(player.getRandom().nextDouble() < 0.10D
-                        ? Items.ENCHANTED_GOLDEN_APPLE : Items.GOLDEN_APPLE);
-                Block.popResource(player.level(), event.getPos(), reward);
+        // Nature God Bless reward belongs to the plot and only rolls on a mature harvest.
+        if (player.level() instanceof ServerLevel natureLevel && isMatureHarvestCrop(event.getState())) {
+            EffectTier natureBless = ForgedFarmingPlotData.get(natureLevel)
+                    .tier(event.getPos().below(), ForgingEffect.NATURE_GOD_BLESS);
+            if (natureBless != null) {
+                double rewardChance = switch (natureBless) {
+                    case I -> 0.05D;
+                    case II -> 0.10D;
+                    case III -> 0.20D;
+                };
+                if (player.getRandom().nextDouble() < rewardChance) {
+                    ItemStack reward = new ItemStack(player.getRandom().nextDouble() < 0.10D
+                            ? Items.ENCHANTED_GOLDEN_APPLE : Items.GOLDEN_APPLE);
+                    Block.popResource(player.level(), event.getPos(), reward);
+                }
             }
         }
 
@@ -960,6 +964,28 @@ public final class ForgedEffectEvents {
             serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL,
                     farmlandPos.getX() + 0.5D, farmlandPos.getY() + 1.08D, farmlandPos.getZ() + 0.5D,
                     2, 0.30D, 0.03D, 0.30D, 0.005D);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onNatureGodGrowth(CropGrowEvent.Pre event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
+        BlockState cropState = event.getState();
+        if (!(cropState.getBlock() instanceof net.minecraft.world.level.block.CropBlock crop)
+                || crop.isMaxAge(cropState)) return;
+
+        EffectTier tier = ForgedFarmingPlotData.get(serverLevel)
+                .tier(event.getPos().below(), ForgingEffect.NATURE_GOD_BLESS);
+        if (tier == null) return;
+
+        // Nature's blessing automatically helps crops grow. Higher tiers trigger more often.
+        double growChance = switch (tier) {
+            case I -> 0.20D;
+            case II -> 0.35D;
+            case III -> 0.50D;
+        };
+        if (serverLevel.random.nextDouble() < growChance) {
+            event.setResult(CropGrowEvent.Pre.Result.GROW);
         }
     }
 
