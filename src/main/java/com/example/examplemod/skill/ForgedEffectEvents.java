@@ -73,7 +73,6 @@ public final class ForgedEffectEvents {
     private static final double[] AIRBORNE_MINING_SPEED = {0.25D, 0.45D, 0.70D};
     private static final int[] SELF_REPAIR_AMOUNT = {2, 5, 10};
     private static final double[] HEALING_HARVEST_CHANCE = {0.05D, 0.10D, 0.18D};
-    private static final int[] MOISTURE_RETAIN_DURABILITY = {6, 4, 2};
     private static final double[] ROTTEN_COMPOST_CHANCE = {0.15D, 0.25D, 0.35D};
     private static final double[] ORGANIC_CATALYST_COOLDOWN = {200.0D, 140.0D, 100.0D};
     private static final double[] NETHER_MUTATION_CHANCE = {0.05D, 0.10D, 0.20D};
@@ -308,7 +307,7 @@ public final class ForgedEffectEvents {
         ItemStack tool = player.getMainHandItem();
         long now = player.level().getGameTime();
 
-        // Moisture Retain: once a plot is marked by tilling, keep that farmland at moisture 7 forever.
+        // Keep the stamped Moisture Retain plot fully hydrated after the immediate tilling trigger.
         long moisturePos = player.getPersistentData().getLong("ForgedPermanentMoisturePos");
         if (moisturePos != 0L) {
             BlockPos pos = BlockPos.of(moisturePos);
@@ -916,37 +915,40 @@ public final class ForgedEffectEvents {
                 tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 2));
         }
 
+        boolean tillableSoil = player.level().getBlockState(clicked).is(Blocks.DIRT)
+                || player.level().getBlockState(clicked).is(Blocks.GRASS_BLOCK)
+                || player.level().getBlockState(clicked).is(Blocks.DIRT_PATH)
+                || player.level().getBlockState(clicked).is(Blocks.FARMLAND);
+
+        // Farming effects trigger on the same hoe click that tills the soil.
         EffectTier moisture = ForgedEffectRuntime.tier(tool, ForgingEffect.MOISTURE_RETAIN);
-        if (moisture != null) {
-            BlockPos farmlandPos = player.level().getBlockState(clicked).is(Blocks.FARMLAND) ? clicked : clicked.below();
-            if (player.level().getBlockState(farmlandPos).is(Blocks.FARMLAND)) {
-                // The skill is attached to the farmland created/used by tilling.
-                // Store the exact plot so it can be kept hydrated permanently.
-                player.getPersistentData().putLong("ForgedPermanentMoisturePos", farmlandPos.asLong());
-                player.level().setBlockAndUpdate(farmlandPos, player.level().getBlockState(farmlandPos)
-                        .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
-                if (!player.getAbilities().instabuild && tool.isDamageableItem()) {
-                    int cost = tierValue(moisture, MOISTURE_RETAIN_DURABILITY);
-                    tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + cost));
-                }
-            }
+        if (moisture != null && tillableSoil) {
+            player.level().setBlockAndUpdate(clicked, Blocks.FARMLAND.defaultBlockState()
+                    .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
+            player.getPersistentData().putLong("ForgedPermanentMoisturePos", clicked.asLong());
         }
 
-        // Rotten Compost is now a tilling effect instead of a mined item.
-        // On a successful tier roll, the tilled farmland itself becomes fully hydrated.
+        // Rotten Compost no longer hydrates farmland. It only rolls a bonus soil-block drop on tilling.
         EffectTier rottenCompost = ForgedEffectRuntime.tier(tool, ForgingEffect.ROTTEN_COMPOST);
-        if (rottenCompost != null && player.level().getBlockState(clicked).is(Blocks.FARMLAND)
+        if (rottenCompost != null && tillableSoil
                 && player.getRandom().nextDouble() < tierValue(rottenCompost, ROTTEN_COMPOST_CHANCE)) {
-            player.level().setBlockAndUpdate(clicked, player.level().getBlockState(clicked)
-                    .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7));
+            ItemStack soilDrop = switch (player.getRandom().nextInt(6)) {
+                case 0 -> new ItemStack(Blocks.DIRT);
+                case 1 -> new ItemStack(Blocks.COARSE_DIRT);
+                case 2 -> new ItemStack(Blocks.ROOTED_DIRT);
+                case 3 -> new ItemStack(Blocks.MUD);
+                case 4 -> new ItemStack(Blocks.CLAY);
+                default -> new ItemStack(Blocks.MYCELIUM);
+            };
+            Block.popResource(player.level(), clicked, soilDrop);
         }
 
         EffectTier floraAegis = ForgedEffectRuntime.tier(tool, ForgingEffect.FLORA_AEGIS);
-        if (floraAegis != null && player.level().getBlockState(clicked).is(Blocks.FARMLAND)) {
+        if (floraAegis != null && tillableSoil) {
             player.getPersistentData().putLong("ForgedProtectedFarmlandPos", clicked.asLong());
         }
 
-                EffectTier organic = ForgedEffectRuntime.tier(tool, ForgingEffect.ORGANIC_CATALYST);
+        EffectTier organic = ForgedEffectRuntime.tier(tool, ForgingEffect.ORGANIC_CATALYST);
         if (organic != null && canUseTimedTrigger(player, "OrganicCatalyst", Math.round(tierValue(organic, ORGANIC_CATALYST_COOLDOWN)))) {
             BlockPos center = clicked.above();
             for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
@@ -964,12 +966,15 @@ public final class ForgedEffectEvents {
         if (event.getLevel().isClientSide()) return;
         long trampled = event.getPos().asLong();
 
-        // Flora Aegis belongs to the farmland that was tilled with the effect.
-        // Once protected, crops can be planted normally and jumping on this plot will not destroy it.
-        for (Player owner : event.getLevel().getEntitiesOfClass(Player.class, new AABB(event.getPos()).inflate(64.0D))) {
-            if (owner.getPersistentData().getLong("ForgedProtectedFarmlandPos") == trampled) {
-                event.setCanceled(true);
-                break;
+        // Flora Aegis is stamped when the plot is tilled. The owner does not need to
+        // hold the tool or stand beside the crop afterward.
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            for (net.minecraft.server.level.ServerPlayer owner : serverLevel.getServer().getPlayerList().getPlayers()) {
+                if (owner.level() == serverLevel
+                        && owner.getPersistentData().getLong("ForgedProtectedFarmlandPos") == trampled) {
+                    event.setCanceled(true);
+                    return;
+                }
             }
         }
     }
