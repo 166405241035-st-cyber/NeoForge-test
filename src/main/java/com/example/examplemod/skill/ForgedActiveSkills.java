@@ -714,22 +714,43 @@ public final class ForgedActiveSkills {
     private static void lineBuilder(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = 40L; // fixed 2 sec
         if (!ready(tool, player, "LineBuilder", cooldown)) return;
+
         ItemStack offhand = player.getOffhandItem();
         if (!(offhand.getItem() instanceof net.minecraft.world.item.BlockItem blockItem) || offhand.isEmpty()) {
-            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Line Builder: ถือบล็อกไว้มือซ้าย"), true);
+            player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                    "Line Builder: ถือบล็อกไว้มือซ้าย"), true);
             return;
         }
+
+        // Build a five-block line in the horizontal direction the player is facing.
+        // Stop at the first blocked position instead of skipping it and creating gaps.
         net.minecraft.core.Direction dir = player.getDirection();
         BlockPos start = player.blockPosition().relative(dir);
         int placed = 0;
-        for (int i = 0; i < 5 && !offhand.isEmpty(); i++) {
+
+        for (int i = 0; i < 5 && (!offhand.isEmpty() || player.getAbilities().instabuild); i++) {
             BlockPos pos = start.relative(dir, i);
-            if (!player.level().getBlockState(pos).canBeReplaced()) continue;
+            if (!player.level().getBlockState(pos).canBeReplaced()) break;
+
             player.level().setBlockAndUpdate(pos, blockItem.getBlock().defaultBlockState());
-            offhand.shrink(1);
+
+            if (!player.getAbilities().instabuild) {
+                offhand.shrink(1);
+            }
             placed++;
+
+            if (player.level() instanceof ServerLevel serverLevel) {
+                Vec3 point = Vec3.atCenterOf(pos);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
+                        point.x, point.y, point.z, 4, 0.22D, 0.22D, 0.22D, 0.04D);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
+                        point.x, point.y, point.z, 2, 0.18D, 0.12D, 0.18D, 0.015D);
+            }
         }
+
+        // No valid placement means no cooldown and no durability cost.
         if (placed == 0) return;
+
         startCooldown(tool, player, "LineBuilder", cooldown);
         damageEquipment(player, switch (tier) { case I -> 5; case II -> 3; case III -> 1; });
     }
