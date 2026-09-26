@@ -722,21 +722,26 @@ public final class ForgedActiveSkills {
             return;
         }
 
-        // Build a five-block line in the horizontal direction the player is facing.
-        // Stop at the first blocked position instead of skipping it and creating gaps.
-        net.minecraft.core.Direction dir = player.getDirection();
+        // Two placement modes:
+        // - Look mostly horizontal: build five blocks forward.
+        // - Look mostly vertical: build five blocks upward/downward from the adjacent block.
+        Vec3 look = player.getLookAngle();
+        boolean vertical = Math.abs(look.y) >= 0.65D;
+        net.minecraft.core.Direction dir;
+        if (vertical) {
+            dir = look.y >= 0.0D ? net.minecraft.core.Direction.UP : net.minecraft.core.Direction.DOWN;
+        } else {
+            dir = player.getDirection();
+        }
+
         BlockPos start = player.blockPosition().relative(dir);
         int placed = 0;
-
         for (int i = 0; i < 5 && (!offhand.isEmpty() || player.getAbilities().instabuild); i++) {
             BlockPos pos = start.relative(dir, i);
             if (!player.level().getBlockState(pos).canBeReplaced()) break;
 
             player.level().setBlockAndUpdate(pos, blockItem.getBlock().defaultBlockState());
-
-            if (!player.getAbilities().instabuild) {
-                offhand.shrink(1);
-            }
+            if (!player.getAbilities().instabuild) offhand.shrink(1);
             placed++;
 
             if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
@@ -748,9 +753,9 @@ public final class ForgedActiveSkills {
             }
         }
 
-        // No valid placement means no cooldown and no durability cost.
         if (placed == 0) return;
-
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                "Line Builder: " + (vertical ? "VERTICAL" : "HORIZONTAL")), true);
         startCooldown(tool, player, "LineBuilder", cooldown);
         damageEquipment(player, switch (tier) { case I -> 5; case II -> 3; case III -> 1; });
     }
