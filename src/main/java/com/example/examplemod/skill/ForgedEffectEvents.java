@@ -985,13 +985,16 @@ public final class ForgedEffectEvents {
         if (event.getLevel().isClientSide()) return;
         if (!(event.getEntity() instanceof Player player)) return;
 
-        // Nether Mutation: trigger only after a plant/crop is actually placed.
-        // Tier scales the mutation chance: I = 5%, II = 10%, III = 20%.
-        EffectTier mutation = ForgedEffectRuntime.tier(player.getMainHandItem(), ForgingEffect.NETHER_MUTATION);
-        if (mutation == null || !isPlantableCrop(event.getPlacedBlock())) return;
-        if (player.getRandom().nextDouble() >= tierValue(mutation, NETHER_MUTATION_CHANCE)) return;
+        // Nether Mutation belongs to the tilled plot. Planting on that plot can mutate
+        // even when the forged hoe is no longer held.
+        if (!isPlantableCrop(event.getPlacedBlock()) || !(player.level() instanceof ServerLevel serverLevel)) return;
+        BlockPos farmlandPos = event.getPos().below();
+        EffectTier mutation = ForgedFarmingPlotData.get(serverLevel)
+                .tier(farmlandPos, ForgingEffect.NETHER_MUTATION);
+        if (mutation == null
+                || player.getRandom().nextDouble() >= tierValue(mutation, NETHER_MUTATION_CHANCE)) return;
 
-        // The planted block mutates into either Nether Wart or a Wither Rose.
+        // The planted crop mutates into either Nether Wart or a Wither Rose.
         Block mutatedBlock = player.getRandom().nextBoolean() ? Blocks.NETHER_WART : Blocks.WITHER_ROSE;
         player.level().setBlockAndUpdate(event.getPos(), mutatedBlock.defaultBlockState());
     }
