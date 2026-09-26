@@ -742,7 +742,13 @@ public final class ForgedActiveSkills {
         // intersect the player's bounding box near a block edge and Minecraft rejects/blocks placement.
         // Keep both modes consistent: the first block always starts two blocks
         // in front of the player's feet.
+        // Both modes begin two blocks in front of the player's feet.
+        // When looking down, build upward from that foot-level anchor too.
+        // Building DOWN immediately hits the ground after the first block.
         BlockPos start = feet.relative(forward, 2);
+        if (vertical) {
+            buildDir = net.minecraft.core.Direction.UP;
+        }
 
         int placed = 0;
         for (int i = 0; i < maxBlocks && (!offhand.isEmpty() || player.getAbilities().instabuild); i++) {
