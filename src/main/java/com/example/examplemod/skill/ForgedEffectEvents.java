@@ -715,6 +715,13 @@ public final class ForgedEffectEvents {
         if (player.level().isClientSide()) return;
         ItemStack tool = player.getMainHandItem();
 
+        // Removing a farmland block also removes its persistent farming-effect metadata.
+        if (player.level() instanceof ServerLevel farmingLevel
+                && (event.getState().is(Blocks.FARMLAND)
+                    || event.getState().is(ExampleMod.MOISTURE_RETAIN_FARMLAND.get()))) {
+            ForgedFarmingPlotData.get(farmingLevel).remove(event.getPos());
+        }
+
         // Remember the latest mined block for the active Magnetic Clumping skill.
         player.getPersistentData().putInt("ForgedLastMinedX", event.getPos().getX());
         player.getPersistentData().putInt("ForgedLastMinedY", event.getPos().getY());
@@ -828,10 +835,21 @@ public final class ForgedEffectEvents {
             }
         }
 
-        EffectTier healingHarvest = ForgedEffectRuntime.tier(tool, ForgingEffect.HEALING_HARVEST);
-        if (healingHarvest != null && isCrop(event.getState())
-                && player.getRandom().nextDouble() < tierValue(healingHarvest, HEALING_HARVEST_CHANCE)) {
-            Block.popResource(player.level(), event.getPos(), PotionContents.createItemStack(Items.POTION, net.minecraft.core.registries.BuiltInRegistries.POTION.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(Registries.POTION, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "healing")))));
+        // Healing Harvest is read from the farmland directly below the harvested crop.
+        // The player does not need to keep holding the forged hoe.
+        if (player.level() instanceof ServerLevel farmingLevel && isCrop(event.getState())) {
+            BlockPos farmlandPos = event.getPos().below();
+            EffectTier healingHarvest = ForgedFarmingPlotData.get(farmingLevel)
+                    .tier(farmlandPos, ForgingEffect.HEALING_HARVEST);
+            if (healingHarvest != null
+                    && player.getRandom().nextDouble() < tierValue(healingHarvest, HEALING_HARVEST_CHANCE)) {
+                Block.popResource(player.level(), event.getPos(),
+                        PotionContents.createItemStack(Items.POTION,
+                                net.minecraft.core.registries.BuiltInRegistries.POTION.getHolderOrThrow(
+                                        net.minecraft.resources.ResourceKey.create(
+                                                Registries.POTION,
+                                                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "healing")))));
+            }
         }
     }
 
