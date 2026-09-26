@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "smeltingandforging:item/axe_header_blueprint"
+  }
+}
