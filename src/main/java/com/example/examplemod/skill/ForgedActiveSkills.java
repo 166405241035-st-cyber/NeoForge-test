@@ -801,7 +801,7 @@ public final class ForgedActiveSkills {
         net.minecraft.core.Direction forward = player.getDirection();
         net.minecraft.core.Direction side = forward.getClockWise();
         BlockPos feet = player.blockPosition();
-        BlockPos center = feet.relative(forward, 2);
+        BlockPos center = feet.relative(forward, 1);
 
         // Raise a 3x3x1 wall from the ground in front of the player.
         // If the player is standing above a gap, search downward a short distance
