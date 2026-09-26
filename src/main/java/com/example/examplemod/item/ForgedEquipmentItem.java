@@ -228,6 +228,11 @@ public class ForgedEquipmentItem extends Item {
                         ForgedFarmingPlotData.get(serverLevel).set(
                                 context.getClickedPos(), ForgingEffect.NETHER_MUTATION, mutationTier);
                     }
+                    EffectTier hyperGrowthTier = ForgedEffectRuntime.tier(stack, ForgingEffect.HYPER_GROWTH_SOIL);
+                    if (hyperGrowthTier != null) {
+                        ForgedFarmingPlotData.get(serverLevel).set(
+                                context.getClickedPos(), ForgingEffect.HYPER_GROWTH_SOIL, hyperGrowthTier);
+                    }
                 }
 
                 if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
