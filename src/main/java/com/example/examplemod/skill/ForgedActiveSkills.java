@@ -739,7 +739,7 @@ public final class ForgedActiveSkills {
             }
             placed++;
 
-            if (player.level() instanceof ServerLevel serverLevel) {
+            if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
                 Vec3 point = Vec3.atCenterOf(pos);
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
                         point.x, point.y, point.z, 4, 0.22D, 0.22D, 0.22D, 0.04D);
