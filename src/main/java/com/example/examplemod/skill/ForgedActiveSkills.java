@@ -821,7 +821,11 @@ public final class ForgedActiveSkills {
             for (int i = -1; i <= 1; i++) {
                 BlockPos sidePos = center.relative(side, i);
                 BlockPos pos = new BlockPos(sidePos.getX(), baseY + y, sidePos.getZ());
-                // Earthy Wall intentionally replaces existing blocks in its 3x3x1 area.
+                // Break any block occupying the wall area first, then raise the wall.
+                // destroyBlock(..., true, player) makes the original block drop normally.
+                if (!player.level().getBlockState(pos).isAir()) {
+                    player.level().destroyBlock(pos, true, player);
+                }
                 player.level().setBlockAndUpdate(pos, wallBlock.defaultBlockState());
                 placed++;
 
