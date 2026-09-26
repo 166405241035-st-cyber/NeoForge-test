@@ -43,6 +43,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent.EntityPlaceEvent;
+import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 
 /** Server-side entry point for forged equipment effects. */
 @EventBusSubscriber(modid = ExampleMod.MODID)
@@ -882,29 +883,6 @@ public final class ForgedEffectEvents {
             }
         }
 
-        EffectTier hyperGrowth = ForgedEffectRuntime.tier(tool, ForgingEffect.HYPER_GROWTH_SOIL);
-        if (hyperGrowth != null && player.level() instanceof ServerLevel serverLevel) {
-            int attempts = switch (hyperGrowth) { case I -> 1; case II -> 2; case III -> 3; };
-            boolean grew = false;
-            // Fixed 3x3 farming area for every tier. Tier changes growth speed only.
-            BlockPos center = clicked.above();
-            java.util.List<BlockPos> crops = new java.util.ArrayList<>();
-            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 1, 1))) {
-                if (serverLevel.getBlockState(pos).getBlock() instanceof net.minecraft.world.level.block.CropBlock)
-                    crops.add(pos.immutable());
-            }
-            for (int i = 0; i < attempts && !crops.isEmpty(); i++) {
-                BlockPos pos = crops.get(player.getRandom().nextInt(crops.size()));
-                net.minecraft.world.level.block.state.BlockState state = serverLevel.getBlockState(pos);
-                if (state.getBlock() instanceof net.minecraft.world.level.block.CropBlock crop && !crop.isMaxAge(state)) {
-                    BoneMealItem.growCrop(new ItemStack(Items.BONE_MEAL), serverLevel, pos);
-                    grew = true;
-                }
-            }
-            if (grew && tool.isDamageableItem())
-                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 2));
-        }
-
         boolean tillableSoil = player.level().getBlockState(clicked).is(Blocks.DIRT)
                 || player.level().getBlockState(clicked).is(Blocks.GRASS_BLOCK)
                 || player.level().getBlockState(clicked).is(Blocks.DIRT_PATH)
@@ -945,6 +923,30 @@ public final class ForgedEffectEvents {
 
     }
 
+
+    @SubscribeEvent
+    public static void onHyperGrowth(CropGrowEvent.Pre event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
+        BlockState cropState = event.getState();
+        if (!(cropState.getBlock() instanceof net.minecraft.world.level.block.CropBlock crop)
+                || crop.isMaxAge(cropState)) return;
+
+        EffectTier tier = ForgedFarmingPlotData.get(serverLevel)
+                .tier(event.getPos().below(), ForgingEffect.HYPER_GROWTH_SOIL);
+        if (tier == null) return;
+
+        // Vanilla remains 1x. We force a fraction of otherwise failed growth attempts:
+        // I ~= 1.5x, II ~= 2x, III ~= 3x natural growth frequency.
+        // Tier III is capped by forcing every attempted crop tick to grow.
+        double forceChance = switch (tier) {
+            case I -> 0.50D;
+            case II -> 0.75D;
+            case III -> 1.00D;
+        };
+        if (serverLevel.random.nextDouble() < forceChance) {
+            event.setResult(CropGrowEvent.Pre.Result.GROW);
+        }
+    }
 
     @SubscribeEvent
     public static void onFarmlandTrample(net.neoforged.neoforge.event.level.BlockEvent.FarmlandTrampleEvent event) {
