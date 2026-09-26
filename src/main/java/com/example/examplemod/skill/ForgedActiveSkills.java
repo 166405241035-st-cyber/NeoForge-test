@@ -791,17 +791,41 @@ public final class ForgedActiveSkills {
     private static void earthyWallRise(Player player, ItemStack tool, EffectTier tier) {
         long cooldown = switch (tier) { case I -> 160L; case II -> 100L; case III -> 60L; };
         if (!ready(tool, player, "EarthyWallRise", cooldown)) return;
+
         net.minecraft.core.Direction forward = player.getDirection();
         net.minecraft.core.Direction side = forward.getClockWise();
-        BlockPos center = player.blockPosition().relative(forward, 2);
-        int placed = 0;
-        for (int i = -1; i <= 1; i++) {
-            BlockPos pos = center.relative(side, i);
-            if (player.level().getBlockState(pos).canBeReplaced()) {
-                player.level().setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
-                placed++;
+        BlockPos feet = player.blockPosition();
+        BlockPos center = feet.relative(forward, 2);
+
+        // Raise a 3-wide wall from the ground in front of the player.
+        // If the player is standing above a gap, search downward a short distance
+        // so the wall still rises from the nearest ground surface.
+        int baseY = center.getY();
+        for (int d = 0; d <= 4; d++) {
+            BlockPos probe = center.below(d);
+            if (!player.level().getBlockState(probe.below()).canBeReplaced()) {
+                baseY = probe.getY();
+                break;
             }
         }
+
+        int placed = 0;
+        for (int i = -1; i <= 1; i++) {
+            BlockPos pos = new BlockPos(center.relative(side, i).getX(), baseY, center.relative(side, i).getZ());
+            if (!player.level().getBlockState(pos).canBeReplaced()) continue;
+
+            player.level().setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
+            placed++;
+
+            if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                Vec3 point = Vec3.atCenterOf(pos);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
+                        point.x, point.y, point.z, 8, 0.35D, 0.15D, 0.35D, 0.035D);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
+                        point.x, point.y + 0.15D, point.z, 3, 0.22D, 0.25D, 0.22D, 0.025D);
+            }
+        }
+
         if (placed == 0) return;
         startCooldown(tool, player, "EarthyWallRise", cooldown);
         damageEquipment(player, 4);
