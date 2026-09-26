@@ -866,13 +866,20 @@ public final class ForgedEffectEvents {
             int extraReach = switch (extendedReach) { case I -> 2; case II -> 4; case III -> 6; };
             Vec3 eye = player.getEyePosition();
             Vec3 look = player.getLookAngle().normalize();
-            for (int d = 1; d <= extraReach; d++) {
-                BlockPos pos = BlockPos.containing(eye.add(look.scale(4.5D + d)));
+
+            // Extend the hoe's normal working distance. The first valid soil block on the
+            // ray is tilled; Tier I/II/III add 2/4/6 blocks beyond normal reach.
+            for (double distance = 4.5D; distance <= 4.5D + extraReach; distance += 0.25D) {
+                BlockPos pos = BlockPos.containing(eye.add(look.scale(distance)));
                 net.minecraft.world.level.block.state.BlockState state = player.level().getBlockState(pos);
                 if ((state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH))
                         && player.level().getBlockState(pos.above()).isAir()) {
                     player.level().setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
-                    break;
+                    if (!player.getAbilities().instabuild && tool.isDamageableItem()) {
+                        tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
+                    }
+                    event.setCanceled(true);
+                    return;
                 }
             }
         }
