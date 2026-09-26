@@ -19,7 +19,7 @@ public class MoistureRetainFarmlandBlock extends FarmBlock {
     }
 
     @Override
-    protected MapCodec<? extends FarmBlock> codec() {
+    public MapCodec<? extends FarmBlock> codec() {
         return CODEC;
     }
 
