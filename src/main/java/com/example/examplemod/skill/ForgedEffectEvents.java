@@ -929,7 +929,7 @@ public final class ForgedEffectEvents {
     @SubscribeEvent
     public static void onHyperGrowthPlotParticles(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
-        if (serverLevel.getGameTime() % 10L != 0L) return;
+        if (serverLevel.getGameTime() % 40L != 0L) return;
 
         for (BlockPos farmlandPos : ForgedFarmingPlotData.get(serverLevel)
                 .positionsWith(ForgingEffect.HYPER_GROWTH_SOIL)) {
