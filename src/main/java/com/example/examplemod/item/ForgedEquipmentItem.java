@@ -189,6 +189,15 @@ public class ForgedEquipmentItem extends Item {
                         && ForgedEffectRuntime.tier(stack, ForgingEffect.MOISTURE_RETAIN) != null
                         && modified.is(net.minecraft.world.level.block.Blocks.FARMLAND)) {
                     modified = modified.setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7);
+
+                    // Remember every Moisture Retain plot in world saved data. Vanilla farmland
+                    // naturally counts moisture back down without nearby water, so setting it to 7
+                    // only once is not permanent.
+                    if (!context.getLevel().isClientSide()
+                            && context.getLevel() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                        com.example.examplemod.skill.ForgedMoistureData.get(serverLevel)
+                                .add(context.getClickedPos());
+                    }
                 }
 
                 context.getLevel().setBlock(context.getClickedPos(), modified, 11);
