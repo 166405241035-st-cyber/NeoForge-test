@@ -912,13 +912,16 @@ public final class ForgedEffectEvents {
         EffectTier rottenCompost = ForgedEffectRuntime.tier(tool, ForgingEffect.ROTTEN_COMPOST);
         if (rottenCompost != null && tillableSoil
                 && player.getRandom().nextDouble() < tierValue(rottenCompost, ROTTEN_COMPOST_CHANCE)) {
-            ItemStack soilDrop = switch (player.getRandom().nextInt(6)) {
-                case 0 -> new ItemStack(Blocks.DIRT);
-                case 1 -> new ItemStack(Blocks.COARSE_DIRT);
-                case 2 -> new ItemStack(Blocks.ROOTED_DIRT);
-                case 3 -> new ItemStack(Blocks.MUD);
-                case 4 -> new ItemStack(Blocks.CLAY);
-                default -> new ItemStack(Blocks.MYCELIUM);
+            // Rotten Compost reward pool follows the eight soil blocks from the design reference.
+            ItemStack soilDrop = switch (player.getRandom().nextInt(8)) {
+                case 0 -> new ItemStack(Blocks.GRASS_BLOCK);
+                case 1 -> new ItemStack(Blocks.PODZOL);
+                case 2 -> new ItemStack(Blocks.MYCELIUM);
+                case 3 -> new ItemStack(Blocks.DIRT_PATH);
+                case 4 -> new ItemStack(Blocks.COARSE_DIRT);
+                case 5 -> new ItemStack(Blocks.ROOTED_DIRT);
+                case 6 -> new ItemStack(Blocks.DIRT);
+                default -> new ItemStack(Blocks.FARMLAND);
             };
             Block.popResource(player.level(), clicked, soilDrop);
         }
