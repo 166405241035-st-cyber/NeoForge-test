@@ -43,7 +43,6 @@ import net.neoforged.neoforge.common.ItemAbility;
 /** Prototype final equipment item produced after the anvil Rhythm minigame. */
 public class ForgedEquipmentItem extends Item {
     private static final ResourceLocation FORGED_ATTACK_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "forged_attack_damage");
-    private static final ResourceLocation EXTENDED_REACH_ID = ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "extended_reach_tilling");
 
     public ForgedEquipmentItem(Properties properties) { super(properties); }
 
@@ -78,36 +77,12 @@ public class ForgedEquipmentItem extends Item {
         configureMiningTool(stack, assembly.blueprint(), assembly.headMetal());
 
         double modifierDamage = Math.max(0.0D, attackDamage - 1.0D);
-        ItemAttributeModifiers.Builder attributeBuilder = ItemAttributeModifiers.builder()
+        ItemAttributeModifiers attributes = ItemAttributeModifiers.builder()
                 .add(Attributes.ATTACK_DAMAGE,
                         new AttributeModifier(FORGED_ATTACK_DAMAGE_ID, modifierDamage, AttributeModifier.Operation.ADD_VALUE),
-                        EquipmentSlotGroup.MAINHAND);
-
-        // Extended Reach must change Minecraft's real block interaction range.
-        // This makes both client targeting and server validation accept the farther block.
-        EffectTier extendedReachTier = null;
-        for (AnvilAssemblyResult.FinalEffect effect : assembly.effects()) {
-            if (effect.effect() == ForgingEffect.EXTENDED_REACH_TILLING) {
-                extendedReachTier = effect.tier();
-                break;
-            }
-        }
-        if (assembly.blueprint() == HeadBlueprintType.HOE && extendedReachTier != null) {
-            double extraReach = switch (extendedReachTier) {
-                case I -> 2.0D;
-                case II -> 4.0D;
-                case III -> 6.0D;
-            };
-            // ATTRIBUTE_MODIFIERS replaces the item's complete modifier component.
-            // Keep vanilla interaction reach (4.5) and add the skill bonus as an
-            // absolute value, otherwise a custom forged item can end up with an
-            // unusable/zero block interaction range.
-            attributeBuilder.add(Attributes.BLOCK_INTERACTION_RANGE,
-                    new AttributeModifier(EXTENDED_REACH_ID, 4.5D + extraReach, AttributeModifier.Operation.ADD_VALUE),
-                    EquipmentSlotGroup.MAINHAND);
-        }
-
-        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attributeBuilder.build());
+                        EquipmentSlotGroup.MAINHAND)
+                .build();
+        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attributes);
 
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(equipmentName(assembly.blueprint()) + " "
                 + shortName(headMaterial) + "+" + shortName(coreMaterial) + "+" + shortName(rodMaterial)));
