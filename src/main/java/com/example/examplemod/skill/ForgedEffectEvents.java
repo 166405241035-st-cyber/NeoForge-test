@@ -936,17 +936,24 @@ public final class ForgedEffectEvents {
                 .tier(event.getPos().below(), ForgingEffect.HYPER_GROWTH_SOIL);
         if (tier == null) return;
 
-        // Vanilla remains 1x. We force a fraction of otherwise failed growth attempts:
-        // I ~= 1.5x, II ~= 2x, III ~= 3x natural growth frequency.
-        // Tier III is capped by forcing every attempted crop tick to grow.
-        double forceChance = switch (tier) {
-            case I -> 0.50D;
-            case II -> 0.75D;
-            case III -> 1.00D;
+        // Hyper Growth is intentionally very noticeable:
+        // Tier I = 3x, II = 4x, III = 5x.
+        // Force the current natural attempt, then schedule extra crop ticks to
+        // approximate the remaining multiplier without requiring the hoe to stay held.
+        int multiplier = switch (tier) {
+            case I -> 3;
+            case II -> 4;
+            case III -> 5;
         };
-        if (serverLevel.random.nextDouble() < forceChance) {
-            event.setResult(CropGrowEvent.Pre.Result.GROW);
+        event.setResult(CropGrowEvent.Pre.Result.GROW);
+        for (int i = 1; i < multiplier; i++) {
+            serverLevel.scheduleTick(event.getPos(), cropState.getBlock(), i);
         }
+
+        // Purple visual feedback over the affected plot.
+        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL,
+                event.getPos().getX() + 0.5D, event.getPos().getY() + 0.35D, event.getPos().getZ() + 0.5D,
+                5, 0.28D, 0.12D, 0.28D, 0.02D);
     }
 
     @SubscribeEvent
