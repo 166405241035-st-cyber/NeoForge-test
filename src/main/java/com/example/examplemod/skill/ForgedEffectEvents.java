@@ -837,7 +837,7 @@ public final class ForgedEffectEvents {
 
         // Healing Harvest is read from the farmland directly below the harvested crop.
         // The player does not need to keep holding the forged hoe.
-        if (player.level() instanceof ServerLevel farmingLevel && isCrop(event.getState())) {
+        if (player.level() instanceof ServerLevel farmingLevel && isMatureHarvestCrop(event.getState())) {
             BlockPos farmlandPos = event.getPos().below();
             EffectTier healingHarvest = ForgedFarmingPlotData.get(farmingLevel)
                     .tier(farmlandPos, ForgingEffect.HEALING_HARVEST);
@@ -1061,6 +1061,18 @@ public final class ForgedEffectEvents {
         return state.is(Blocks.WHEAT) || state.is(Blocks.CARROTS) || state.is(Blocks.POTATOES)
                 || state.is(Blocks.BEETROOTS) || state.is(Blocks.NETHER_WART)
                 || state.is(Blocks.MELON) || state.is(Blocks.PUMPKIN);
+    }
+
+    private static boolean isMatureHarvestCrop(net.minecraft.world.level.block.state.BlockState state) {
+        if (state.getBlock() instanceof net.minecraft.world.level.block.CropBlock crop) {
+            return crop.isMaxAge(state);
+        }
+        if (state.is(Blocks.NETHER_WART)) {
+            return state.getValue(net.minecraft.world.level.block.NetherWartBlock.AGE)
+                    >= net.minecraft.world.level.block.NetherWartBlock.MAX_AGE;
+        }
+        // Melon and pumpkin blocks are already the finished harvest product.
+        return state.is(Blocks.MELON) || state.is(Blocks.PUMPKIN);
     }
 
     private static boolean isPlantableCrop(net.minecraft.world.level.block.state.BlockState state) {
