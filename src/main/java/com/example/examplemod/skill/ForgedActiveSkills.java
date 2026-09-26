@@ -734,7 +734,10 @@ public final class ForgedActiveSkills {
             dir = player.getDirection();
         }
 
-        BlockPos start = player.blockPosition().relative(dir);
+        // Anchor placement to the player's feet. Horizontal mode starts one block
+        // in front at foot level; vertical mode starts at the feet and grows up/down.
+        BlockPos feet = player.blockPosition();
+        BlockPos start = vertical ? feet : feet.relative(dir);
         int placed = 0;
         for (int i = 0; i < 5 && (!offhand.isEmpty() || player.getAbilities().instabuild); i++) {
             BlockPos pos = start.relative(dir, i);
