@@ -42,7 +42,9 @@ public class InvisibleSupportBlock extends Block {
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.empty();
+        // Keep the block visually invisible but physically solid so Sky Bridge Walk
+        // can support the player. Block Levitation also remains supported by it.
+        return Shapes.block();
     }
 
     @Override
