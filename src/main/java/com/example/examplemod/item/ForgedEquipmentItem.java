@@ -183,21 +183,13 @@ public class ForgedEquipmentItem extends Item {
         for (ItemAbility action : actions) {
             BlockState modified = original.getToolModifiedState(context, action, false);
             if (modified != null) {
-                // Moisture Retain must apply in the actual HOE_TILL path. The generic
-                // RightClickBlock event runs before this custom forged hoe performs its till action.
+                // Moisture Retain creates its own permanent-moist farmland block.
+                // It still behaves like vanilla FarmBlock for crop planting/growth, but never dries.
                 if (type == HeadBlueprintType.HOE && action == ItemAbilities.HOE_TILL
                         && ForgedEffectRuntime.tier(stack, ForgingEffect.MOISTURE_RETAIN) != null
                         && modified.is(net.minecraft.world.level.block.Blocks.FARMLAND)) {
-                    modified = modified.setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7);
-
-                    // Remember every Moisture Retain plot in world saved data. Vanilla farmland
-                    // naturally counts moisture back down without nearby water, so setting it to 7
-                    // only once is not permanent.
-                    if (!context.getLevel().isClientSide()
-                            && context.getLevel() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-                        com.example.examplemod.skill.ForgedMoistureData.get(serverLevel)
-                                .add(context.getClickedPos());
-                    }
+                    modified = ExampleMod.MOISTURE_RETAIN_FARMLAND.get().defaultBlockState()
+                            .setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7);
                 }
 
                 context.getLevel().setBlock(context.getClickedPos(), modified, 11);
