@@ -307,6 +307,12 @@ public final class ForgedEffectEvents {
         ItemStack tool = player.getMainHandItem();
         long now = player.level().getGameTime();
 
+        // Refresh every Moisture Retain plot from world saved data. Do it once per
+        // second; this is far faster than vanilla farmland can visibly dry out.
+        if (player.level() instanceof ServerLevel moistureLevel && now % 20L == 0L) {
+            ForgedMoistureData.get(moistureLevel).refresh(moistureLevel);
+        }
+
         // Keep the stamped Moisture Retain plot fully hydrated after the immediate tilling trigger.
         long moisturePos = player.getPersistentData().getLong("ForgedPermanentMoisturePos");
         if (moisturePos != 0L) {
