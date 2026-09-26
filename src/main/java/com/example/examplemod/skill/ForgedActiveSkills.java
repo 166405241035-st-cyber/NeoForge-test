@@ -742,10 +742,10 @@ public final class ForgedActiveSkills {
         // intersect the player's bounding box near a block edge and Minecraft rejects/blocks placement.
         // Keep both modes consistent: the first block always starts two blocks
         // in front of the player's feet.
-        // Both modes begin two blocks in front of the player's feet.
+        // Both modes begin one block in front of the player's feet.
         // Looking up builds upward. Looking down builds downward only when there is
         // empty space below the front anchor (for example at an edge or over a gap).
-        BlockPos start = feet.relative(forward, 2);
+        BlockPos start = feet.relative(forward, 1);
         if (vertical) {
             if (look.y < 0.0D) {
                 BlockPos belowStart = start.below();
