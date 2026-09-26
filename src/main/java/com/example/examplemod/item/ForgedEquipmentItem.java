@@ -98,8 +98,12 @@ public class ForgedEquipmentItem extends Item {
                 case II -> 4.0D;
                 case III -> 6.0D;
             };
+            // ATTRIBUTE_MODIFIERS replaces the item's complete modifier component.
+            // Keep vanilla interaction reach (4.5) and add the skill bonus as an
+            // absolute value, otherwise a custom forged item can end up with an
+            // unusable/zero block interaction range.
             attributeBuilder.add(Attributes.BLOCK_INTERACTION_RANGE,
-                    new AttributeModifier(EXTENDED_REACH_ID, extraReach, AttributeModifier.Operation.ADD_VALUE),
+                    new AttributeModifier(EXTENDED_REACH_ID, 4.5D + extraReach, AttributeModifier.Operation.ADD_VALUE),
                     EquipmentSlotGroup.MAINHAND);
         }
 
