@@ -43,6 +43,7 @@ import net.neoforged.neoforge.common.ItemAbility;
 /** Prototype final equipment item produced after the anvil Rhythm minigame. */
 public class ForgedEquipmentItem extends Item {
     private static final ResourceLocation FORGED_ATTACK_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "forged_attack_damage");
+    private static final ResourceLocation EXTENDED_REACH_ID = ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "extended_reach_tilling");
 
     public ForgedEquipmentItem(Properties properties) { super(properties); }
 
@@ -77,12 +78,32 @@ public class ForgedEquipmentItem extends Item {
         configureMiningTool(stack, assembly.blueprint(), assembly.headMetal());
 
         double modifierDamage = Math.max(0.0D, attackDamage - 1.0D);
-        ItemAttributeModifiers attributes = ItemAttributeModifiers.builder()
+        ItemAttributeModifiers.Builder attributeBuilder = ItemAttributeModifiers.builder()
                 .add(Attributes.ATTACK_DAMAGE,
                         new AttributeModifier(FORGED_ATTACK_DAMAGE_ID, modifierDamage, AttributeModifier.Operation.ADD_VALUE),
-                        EquipmentSlotGroup.MAINHAND)
-                .build();
-        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attributes);
+                        EquipmentSlotGroup.MAINHAND);
+
+        // Extended Reach must change Minecraft's real block interaction range.
+        // This makes both client targeting and server validation accept the farther block.
+        EffectTier extendedReachTier = null;
+        for (AnvilAssemblyResult.FinalEffect effect : assembly.effects()) {
+            if (effect.effect() == ForgingEffect.EXTENDED_REACH_TILLING) {
+                extendedReachTier = effect.tier();
+                break;
+            }
+        }
+        if (assembly.blueprint() == HeadBlueprintType.HOE && extendedReachTier != null) {
+            double extraReach = switch (extendedReachTier) {
+                case I -> 2.0D;
+                case II -> 4.0D;
+                case III -> 6.0D;
+            };
+            attributeBuilder.add(Attributes.BLOCK_INTERACTION_RANGE,
+                    new AttributeModifier(EXTENDED_REACH_ID, extraReach, AttributeModifier.Operation.ADD_VALUE),
+                    EquipmentSlotGroup.MAINHAND);
+        }
+
+        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attributeBuilder.build());
 
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(equipmentName(assembly.blueprint()) + " "
                 + shortName(headMaterial) + "+" + shortName(coreMaterial) + "+" + shortName(rodMaterial)));
@@ -104,39 +125,6 @@ public class ForgedEquipmentItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-
-        // RightClickBlock is never fired for blocks outside vanilla interaction range.
-        // Extended Reach therefore has to handle a right-click "miss" from Item.use(),
-        // then perform its own longer server-side ray cast.
-        EffectTier reachTier = ForgedEffectRuntime.tier(stack, ForgingEffect.EXTENDED_REACH_TILLING);
-        if (readBlueprint(stack) == HeadBlueprintType.HOE && reachTier != null) {
-            int extraReach = switch (reachTier) { case I -> 2; case II -> 4; case III -> 6; };
-            Vec3 eye = player.getEyePosition();
-            Vec3 look = player.getLookAngle().normalize();
-            double maxReach = player.blockInteractionRange() + extraReach;
-            net.minecraft.world.phys.BlockHitResult hit = level.clip(
-                    new net.minecraft.world.level.ClipContext(
-                            eye, eye.add(look.scale(maxReach)),
-                            net.minecraft.world.level.ClipContext.Block.OUTLINE,
-                            net.minecraft.world.level.ClipContext.Fluid.NONE, player));
-
-            if (hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) {
-                BlockState state = level.getBlockState(hit.getBlockPos());
-                if ((state.is(net.minecraft.world.level.block.Blocks.DIRT)
-                        || state.is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
-                        || state.is(net.minecraft.world.level.block.Blocks.DIRT_PATH))
-                        && level.getBlockState(hit.getBlockPos().above()).isAir()) {
-                    if (!level.isClientSide()) {
-                        level.setBlockAndUpdate(hit.getBlockPos(),
-                                net.minecraft.world.level.block.Blocks.FARMLAND.defaultBlockState());
-                        if (!player.getAbilities().instabuild && stack.isDamageableItem()) {
-                            stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
-                        }
-                    }
-                    return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
-                }
-            }
-        }
 
         if (ForgedEffectRuntime.tier(stack, ForgingEffect.BOOMERANG_WEAPON) == null)
             return super.use(level, player, hand);
