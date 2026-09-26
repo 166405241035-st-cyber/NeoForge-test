@@ -104,6 +104,40 @@ public class ForgedEquipmentItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
+        // RightClickBlock is never fired for blocks outside vanilla interaction range.
+        // Extended Reach therefore has to handle a right-click "miss" from Item.use(),
+        // then perform its own longer server-side ray cast.
+        EffectTier reachTier = ForgedEffectRuntime.tier(stack, ForgingEffect.EXTENDED_REACH_TILLING);
+        if (readBlueprint(stack) == HeadBlueprintType.HOE && reachTier != null) {
+            int extraReach = switch (reachTier) { case I -> 2; case II -> 4; case III -> 6; };
+            Vec3 eye = player.getEyePosition();
+            Vec3 look = player.getLookAngle().normalize();
+            double maxReach = player.blockInteractionRange() + extraReach;
+            net.minecraft.world.phys.BlockHitResult hit = level.clip(
+                    new net.minecraft.world.level.ClipContext(
+                            eye, eye.add(look.scale(maxReach)),
+                            net.minecraft.world.level.ClipContext.Block.OUTLINE,
+                            net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+
+            if (hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) {
+                BlockState state = level.getBlockState(hit.getBlockPos());
+                if ((state.is(net.minecraft.world.level.block.Blocks.DIRT)
+                        || state.is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
+                        || state.is(net.minecraft.world.level.block.Blocks.DIRT_PATH))
+                        && level.getBlockState(hit.getBlockPos().above()).isAir()) {
+                    if (!level.isClientSide()) {
+                        level.setBlockAndUpdate(hit.getBlockPos(),
+                                net.minecraft.world.level.block.Blocks.FARMLAND.defaultBlockState());
+                        if (!player.getAbilities().instabuild && stack.isDamageableItem()) {
+                            stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
+                        }
+                    }
+                    return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+                }
+            }
+        }
+
         if (ForgedEffectRuntime.tier(stack, ForgingEffect.BOOMERANG_WEAPON) == null)
             return super.use(level, player, hand);
         player.startUsingItem(hand);
