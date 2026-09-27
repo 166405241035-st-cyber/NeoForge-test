@@ -57,9 +57,7 @@ public class AnvilForgingResultScreen extends Screen {
         y=Math.max(y+8,top+104);
         g.drawCenteredString(font, "RANK: " + performanceRank, cx, y, 0xFF55FFFF);
         y += 16;
-        g.drawCenteredString(font, String.format("Blessing Chance: %.0f%%", blessingChance * 100.0D), cx, y, 0xFFFF55);
         y += 16;
-        g.drawCenteredString(font, String.format("Curse Chance: %.0f%%", (1.0D - blessingChance) * 100.0D), cx, y, 0xFFFF5555);
         y += 20;
         if (blessing != null) {
             g.drawCenteredString(font, "BLESSING: " + blessing.displayName(), cx, y, 0xFFFF55);
