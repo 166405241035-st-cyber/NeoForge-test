@@ -7,7 +7,6 @@ public enum ForgedBlessing {
     HUNTERS_FORTUNE("Hunter's Fortune"),
     LIFE_STEAL("Life Steal"),
     DURABILITY_GUARD("Durability Guard"),
-    MINERS_FORTUNE("Miner's Fortune"),
     VEIN_BREAKER("Vein Breaker"),
     MINING_HASTE("Mining Haste"),
     EXPERIENCE_BOOST("Experience Boost"),
