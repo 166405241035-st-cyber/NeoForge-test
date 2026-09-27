@@ -30,6 +30,7 @@ public final class ForgedCurseRuntime {
     /** Used later by the Rhythm Forging reward resolver. */
     public static void set(ItemStack stack, ForgedCurse curse) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.remove("forgedBlessing");
             if (curse == null) tag.remove(CURSE_KEY);
             else tag.putString(CURSE_KEY, curse.name());
         });
