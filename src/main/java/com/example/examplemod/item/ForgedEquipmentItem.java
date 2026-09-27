@@ -14,6 +14,7 @@ import com.example.examplemod.skill.curse.ForgedCurseRuntime;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -123,6 +124,22 @@ public class ForgedEquipmentItem extends Item {
         if (mineableTag != null) stack.set(DataComponents.TOOL, vanillaTier(headMetal).createToolProperties(mineableTag));
     }
 
+
+    @Override
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        if (!attacker.level().isClientSide()) {
+            ForgedBlessingRuntime.damage(stack, 1);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
+        if (!level.isClientSide() && state.getDestroySpeed(level, pos) != 0.0F) {
+            ForgedBlessingRuntime.damage(stack, 1);
+        }
+        return true;
+    }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -250,7 +267,7 @@ public class ForgedEquipmentItem extends Item {
                 }
 
                 if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
-                    stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
+                    ForgedBlessingRuntime.damage(stack, 1);
                 }
                 return InteractionResult.sidedSuccess(context.getLevel().isClientSide());
             }
