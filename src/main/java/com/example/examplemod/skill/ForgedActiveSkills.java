@@ -700,12 +700,6 @@ public final class ForgedActiveSkills {
         player.displayClientMessage(net.minecraft.network.chat.Component.literal(
                 "Nature God Bless: Fortune III harvest active for 15s"), true);
 
-        // Immediate golden burst when R is pressed.
-        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
-            server.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
-                    player.getX(), player.getY() + 1.0D, player.getZ(),
-                    36, 0.65D, 0.85D, 0.65D, 0.10D);
-        }
     }
 
     private static void openStorage(Player player, ItemStack tool) {
