@@ -281,7 +281,10 @@ public class ForgedEquipmentItem extends Item {
             int remaining = Math.max(0, durability - stack.getDamageValue());
             tooltip.add(Component.literal("Durability: " + remaining + " / " + durability).withStyle(ChatFormatting.GRAY));
         }
-        double attackDamage = tag.getDouble("forgedAttackDamage");
+        double baseAttackDamage = tag.getDouble("forgedAttackDamage");
+        boolean hasPowerStrike = ForgedBlessingRuntime.has(stack, ForgedBlessing.POWER_STRIKE);
+        double attackDamage = hasPowerStrike ? baseAttackDamage * 1.20D : baseAttackDamage;
+
         EffectTier witherCurseTier = ForgedEffectRuntime.tier(stack, ForgingEffect.WITHER_CURSE_POWER);
         if (witherCurseTier != null) {
             double multiplier = switch (witherCurseTier) {
@@ -289,12 +292,18 @@ public class ForgedEquipmentItem extends Item {
                 case II -> 2.0D;
                 case III -> 3.0D;
             };
-            double cursedDamage = attackDamage * multiplier;
-            tooltip.add(Component.literal("Attack Damage: " + formatDamage(cursedDamage)
-                    + " (Base " + formatDamage(attackDamage) + " x" + formatDamage(multiplier) + ")")
+            double finalDamage = attackDamage * multiplier;
+            tooltip.add(Component.literal("Attack Damage: " + formatDamage(finalDamage)
+                    + " (Base " + formatDamage(baseAttackDamage)
+                    + (hasPowerStrike ? " +20%" : "")
+                    + " x" + formatDamage(multiplier) + ")")
                     .withStyle(ChatFormatting.RED));
+        } else if (hasPowerStrike) {
+            tooltip.add(Component.literal("Attack Damage: " + formatDamage(attackDamage)
+                    + " (Base " + formatDamage(baseAttackDamage) + " +20%)")
+                    .withStyle(ChatFormatting.GOLD));
         } else {
-            tooltip.add(Component.literal("Attack Damage: " + formatDamage(attackDamage)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.literal("Attack Damage: " + formatDamage(baseAttackDamage)).withStyle(ChatFormatting.GRAY));
         }
 
         if (head != null && core != null && rod != null) {
