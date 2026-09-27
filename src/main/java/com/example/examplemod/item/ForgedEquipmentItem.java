@@ -6,6 +6,10 @@ import com.example.examplemod.entity.*;
 import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
+import com.example.examplemod.skill.blessing.ForgedBlessing;
+import com.example.examplemod.skill.blessing.ForgedBlessingRuntime;
+import com.example.examplemod.skill.curse.ForgedCurse;
+import com.example.examplemod.skill.curse.ForgedCurseRuntime;
 
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -305,6 +309,18 @@ public class ForgedEquipmentItem extends Item {
                 EffectTier effectTier = EffectTier.valueOf(tag.getString("tier" + i));
                 tooltip.add(Component.literal("  " + effect.displayName() + " " + effectTier.name()).withStyle(ChatFormatting.GREEN));
             } catch (IllegalArgumentException ignored) {}
+        }
+
+        ForgedBlessing blessing = ForgedBlessingRuntime.get(stack);
+        if (blessing != null) {
+            tooltip.add(Component.literal("Blessing: " + blessing.displayName())
+                    .withStyle(ChatFormatting.GOLD));
+        }
+
+        ForgedCurse curse = ForgedCurseRuntime.get(stack);
+        if (curse != null) {
+            tooltip.add(Component.literal("Curse: " + curse.displayName())
+                    .withStyle(ChatFormatting.DARK_PURPLE));
         }
     }
 
