@@ -978,25 +978,30 @@ public final class ForgedEffectEvents {
     @SubscribeEvent
     public static void onNatureGodBlessPlotAura(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
-        if (serverLevel.getGameTime() % 20L != 0L) return;
+        if (serverLevel.getGameTime() % 10L != 0L) return;
 
-        // The golden ring belongs to the blessed farmland itself. It is a visual
-        // range marker for the plot's automatic crop-growth blessing, not an R effect.
+        // Clearly visible golden boundary around every Nature God Bless plot.
+        // The previous ring was too sparse and too close to the ground to notice.
         for (BlockPos farmlandPos : ForgedFarmingPlotData.get(serverLevel)
                 .positionsWith(ForgingEffect.NATURE_GOD_BLESS)) {
             if (!serverLevel.isLoaded(farmlandPos)) continue;
             BlockState soil = serverLevel.getBlockState(farmlandPos);
             if (!soil.is(Blocks.FARMLAND) && !soil.is(ExampleMod.MOISTURE_RETAIN_FARMLAND.get())) continue;
 
-            double radius = 1.5D;
-            for (int i = 0; i < 12; i++) {
-                double angle = Math.PI * 2.0D * i / 12.0D;
+            double radius = 2.5D;
+            for (int i = 0; i < 32; i++) {
+                double angle = Math.PI * 2.0D * i / 32.0D;
+                double x = farmlandPos.getX() + 0.5D + Math.cos(angle) * radius;
+                double z = farmlandPos.getZ() + 0.5D + Math.sin(angle) * radius;
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
-                        farmlandPos.getX() + 0.5D + Math.cos(angle) * radius,
-                        farmlandPos.getY() + 0.18D,
-                        farmlandPos.getZ() + 0.5D + Math.sin(angle) * radius,
-                        1, 0.02D, 0.02D, 0.02D, 0.0D);
+                        x, farmlandPos.getY() + 0.65D, z,
+                        1, 0.0D, 0.04D, 0.0D, 0.0D);
             }
+
+            // A small vertical marker makes the blessed center easy to identify too.
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
+                    farmlandPos.getX() + 0.5D, farmlandPos.getY() + 1.15D, farmlandPos.getZ() + 0.5D,
+                    5, 0.20D, 0.35D, 0.20D, 0.01D);
         }
     }
 
