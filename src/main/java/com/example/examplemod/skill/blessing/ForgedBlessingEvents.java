@@ -49,8 +49,11 @@ public final class ForgedBlessingEvents {
         }
 
         if (ForgedBlessingRuntime.has(weapon, ForgedBlessing.DIVINE_EXECUTION)
-                && event.getEntity() instanceof net.minecraft.world.entity.monster.Monster
+                && player.getAttackStrengthScale(0.5F) >= 1.0F
+                && event.getEntity() instanceof net.minecraft.world.entity.LivingEntity
+                && !(event.getEntity() instanceof Player)
                 && player.getRandom().nextDouble() < DIVINE_EXECUTION_CHANCE) {
+            // 5% execution chance only on a fully cooled attack; bosses are included.
             event.setAmount(Math.max(event.getAmount(), event.getEntity().getHealth() + event.getEntity().getAbsorptionAmount()));
         }
     }
