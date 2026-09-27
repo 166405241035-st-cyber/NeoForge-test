@@ -976,32 +976,24 @@ public final class ForgedEffectEvents {
 
 
     @SubscribeEvent
-    public static void onNatureGodBlessPlotAura(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
+    public static void onNatureGodBlessHeldAura(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (!(player.level() instanceof ServerLevel serverLevel)) return;
         if (serverLevel.getGameTime() % 10L != 0L) return;
 
-        // Debug-friendly, unmistakable range marker: use END_ROD instead of the
-        // short-lived Totem particle. This makes the blessed plot boundary persist
-        // long enough to be visible between server particle packets.
-        for (BlockPos farmlandPos : ForgedFarmingPlotData.get(serverLevel)
-                .positionsWith(ForgingEffect.NATURE_GOD_BLESS)) {
-            if (!serverLevel.isLoaded(farmlandPos)) continue;
-            BlockState soil = serverLevel.getBlockState(farmlandPos);
-            if (!soil.is(Blocks.FARMLAND) && !soil.is(ExampleMod.MOISTURE_RETAIN_FARMLAND.get())) continue;
+        // Nature God Bless growth aura follows the player while the forged equipment
+        // is held. Tilling is NOT required for this visual/growth-range indicator.
+        ItemStack held = player.getMainHandItem();
+        if (ForgedEffectRuntime.tier(held, ForgingEffect.NATURE_GOD_BLESS) == null) return;
 
-            double radius = 2.5D;
-            for (int i = 0; i < 32; i++) {
-                double angle = Math.PI * 2.0D * i / 32.0D;
-                double x = farmlandPos.getX() + 0.5D + Math.cos(angle) * radius;
-                double z = farmlandPos.getZ() + 0.5D + Math.sin(angle) * radius;
-                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                        x, farmlandPos.getY() + 0.80D, z,
-                        1, 0.0D, 0.0D, 0.0D, 0.0D);
-            }
-
+        double radius = 4.0D;
+        for (int i = 0; i < 40; i++) {
+            double angle = Math.PI * 2.0D * i / 40.0D;
             serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                    farmlandPos.getX() + 0.5D, farmlandPos.getY() + 1.25D, farmlandPos.getZ() + 0.5D,
-                    8, 0.25D, 0.35D, 0.25D, 0.005D);
+                    player.getX() + Math.cos(angle) * radius,
+                    player.getY() + 0.15D,
+                    player.getZ() + Math.sin(angle) * radius,
+                    1, 0.0D, 0.0D, 0.0D, 0.0D);
         }
     }
 
