@@ -20,6 +20,17 @@ public final class ForgedBlessingRuntime {
 
     public static boolean has(ItemStack stack, ForgedBlessing blessing) { return get(stack) == blessing; }
 
+    /** All forged durability costs should pass here so Durability Guard also protects skill costs. */
+    public static boolean damage(ItemStack stack, int amount) {
+        if (stack == null || stack.isEmpty() || amount <= 0) return false;
+        if (has(stack, ForgedBlessing.DURABILITY_GUARD)
+                && java.util.concurrent.ThreadLocalRandom.current().nextDouble() < 0.25D) {
+            return false;
+        }
+        stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + amount));
+        return true;
+    }
+
     public static void set(ItemStack stack, ForgedBlessing blessing) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.remove("forgedCurse");
