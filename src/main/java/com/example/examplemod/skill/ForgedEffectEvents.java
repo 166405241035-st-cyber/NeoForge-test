@@ -987,13 +987,21 @@ public final class ForgedEffectEvents {
         if (ForgedEffectRuntime.tier(held, ForgingEffect.NATURE_GOD_BLESS) == null) return;
 
         double radius = 4.0D;
-        for (int i = 0; i < 40; i++) {
-            double angle = Math.PI * 2.0D * i / 40.0D;
-            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+
+        // Soft gold dust. Dust particles support RGB + scale, so this is much less
+        // visually harsh than END_ROD. Vanilla particles do not expose true alpha,
+        // therefore the "transparent" look is achieved with small scale, fewer points
+        // and slower refresh.
+        var softGold = new net.minecraft.core.particles.DustParticleOptions(
+                org.joml.Vector3f.fromColor(0xE8B84A), 0.45F);
+
+        for (int i = 0; i < 24; i++) {
+            double angle = Math.PI * 2.0D * i / 24.0D;
+            serverLevel.sendParticles(softGold,
                     player.getX() + Math.cos(angle) * radius,
-                    player.getY() + 0.15D,
+                    player.getY() + 0.12D,
                     player.getZ() + Math.sin(angle) * radius,
-                    1, 0.0D, 0.0D, 0.0D, 0.0D);
+                    1, 0.015D, 0.015D, 0.015D, 0.0D);
         }
     }
 
