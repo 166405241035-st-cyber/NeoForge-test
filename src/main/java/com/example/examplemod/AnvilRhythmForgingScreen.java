@@ -32,6 +32,8 @@ public class AnvilRhythmForgingScreen extends Screen {
     private boolean finished;
     private ForgedBlessing rolledBlessing;
     private ForgedCurse rolledCurse;
+    private double finalBlessingChance;
+    private String performanceRank = "D";
     private String resultText = "Press the shown W/A/S/D key at the right time";
     private int resultColor = 0xFFFFFF;
 
@@ -61,13 +63,33 @@ public class AnvilRhythmForgingScreen extends Screen {
         if(minecraft.player!=null){
             ItemStack equipment=ExampleMod.FORGED_EQUIPMENT_ITEM.get().createStack(assembly);
 
-            // Minigame 2 reward: high accuracy/combo pushes the roll toward Blessing;
-            // misses push it toward Curse. The selected reward itself is random from
-            // the Blessing/Curse pools defined by the project design.
-            double performance = Math.max(0.0D, Math.min(1.0D,
-                    (accuracy / 100.0D) * 0.75D + (maxCombo / (double) TOTAL_ROUNDS) * 0.25D));
-            double blessingChance = 0.20D + performance * 0.60D; // 20%..80%
-            if (random.nextDouble() < blessingChance) {
+            // Minigame 2 reward uses a visible performance rank as the base chance.
+            // Misses penalize the chance, while strong Perfect play and a full combo
+            // give small bonuses. Curse always keeps at least a 5% chance.
+            double blessingChance;
+            if (accuracy >= 90.0D && maxCombo >= 8) {
+                performanceRank = "S";
+                blessingChance = 0.90D;
+            } else if (accuracy >= 80.0D) {
+                performanceRank = "A";
+                blessingChance = 0.75D;
+            } else if (accuracy >= 65.0D) {
+                performanceRank = "B";
+                blessingChance = 0.60D;
+            } else if (accuracy >= 50.0D) {
+                performanceRank = "C";
+                blessingChance = 0.45D;
+            } else {
+                performanceRank = "D";
+                blessingChance = 0.10D;
+            }
+
+            blessingChance -= missCount * 0.05D;
+            if (perfectCount >= 7) blessingChance += 0.05D;
+            if (maxCombo >= TOTAL_ROUNDS) blessingChance += 0.10D;
+            finalBlessingChance = Math.max(0.05D, Math.min(0.95D, blessingChance));
+
+            if (random.nextDouble() < finalBlessingChance) {
                 ForgedBlessing[] pool = ForgedBlessing.values();
                 rolledBlessing = pool[random.nextInt(pool.length)];
                 ForgedBlessingRuntime.set(equipment, rolledBlessing);
@@ -79,7 +101,7 @@ public class AnvilRhythmForgingScreen extends Screen {
 
             if(!minecraft.player.getInventory().add(equipment)) minecraft.player.drop(equipment,false);
         }
-        minecraft.setScreen(new AnvilForgingResultScreen(result,assembly,rolledBlessing,rolledCurse));
+        minecraft.setScreen(new AnvilForgingResultScreen(result,assembly,rolledBlessing,rolledCurse,performanceRank,finalBlessingChance));
     }
 
     @Override public boolean keyPressed(int keyCode,int scanCode,int modifiers){if(Direction.fromKey(keyCode)!=null){attempt(keyCode);return true;}return super.keyPressed(keyCode,scanCode,modifiers);}
