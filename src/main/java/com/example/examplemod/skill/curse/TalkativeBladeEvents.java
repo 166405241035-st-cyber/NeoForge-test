@@ -116,8 +116,8 @@ public final class TalkativeBladeEvents {
                 return;
             }
 
-            // Usually wait 5-12 minutes. The player should have time to believe the sword is gone.
-            data.putLong(RETURN_AT, now + 20L * (300 + player.getRandom().nextInt(421)));
+            // DEBUG/testing: wait exactly 1 minute before the first return attempt.
+            data.putLong(RETURN_AT, now + 20L * 60L);
             data.putInt(RETURN_MODE, player.getRandom().nextInt(4));
             if (player.getRandom().nextDouble() < 0.45D) {
                 say(player, random(player, List.of("...", "เจ้าลืมอะไรหรือเปล่า?", "แน่ใจนะว่าจบแล้ว?", "ข้าเห็นเจ้านะ", "แล้วเราจะได้พบกันอีก...")));
