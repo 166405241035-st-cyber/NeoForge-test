@@ -320,7 +320,7 @@ public class ForgedEquipmentItem extends Item {
         ForgedCurse curse = ForgedCurseRuntime.get(stack);
         if (curse != null) {
             tooltip.add(Component.literal("Curse: " + curse.displayName())
-                    .withStyle(ChatFormatting.DARK_PURPLE));
+                    .withStyle(ChatFormatting.RED));
         }
     }
 
