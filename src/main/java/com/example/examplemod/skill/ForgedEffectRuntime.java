@@ -8,6 +8,8 @@ import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
 
 import net.minecraft.world.item.ItemStack;
+import com.example.examplemod.skill.curse.ForgedCurse;
+import com.example.examplemod.skill.curse.ForgedCurseRuntime;
 
 /** Shared helpers used by server-side forged-effect triggers. */
 public final class ForgedEffectRuntime {
@@ -18,6 +20,14 @@ public final class ForgedEffectRuntime {
     }
 
     public static EffectTier tier(ItemStack stack, ForgingEffect wanted) {
+        // Power Erasure normally suppresses every main Effect earned from the first
+        // minigame. Wither Curse Power is the one intentional secret synergy:
+        // its damage bonus survives while its self-Wither drawback is erased.
+        if (ForgedCurseRuntime.has(stack, ForgedCurse.POWER_ERASURE)
+                && wanted != ForgingEffect.WITHER_CURSE_POWER) {
+            return null;
+        }
+
         int count = ForgedEquipmentItem.effectCount(stack);
         for (int i = 0; i < count; i++) {
             AnvilAssemblyResult.FinalEffect effect = ForgedEquipmentItem.readEffect(stack, i);
