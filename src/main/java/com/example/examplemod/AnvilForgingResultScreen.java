@@ -5,6 +5,8 @@ import com.example.examplemod.entity.*;
 import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
+import com.example.examplemod.skill.blessing.ForgedBlessing;
+import com.example.examplemod.skill.curse.ForgedCurse;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -15,11 +17,20 @@ import net.minecraft.network.chat.Component;
 public class AnvilForgingResultScreen extends Screen {
     private final ForgingResult result;
     private final AnvilAssemblyResult assembly;
+    private final ForgedBlessing blessing;
+    private final ForgedCurse curse;
 
     public AnvilForgingResultScreen(ForgingResult result, AnvilAssemblyResult assembly) {
+        this(result, assembly, null, null);
+    }
+
+    public AnvilForgingResultScreen(ForgingResult result, AnvilAssemblyResult assembly,
+            ForgedBlessing blessing, ForgedCurse curse) {
         super(Component.literal("Final Forging Result"));
         this.result = result;
         this.assembly = assembly;
+        this.blessing = blessing;
+        this.curse = curse;
     }
 
     @Override protected void init() {
@@ -39,7 +50,14 @@ public class AnvilForgingResultScreen extends Screen {
         for(AnvilAssemblyResult.FinalEffect effect:assembly.effects()){
             g.drawCenteredString(font,effect.effect().displayName()+" "+effect.tier().name(),cx,y,0x55FF55);y+=16;
         }
-        y=Math.max(y+8,top+120);
+        y=Math.max(y+8,top+112);
+        if (blessing != null) {
+            g.drawCenteredString(font, "BLESSING: " + blessing.displayName(), cx, y, 0xFFFF55);
+            y += 18;
+        } else if (curse != null) {
+            g.drawCenteredString(font, "CURSE: " + curse.displayName(), cx, y, 0xFFCC5577);
+            y += 18;
+        }
         g.drawCenteredString(font,"SCORE: "+result.score(),cx,y,0xFFFF55);
         g.drawCenteredString(font,String.format("ACCURACY: %.1f%%",result.accuracy()),cx,y+18,0xFFFFFF);
         g.drawCenteredString(font,"MAX COMBO: x"+result.maxCombo(),cx,y+36,0xFFFFFF);
