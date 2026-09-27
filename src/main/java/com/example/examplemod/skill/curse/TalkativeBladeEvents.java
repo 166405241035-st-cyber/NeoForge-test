@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class TalkativeBladeEvents {
     private static final String NEXT_CHAT = "TalkativeBladeNextChat";
     private static final String NEXT_EMERGENCY = "TalkativeBladeNextEmergency";
+    private static final String CREEPER_ACTIVE = "TalkativeBladeCreeperActive";
     private static final String NEXT_TROLL = "TalkativeBladeNextTroll";
     private static final String TROLL_LEFT = "TalkativeBladeTrollLeft";
     private static final String TROLL_NEXT = "TalkativeBladeTrollNext";
@@ -141,15 +142,20 @@ public final class TalkativeBladeEvents {
 
         // Emergency Creeper warning ignores normal chatter cooldown, but has its own cooldown.
         Creeper creeper = nearestDangerousCreeper(player);
-        if (creeper != null && now >= data.getLong(NEXT_EMERGENCY)) {
+        boolean creeperWasActive = data.getBoolean(CREEPER_ACTIVE);
+        if (creeper == null) {
+            // Re-arm only after the player has actually left the dangerous Creeper situation.
+            data.putBoolean(CREEPER_ACTIVE, false);
+        } else if (!creeperWasActive && now >= data.getLong(NEXT_EMERGENCY)) {
+            // Warn once per encounter, not every time the player turns their back to the same Creeper.
+            data.putBoolean(CREEPER_ACTIVE, true);
             String warning = random(player, CREEPER);
             say(player, warning);
             String title = random(player, CREEPER_TITLES);
-            player.sendSystemMessage(Component.literal("§c§l" + title));
             player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(Component.literal("§c§l" + title)));
             player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(Component.literal("§eTalkative Blade กำลังเตือนเจ้า!")));
             player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(0, 25, 10));
-            data.putLong(NEXT_EMERGENCY, now + 20L * 8L);
+            data.putLong(NEXT_EMERGENCY, now + 20L * 20L);
             return;
         }
 
