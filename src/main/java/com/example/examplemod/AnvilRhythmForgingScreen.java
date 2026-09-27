@@ -5,6 +5,8 @@ import com.example.examplemod.entity.*;
 import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
+import com.example.examplemod.skill.blessing.*;
+import com.example.examplemod.skill.curse.*;
 
 import java.util.Random;
 import org.lwjgl.glfw.GLFW;
@@ -28,6 +30,8 @@ public class AnvilRhythmForgingScreen extends Screen {
     private Direction direction;
     private float approachRadius;
     private boolean finished;
+    private ForgedBlessing rolledBlessing;
+    private ForgedCurse rolledCurse;
     private String resultText = "Press the shown W/A/S/D key at the right time";
     private int resultColor = 0xFFFFFF;
 
@@ -56,9 +60,26 @@ public class AnvilRhythmForgingScreen extends Screen {
         ForgingResult result=new ForgingResult(score,accuracy,maxCombo,perfectCount,greatCount,goodCount,missCount);
         if(minecraft.player!=null){
             ItemStack equipment=ExampleMod.FORGED_EQUIPMENT_ITEM.get().createStack(assembly);
+
+            // Minigame 2 reward: high accuracy/combo pushes the roll toward Blessing;
+            // misses push it toward Curse. The selected reward itself is random from
+            // the Blessing/Curse pools defined by the project design.
+            double performance = Math.max(0.0D, Math.min(1.0D,
+                    (accuracy / 100.0D) * 0.75D + (maxCombo / (double) TOTAL_ROUNDS) * 0.25D));
+            double blessingChance = 0.20D + performance * 0.60D; // 20%..80%
+            if (random.nextDouble() < blessingChance) {
+                ForgedBlessing[] pool = ForgedBlessing.values();
+                rolledBlessing = pool[random.nextInt(pool.length)];
+                ForgedBlessingRuntime.set(equipment, rolledBlessing);
+            } else {
+                ForgedCurse[] pool = ForgedCurse.values();
+                rolledCurse = pool[random.nextInt(pool.length)];
+                ForgedCurseRuntime.set(equipment, rolledCurse);
+            }
+
             if(!minecraft.player.getInventory().add(equipment)) minecraft.player.drop(equipment,false);
         }
-        minecraft.setScreen(new AnvilForgingResultScreen(result,assembly));
+        minecraft.setScreen(new AnvilForgingResultScreen(result,assembly,rolledBlessing,rolledCurse));
     }
 
     @Override public boolean keyPressed(int keyCode,int scanCode,int modifiers){if(Direction.fromKey(keyCode)!=null){attempt(keyCode);return true;}return super.keyPressed(keyCode,scanCode,modifiers);}
