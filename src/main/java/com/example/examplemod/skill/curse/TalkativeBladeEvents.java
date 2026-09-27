@@ -112,13 +112,17 @@ public final class TalkativeBladeEvents {
 
             // Sometimes absolutely nothing strange happens: simply return the blade as a normal drop.
             if (player.getRandom().nextDouble() < 0.30D) {
+                player.sendSystemMessage(Component.literal("§8[Talkative Blade DEBUG] §7สุ่มเหตุการณ์: NOTHING — ไม่มีเหตุการณ์หลอน"));
                 player.level().addFreshEntity(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), HAUNTING.remove(player.getUUID())));
                 return;
             }
 
             // DEBUG/testing: wait exactly 1 minute before the first return attempt.
             data.putLong(RETURN_AT, now + 20L * 60L);
-            data.putInt(RETURN_MODE, player.getRandom().nextInt(4));
+            int returnMode = player.getRandom().nextInt(4);
+            data.putInt(RETURN_MODE, returnMode);
+            player.sendSystemMessage(Component.literal("§8[Talkative Blade DEBUG] §7สุ่มเหตุการณ์: " + returnModeName(returnMode)
+                    + " | เริ่มเช็กการกลับใน 1 นาที"));
             if (player.getRandom().nextDouble() < 0.45D) {
                 say(player, random(player, List.of("...", "เจ้าลืมอะไรหรือเปล่า?", "แน่ใจนะว่าจบแล้ว?", "ข้าเห็นเจ้านะ", "แล้วเราจะได้พบกันอีก...")));
             }
@@ -227,6 +231,15 @@ public final class TalkativeBladeEvents {
             title(player, "MISS ME?", line);
             say(player, line);
         }
+    }
+
+    private static String returnModeName(int mode) {
+        return switch (mode) {
+            case 0 -> "INVENTORY RETURN — แอบกลับเข้ากระเป๋า";
+            case 1 -> "SURPRISE DROP — โผล่กลับมาใกล้ผู้เล่น";
+            case 2 -> "MINING RETURN — ทำเหมือนโผล่กลับมาจากการขุด";
+            default -> "MONSTER RETURN — ทำเหมือนมอนสเตอร์เอาดาบกลับมา";
+        };
     }
 
     private static void title(ServerPlayer player, String title, String subtitle) {
