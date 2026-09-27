@@ -72,20 +72,20 @@ public final class ForgedBlessingEvents {
         event.getDrops().addAll(copies);
     }
 
-    /** Experience Boost increases mob XP by 30%. */
+    /** Experience Boost increases mob XP by 60%. */
     @SubscribeEvent
     public static void onExperienceDrop(LivingExperienceDropEvent event) {
         Player player = event.getAttackingPlayer();
         if (player == null || player.level().isClientSide()) return;
         if (!ForgedBlessingRuntime.has(player.getMainHandItem(), ForgedBlessing.EXPERIENCE_BOOST)) return;
-        event.setDroppedExperience(Math.max(0, Math.round(event.getDroppedExperience() * 1.30F)));
+        event.setDroppedExperience(Math.max(0, Math.round(event.getDroppedExperience() * 1.60F)));
     }
 
-    /** Mining Haste is a permanent +25% break-speed bonus while using the blessed tool. */
+    /** Mining Haste is a permanent +50% break-speed bonus while using the blessed tool. */
     @SubscribeEvent
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         if (ForgedBlessingRuntime.has(event.getEntity().getMainHandItem(), ForgedBlessing.MINING_HASTE)) {
-            event.setNewSpeed(event.getNewSpeed() * 1.25F);
+            event.setNewSpeed(event.getNewSpeed() * 1.50F);
         }
     }
 
