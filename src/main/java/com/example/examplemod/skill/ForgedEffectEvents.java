@@ -993,7 +993,7 @@ public final class ForgedEffectEvents {
         // therefore the "transparent" look is achieved with small scale, fewer points
         // and slower refresh.
         var softGold = new net.minecraft.core.particles.DustParticleOptions(
-                new org.joml.Vector3f(232.0F / 255.0F, 184.0F / 255.0F, 74.0F / 255.0F), 0.45F);
+                new org.joml.Vector3f(1.0F, 1.0F, 0.0F), 0.45F);
 
         for (int i = 0; i < 24; i++) {
             double angle = Math.PI * 2.0D * i / 24.0D;
