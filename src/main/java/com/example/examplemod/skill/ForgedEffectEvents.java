@@ -999,7 +999,7 @@ public final class ForgedEffectEvents {
             double angle = Math.PI * 2.0D * i / 24.0D;
             serverLevel.sendParticles(softGold,
                     player.getX() + Math.cos(angle) * radius,
-                    player.getY() + 0.12D,
+                    player.getY() + 1.12D,
                     player.getZ() + Math.sin(angle) * radius,
                     1, 0.015D, 0.015D, 0.015D, 0.0D);
         }
