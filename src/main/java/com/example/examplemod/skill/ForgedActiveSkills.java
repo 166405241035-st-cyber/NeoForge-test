@@ -687,20 +687,25 @@ public final class ForgedActiveSkills {
     }
 
     private static void natureGodBless(Player player, ItemStack tool, EffectTier tier) {
-        long cooldown = ForgedSkillConfig.nature(tier);
+        // Active Nature God Bless is a harvest buff, separate from the passive
+        // plot growth and Golden Apple reward. R grants Fortune-III-like crop drops
+        // for 15 seconds, then this exact forged tool has a 60-second cooldown.
+        final long cooldown = 1200L; // 60 sec
         if (!ready(tool, player, "NatureGodBless", cooldown)) return;
 
-        int chance = tier == EffectTier.I ? 5 : tier == EffectTier.II ? 10 : 20;
-        if (player.getRandom().nextInt(100) < chance) {
-            player.getInventory().add(new ItemStack(
-                    player.getRandom().nextDouble() < 0.1D ? net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE
-                            : net.minecraft.world.item.Items.GOLDEN_APPLE));
-            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Nature God Bless: ได้รับพรจากธรรมชาติ"), true);
-        } else {
-            player.displayClientMessage(net.minecraft.network.chat.Component.literal("Nature God Bless: ไม่ได้รับรางวัล"), true);
-        }
+        long now = player.level().getGameTime();
+        player.getPersistentData().putLong("ForgedNatureGodBlessFortuneUntil", now + 300L); // 15 sec
         startCooldown(tool, player, "NatureGodBless", cooldown);
-        damageEquipment(player, 8);
+
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                "Nature God Bless: Fortune III harvest active for 15s"), true);
+
+        // Immediate golden burst when R is pressed.
+        if (player.level() instanceof net.minecraft.server.level.ServerLevel server) {
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
+                    player.getX(), player.getY() + 1.0D, player.getZ(),
+                    36, 0.65D, 0.85D, 0.65D, 0.10D);
+        }
     }
 
     private static void openStorage(Player player, ItemStack tool) {
