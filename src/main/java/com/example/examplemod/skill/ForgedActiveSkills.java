@@ -697,6 +697,12 @@ public final class ForgedActiveSkills {
         player.getPersistentData().putLong("ForgedNatureGodBlessFortuneUntil", now + 300L); // 15 sec
         startCooldown(tool, player, "NatureGodBless", cooldown);
 
+        // Show the vanilla potion-style HUD icon and swirling status particles
+        // while the Fortune harvest blessing is active.
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                net.minecraft.world.effect.MobEffects.LUCK,
+                300, 2, false, true, true));
+
         player.displayClientMessage(net.minecraft.network.chat.Component.literal(
                 "Nature God Bless: Fortune III harvest active for 15s"), true);
 
