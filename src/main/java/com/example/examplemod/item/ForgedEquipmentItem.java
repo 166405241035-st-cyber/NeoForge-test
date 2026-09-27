@@ -315,6 +315,12 @@ public class ForgedEquipmentItem extends Item {
         if (blessing != null) {
             tooltip.add(Component.literal("Blessing: " + blessing.displayName())
                     .withStyle(ChatFormatting.GOLD));
+            if (blessing == ForgedBlessing.POWER_STRIKE) {
+                tooltip.add(Component.literal("  Increases attack damage by 20%.")
+                        .withStyle(ChatFormatting.GRAY));
+                tooltip.add(Component.literal("  Applied before Wither Curse Power multiplier.")
+                        .withStyle(ChatFormatting.DARK_GRAY));
+            }
         }
 
         ForgedCurse curse = ForgedCurseRuntime.get(stack);
