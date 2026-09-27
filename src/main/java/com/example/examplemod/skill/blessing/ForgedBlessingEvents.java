@@ -4,17 +4,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -72,16 +72,21 @@ public final class ForgedBlessingEvents {
         event.getDrops().addAll(copies);
     }
 
-    /** Experience Boost adds 30% of XP dropped by killed mobs. */
+    /** Experience Boost increases mob XP by 30%. */
     @SubscribeEvent
-    public static void onLivingDeath(LivingDeathEvent event) {
-        Entity attacker = event.getSource().getEntity();
-        if (!(attacker instanceof Player player) || player.level().isClientSide()) return;
+    public static void onExperienceDrop(LivingExperienceDropEvent event) {
+        Player player = event.getAttackingPlayer();
+        if (player == null || player.level().isClientSide()) return;
         if (!ForgedBlessingRuntime.has(player.getMainHandItem(), ForgedBlessing.EXPERIENCE_BOOST)) return;
+        event.setDroppedExperience(Math.max(0, Math.round(event.getDroppedExperience() * 1.30F)));
+    }
 
-        int base = event.getEntity().getExperienceReward((ServerLevel) player.level(), player);
-        int bonus = Math.max(0, Math.round(base * 0.30F));
-        if (bonus > 0) ExperienceOrb.award((ServerLevel) player.level(), event.getEntity().position(), bonus);
+    /** Mining Haste is a permanent +25% break-speed bonus while using the blessed tool. */
+    @SubscribeEvent
+    public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
+        if (ForgedBlessingRuntime.has(event.getEntity().getMainHandItem(), ForgedBlessing.MINING_HASTE)) {
+            event.setNewSpeed(event.getNewSpeed() * 1.25F);
+        }
     }
 
     /** Break up to 8 connected blocks of the same ore type. */
