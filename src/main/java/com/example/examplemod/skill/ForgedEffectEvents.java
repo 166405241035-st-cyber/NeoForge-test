@@ -666,6 +666,31 @@ public final class ForgedEffectEvents {
             }
         }
 
+        // Nature God Bless R: for 15 seconds, mature crops harvested from a
+        // Nature-God-Bless plot receive a Fortune-III-like randomized yield bonus.
+        // This deliberately applies to crop drops only; Golden Apple rewards remain
+        // the separate passive 5/10/20% plot roll.
+        if (event.getLevel() instanceof ServerLevel natureFortuneLevel
+                && isMatureHarvestCrop(event.getState())
+                && player.getPersistentData().getLong("ForgedNatureGodBlessFortuneUntil")
+                        > natureFortuneLevel.getGameTime()
+                && ForgedFarmingPlotData.get(natureFortuneLevel)
+                        .tier(event.getPos().below(), ForgingEffect.NATURE_GOD_BLESS) != null) {
+            for (ItemEntity drop : event.getDrops()) {
+                ItemStack stack = drop.getItem();
+                if (stack.isEmpty()) continue;
+
+                // Fortune III style: random bonus 0..3 additional copies of each
+                // normal crop drop stack, rather than a fixed multiplier.
+                int bonusCopies = player.getRandom().nextInt(4);
+                if (bonusCopies > 0) {
+                    int bonus = stack.getCount() * bonusCopies;
+                    stack.grow(bonus);
+                    drop.setItem(stack);
+                }
+            }
+        }
+
         // Static Hover Drop: freeze only the item entities produced by THIS block.
         // Tier controls hover duration only: I = 5s, II = 10s, III = 20s.
         EffectTier staticHover = ForgedEffectRuntime.tier(tool, ForgingEffect.STATIC_HOVER_DROP);
@@ -855,7 +880,7 @@ public final class ForgedEffectEvents {
                     case III -> 0.20D;
                 };
                 if (player.getRandom().nextDouble() < rewardChance) {
-                    ItemStack reward = new ItemStack(player.getRandom().nextDouble() < 0.10D
+                    ItemStack reward = new ItemStack(player.getRandom().nextDouble() < 0.01D
                             ? Items.ENCHANTED_GOLDEN_APPLE : Items.GOLDEN_APPLE);
                     Block.popResource(player.level(), event.getPos(), reward);
                 }
@@ -949,6 +974,21 @@ public final class ForgedEffectEvents {
 
     }
 
+
+    @SubscribeEvent
+    public static void onNatureGodBlessAura(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (!(player.level() instanceof ServerLevel serverLevel)) return;
+
+        long until = player.getPersistentData().getLong("ForgedNatureGodBlessFortuneUntil");
+        if (until <= serverLevel.getGameTime()) return;
+        if (serverLevel.getGameTime() % 5L != 0L) return;
+
+        // Totem particles provide the gold/green-gold blessing aura while R is active.
+        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                3, 0.45D, 0.75D, 0.45D, 0.015D);
+    }
 
     @SubscribeEvent
     public static void onHyperGrowthPlotParticles(LevelTickEvent.Post event) {
