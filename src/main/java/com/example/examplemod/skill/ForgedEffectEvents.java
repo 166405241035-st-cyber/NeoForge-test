@@ -980,8 +980,9 @@ public final class ForgedEffectEvents {
         if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
         if (serverLevel.getGameTime() % 10L != 0L) return;
 
-        // Clearly visible golden boundary around every Nature God Bless plot.
-        // The previous ring was too sparse and too close to the ground to notice.
+        // Debug-friendly, unmistakable range marker: use END_ROD instead of the
+        // short-lived Totem particle. This makes the blessed plot boundary persist
+        // long enough to be visible between server particle packets.
         for (BlockPos farmlandPos : ForgedFarmingPlotData.get(serverLevel)
                 .positionsWith(ForgingEffect.NATURE_GOD_BLESS)) {
             if (!serverLevel.isLoaded(farmlandPos)) continue;
@@ -993,15 +994,14 @@ public final class ForgedEffectEvents {
                 double angle = Math.PI * 2.0D * i / 32.0D;
                 double x = farmlandPos.getX() + 0.5D + Math.cos(angle) * radius;
                 double z = farmlandPos.getZ() + 0.5D + Math.sin(angle) * radius;
-                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
-                        x, farmlandPos.getY() + 0.65D, z,
-                        1, 0.0D, 0.04D, 0.0D, 0.0D);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                        x, farmlandPos.getY() + 0.80D, z,
+                        1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
 
-            // A small vertical marker makes the blessed center easy to identify too.
-            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
-                    farmlandPos.getX() + 0.5D, farmlandPos.getY() + 1.15D, farmlandPos.getZ() + 0.5D,
-                    5, 0.20D, 0.35D, 0.20D, 0.01D);
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                    farmlandPos.getX() + 0.5D, farmlandPos.getY() + 1.25D, farmlandPos.getZ() + 0.5D,
+                    8, 0.25D, 0.35D, 0.25D, 0.005D);
         }
     }
 
