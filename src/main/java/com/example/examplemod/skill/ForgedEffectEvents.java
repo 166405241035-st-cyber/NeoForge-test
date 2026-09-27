@@ -6,6 +6,7 @@ import com.example.examplemod.entity.*;
 import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
+import com.example.examplemod.skill.blessing.ForgedBlessingRuntime;
 
 import net.minecraft.server.level.ServerLevel;
 import com.example.examplemod.skill.curse.ForgedCurse;
@@ -151,7 +152,7 @@ public final class ForgedEffectEvents {
             }
             player.level().explode(player, target.getX(), target.getY(), target.getZ(),
                     2.0F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
-            weapon.setDamageValue(Math.min(weapon.getMaxDamage(), weapon.getDamageValue() + 3));
+            ForgedBlessingRuntime.damage(weapon, 3);
         }
 
         EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
@@ -440,7 +441,7 @@ public final class ForgedEffectEvents {
             }
 
             if (tool.isDamageableItem())
-                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 2));
+                ForgedBlessingRuntime.damage(tool, 2);
         }
 
         if (groundedNow) player.getPersistentData().putBoolean("ForgedEarthyWasFalling", false);
@@ -724,7 +725,7 @@ public final class ForgedEffectEvents {
 
             if (tool.isDamageableItem()) {
                 int cost = switch (vacuum) { case I -> 5; case II -> 3; case III -> 1; };
-                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + cost));
+                ForgedBlessingRuntime.damage(tool, cost);
             }
         }
     }
@@ -777,7 +778,7 @@ public final class ForgedEffectEvents {
         Block.popResource(player.level(), pos, new ItemStack(Blocks.BEDROCK));
 
         if (!player.getAbilities().instabuild && tool.isDamageableItem()) {
-            tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
+            ForgedBlessingRuntime.damage(tool, 1);
         }
     }
 
@@ -795,7 +796,7 @@ public final class ForgedEffectEvents {
             player.level().setBlockAndUpdate(event.getPos(), Blocks.AIR.defaultBlockState());
             Block.popResource(player.level(), event.getPos(), new ItemStack(Blocks.BEDROCK));
             if (!player.getAbilities().instabuild && tool.isDamageableItem()) {
-                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + 1));
+                ForgedBlessingRuntime.damage(tool, 1);
             }
         }
     }
@@ -938,7 +939,7 @@ public final class ForgedEffectEvents {
                 }
                 // Durability is charged only for blocks actually tilled.
                 if (changed > 0 && tool.isDamageableItem())
-                    tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + changed));
+                    ForgedBlessingRuntime.damage(tool, changed);
             }
         }
 
@@ -1178,7 +1179,7 @@ public final class ForgedEffectEvents {
         // Project rule: extra blocks cost 50% durability, rounded up.
         int extraCost = (extraBroken + 1) / 2;
         if (extraCost > 0 && tool.isDamageableItem())
-            tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + extraCost));
+            ForgedBlessingRuntime.damage(tool, extraCost);
     }
 
     private static boolean isCrop(net.minecraft.world.level.block.state.BlockState state) {
