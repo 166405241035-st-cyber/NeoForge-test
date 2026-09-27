@@ -8,6 +8,8 @@ import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
 
 import net.minecraft.server.level.ServerLevel;
+import com.example.examplemod.skill.curse.ForgedCurse;
+import com.example.examplemod.skill.curse.ForgedCurseRuntime;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -516,11 +518,17 @@ public final class ForgedEffectEvents {
         // Its attack multiplier is applied in onLivingAttack.
         EffectTier witherCurse = ForgedEffectRuntime.tier(tool, ForgingEffect.WITHER_CURSE_POWER);
         if (witherCurse != null) {
-            // Do not reset Wither's internal damage timer every player tick.
-            // Refresh Wither I only when it is close to expiring, so vanilla Wither damage can tick normally.
-            MobEffectInstance currentWither = player.getEffect(MobEffects.WITHER);
-            if (currentWither == null || currentWither.getDuration() <= 20)
-                player.addEffect(new MobEffectInstance(MobEffects.WITHER, 120, 0, false, false));
+            // Secret synergy: Power Erasure removes Wither Curse Power's drawback
+            // without erasing its damage multiplier.
+            if (ForgedCurseRuntime.has(tool, ForgedCurse.POWER_ERASURE)) {
+                player.removeEffect(MobEffects.WITHER);
+            } else {
+                // Do not reset Wither's internal damage timer every player tick.
+                // Refresh Wither I only when it is close to expiring, so vanilla Wither damage can tick normally.
+                MobEffectInstance currentWither = player.getEffect(MobEffects.WITHER);
+                if (currentWither == null || currentWither.getDuration() <= 20)
+                    player.addEffect(new MobEffectInstance(MobEffects.WITHER, 120, 0, false, false));
+            }
         }
 
         EffectTier frenzy = ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING);
