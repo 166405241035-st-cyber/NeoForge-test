@@ -19,18 +19,22 @@ public class AnvilForgingResultScreen extends Screen {
     private final AnvilAssemblyResult assembly;
     private final ForgedBlessing blessing;
     private final ForgedCurse curse;
+    private final String performanceRank;
+    private final double blessingChance;
 
     public AnvilForgingResultScreen(ForgingResult result, AnvilAssemblyResult assembly) {
-        this(result, assembly, null, null);
+        this(result, assembly, null, null, "-", 0.0D);
     }
 
     public AnvilForgingResultScreen(ForgingResult result, AnvilAssemblyResult assembly,
-            ForgedBlessing blessing, ForgedCurse curse) {
+            ForgedBlessing blessing, ForgedCurse curse, String performanceRank, double blessingChance) {
         super(Component.literal("Final Forging Result"));
         this.result = result;
         this.assembly = assembly;
         this.blessing = blessing;
         this.curse = curse;
+        this.performanceRank = performanceRank;
+        this.blessingChance = blessingChance;
     }
 
     @Override protected void init() {
@@ -50,7 +54,13 @@ public class AnvilForgingResultScreen extends Screen {
         for(AnvilAssemblyResult.FinalEffect effect:assembly.effects()){
             g.drawCenteredString(font,effect.effect().displayName()+" "+effect.tier().name(),cx,y,0x55FF55);y+=16;
         }
-        y=Math.max(y+8,top+112);
+        y=Math.max(y+8,top+104);
+        g.drawCenteredString(font, "RANK: " + performanceRank, cx, y, 0xFF55FFFF);
+        y += 16;
+        g.drawCenteredString(font, String.format("Blessing Chance: %.0f%%", blessingChance * 100.0D), cx, y, 0xFFFF55);
+        y += 16;
+        g.drawCenteredString(font, String.format("Curse Chance: %.0f%%", (1.0D - blessingChance) * 100.0D), cx, y, 0xFFFF5555);
+        y += 20;
         if (blessing != null) {
             g.drawCenteredString(font, "BLESSING: " + blessing.displayName(), cx, y, 0xFFFF55);
             y += 18;
