@@ -9,7 +9,7 @@ public enum ForgedBlessing {
     DURABILITY_GUARD("Durability Guard"),
     MINERS_FORTUNE("Miner's Fortune"),
     VEIN_BREAKER("Vein Breaker"),
-    AUTO_SMELT("Auto Smelt"),
+    MINING_HASTE("Mining Haste"),
     EXPERIENCE_BOOST("Experience Boost"),
     DIVINE_EXECUTION("Divine Execution");
 
