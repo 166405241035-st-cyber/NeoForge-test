@@ -3,12 +3,15 @@ package com.example.examplemod.skill.curse;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Context-aware chatter for Talkative Blade.
@@ -21,6 +24,10 @@ public final class TalkativeBladeEvents {
     private static final String NEXT_TROLL = "TalkativeBladeNextTroll";
     private static final String TROLL_LEFT = "TalkativeBladeTrollLeft";
     private static final String TROLL_NEXT = "TalkativeBladeTrollNext";
+    private static final String ABANDON_COUNT = "TalkativeBladeAbandonCount";
+    private static final String RETURN_AT = "TalkativeBladeReturnAt";
+    private static final String RETURN_MODE = "TalkativeBladeReturnMode";
+    private static final ConcurrentHashMap<UUID, ItemStack> HAUNTING = new ConcurrentHashMap<>();
 
     private static final List<String> IDLE = List.of(
             "นี่... จะยืนอีกนานไหม?", "ข้าเริ่มเบื่อแล้วนะ", "มีอะไรให้ฟันบ้างไหม?",
@@ -88,9 +95,35 @@ public final class TalkativeBladeEvents {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         long now = player.level().getGameTime();
-        if (now % 10L != 0L || !hasTalkativeBlade(player)) return;
+        if (now % 10L != 0L) return;
 
         var data = player.getPersistentData();
+        processHauntingReturn(player, now);
+
+        ItemEntity abandoned = findRecentlyDroppedBlade(player);
+        if (abandoned != null) {
+            // The original stack is hidden, not copied, so this cannot duplicate forged equipment.
+            ItemStack original = abandoned.getItem().copy();
+            abandoned.discard();
+            HAUNTING.put(player.getUUID(), original);
+            int attempts = data.getInt(ABANDON_COUNT) + 1;
+            data.putInt(ABANDON_COUNT, attempts);
+
+            // Sometimes absolutely nothing strange happens: simply return the blade as a normal drop.
+            if (player.getRandom().nextDouble() < 0.30D) {
+                player.level().addFreshEntity(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), HAUNTING.remove(player.getUUID())));
+                return;
+            }
+
+            // Usually wait 5-12 minutes. The player should have time to believe the sword is gone.
+            data.putLong(RETURN_AT, now + 20L * (300 + player.getRandom().nextInt(421)));
+            data.putInt(RETURN_MODE, player.getRandom().nextInt(4));
+            if (player.getRandom().nextDouble() < 0.45D) {
+                say(player, random(player, List.of("...", "เจ้าลืมอะไรหรือเปล่า?", "แน่ใจนะว่าจบแล้ว?", "ข้าเห็นเจ้านะ", "แล้วเราจะได้พบกันอีก...")));
+            }
+        }
+
+        if (!hasTalkativeBlade(player)) return;
 
         // Rare obnoxious chat burst: intentionally part of the curse.
         int left = data.getInt(TROLL_LEFT);
@@ -124,8 +157,8 @@ public final class TalkativeBladeEvents {
 
         List<String> pool = choosePool(player);
         say(player, random(player, pool));
-        // 15-45 seconds between ordinary lines.
-        data.putLong(NEXT_CHAT, now + 20L * (15 + player.getRandom().nextInt(31)));
+        // Talkative really means talkative: 7-15 seconds between ordinary lines.
+        data.putLong(NEXT_CHAT, now + 20L * (7 + player.getRandom().nextInt(9)));
     }
 
     private static List<String> choosePool(ServerPlayer player) {
@@ -139,6 +172,61 @@ public final class TalkativeBladeEvents {
         if (player.level().isRaining()) return RAIN;
         if (player.level().isNight()) return NIGHT;
         return IDLE;
+    }
+
+
+    private static ItemEntity findRecentlyDroppedBlade(ServerPlayer player) {
+        for (ItemEntity entity : player.level().getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(4.0D))) {
+            if (entity.getAge() <= 60 && ForgedCurseRuntime.has(entity.getItem(), ForgedCurse.TALKATIVE_BLADE)) return entity;
+        }
+        return null;
+    }
+
+    private static void processHauntingReturn(ServerPlayer player, long now) {
+        ItemStack blade = HAUNTING.get(player.getUUID());
+        if (blade == null || blade.isEmpty()) return;
+        var data = player.getPersistentData();
+        long at = data.getLong(RETURN_AT);
+        if (at <= 0L || now < at) return;
+
+        // Even when the timer expires there is a chance nothing happens yet; try again later.
+        if (player.getRandom().nextDouble() < 0.35D) {
+            data.putLong(RETURN_AT, now + 20L * (60 + player.getRandom().nextInt(181)));
+            return;
+        }
+
+        int mode = data.getInt(RETURN_MODE);
+        HAUNTING.remove(player.getUUID());
+        data.remove(RETURN_AT);
+        data.remove(RETURN_MODE);
+
+        if (mode == 0 && player.getInventory().add(blade)) {
+            title(player, "ข้ากลับมาแล้ว", "หาอะไรอยู่เหรอ?");
+            say(player, "รู้แล้วว่าเจ้าขาดข้าไม่ได้");
+        } else {
+            // Modes 1-3 materialize close to the player. This lets the blade seem to come from
+            // whatever the player is currently fighting/mining without creating a duplicate.
+            ItemEntity returned = new ItemEntity(player.level(),
+                    player.getX() + (player.getRandom().nextDouble() - 0.5D) * 2.0D,
+                    player.getY() + 0.5D,
+                    player.getZ() + (player.getRandom().nextDouble() - 0.5D) * 2.0D,
+                    blade);
+            returned.setPickUpDelay(10);
+            player.level().addFreshEntity(returned);
+            String line = switch (mode) {
+                case 1 -> "SURPRISE! คิดว่าจะหนีข้าพ้นเหรอ?";
+                case 2 -> "ขุดหาอะไรอยู่? หาข้าหรือเปล่า?";
+                default -> "มอนสเตอร์ฝากข้ามาคืน... จริง ๆ นะ";
+            };
+            title(player, "MISS ME?", line);
+            say(player, line);
+        }
+    }
+
+    private static void title(ServerPlayer player, String title, String subtitle) {
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(Component.literal("§c§l" + title)));
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(Component.literal("§e" + subtitle)));
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(5, 35, 10));
     }
 
     private static Creeper nearestDangerousCreeper(ServerPlayer player) {
