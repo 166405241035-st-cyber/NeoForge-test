@@ -976,18 +976,28 @@ public final class ForgedEffectEvents {
 
 
     @SubscribeEvent
-    public static void onNatureGodBlessAura(PlayerTickEvent.Post event) {
-        Player player = event.getEntity();
-        if (!(player.level() instanceof ServerLevel serverLevel)) return;
+    public static void onNatureGodBlessPlotAura(LevelTickEvent.Post event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
+        if (serverLevel.getGameTime() % 20L != 0L) return;
 
-        long until = player.getPersistentData().getLong("ForgedNatureGodBlessFortuneUntil");
-        if (until <= serverLevel.getGameTime()) return;
-        if (serverLevel.getGameTime() % 5L != 0L) return;
+        // The golden ring belongs to the blessed farmland itself. It is a visual
+        // range marker for the plot's automatic crop-growth blessing, not an R effect.
+        for (BlockPos farmlandPos : ForgedFarmingPlotData.get(serverLevel)
+                .positionsWith(ForgingEffect.NATURE_GOD_BLESS)) {
+            if (!serverLevel.isLoaded(farmlandPos)) continue;
+            BlockState soil = serverLevel.getBlockState(farmlandPos);
+            if (!soil.is(Blocks.FARMLAND) && !soil.is(ExampleMod.MOISTURE_RETAIN_FARMLAND.get())) continue;
 
-        // Totem particles provide the gold/green-gold blessing aura while R is active.
-        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
-                player.getX(), player.getY() + 1.0D, player.getZ(),
-                3, 0.45D, 0.75D, 0.45D, 0.015D);
+            double radius = 1.5D;
+            for (int i = 0; i < 12; i++) {
+                double angle = Math.PI * 2.0D * i / 12.0D;
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING,
+                        farmlandPos.getX() + 0.5D + Math.cos(angle) * radius,
+                        farmlandPos.getY() + 0.18D,
+                        farmlandPos.getZ() + 0.5D + Math.sin(angle) * radius,
+                        1, 0.02D, 0.02D, 0.02D, 0.0D);
+            }
+        }
     }
 
     @SubscribeEvent
