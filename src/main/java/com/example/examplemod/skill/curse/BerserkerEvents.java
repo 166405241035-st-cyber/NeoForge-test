@@ -46,7 +46,7 @@ public final class BerserkerEvents {
         // Keep a short hidden-duration refresh so the HUD behaves like a potion effect
         // but disappears almost immediately when Berserker is no longer active.
         if (active) {
-            player.addEffect(new MobEffectInstance(ExampleMod.BERSERKER, 30, 0, false, false, true));
+            player.addEffect(new MobEffectInstance(ExampleMod.BERSERKER, 100, 0, false, false, true));
         } else {
             player.removeEffect(ExampleMod.BERSERKER);
         }
