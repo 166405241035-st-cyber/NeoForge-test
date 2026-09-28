@@ -51,7 +51,7 @@ public final class LastStandEvents {
         }
 
         if (ready) {
-            player.addEffect(new MobEffectInstance(ExampleMod.LAST_STAND, 30, 0, false, false, true));
+            player.addEffect(new MobEffectInstance(ExampleMod.LAST_STAND, 100, 0, false, false, true));
         } else {
             player.removeEffect(ExampleMod.LAST_STAND);
         }
