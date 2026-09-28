@@ -1,5 +1,7 @@
 package com.example.examplemod.skill.curse;
 
+import com.example.examplemod.ExampleMod;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -7,6 +9,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * Vampire Blade:
@@ -18,6 +21,18 @@ public final class VampireBladeEvents {
     private static final float LIFE_STEAL_RATIO = 0.20F;
 
     private VampireBladeEvents() {}
+
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) return;
+
+        if (hasVampireBladeInInventory(player)) {
+            player.addEffect(new MobEffectInstance(ExampleMod.VAMPIRE_BLADE, 30, 0, false, false, true));
+        } else {
+            player.removeEffect(ExampleMod.VAMPIRE_BLADE);
+        }
+    }
 
     @SubscribeEvent
     public static void onLivingDamage(LivingIncomingDamageEvent event) {
