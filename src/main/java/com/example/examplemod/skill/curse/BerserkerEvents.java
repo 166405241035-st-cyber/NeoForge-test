@@ -1,5 +1,7 @@
 package com.example.examplemod.skill.curse;
 
+import com.example.examplemod.ExampleMod;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -40,6 +42,14 @@ public final class BerserkerEvents {
         boolean active = hasBerserkerInInventory(player)
                 && player.getHealth() > 0.0F
                 && player.getHealth() < player.getMaxHealth() * HEALTH_THRESHOLD;
+
+        // Keep a short hidden-duration refresh so the HUD behaves like a potion effect
+        // but disappears almost immediately when Berserker is no longer active.
+        if (active) {
+            player.addEffect(new MobEffectInstance(ExampleMod.BERSERKER, 30, 0, false, false, true));
+        } else {
+            player.removeEffect(ExampleMod.BERSERKER);
+        }
 
         var attackSpeed = player.getAttribute(Attributes.ATTACK_SPEED);
         if (attackSpeed == null) return;
