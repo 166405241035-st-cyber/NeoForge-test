@@ -3,8 +3,13 @@ package com.example.examplemod.skill.curse;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -228,6 +233,16 @@ public final class TalkativeBladeEvents {
         }
 
         int mode = data.getInt(RETURN_MODE);
+
+        // Mining and monster returns become ARMED here. The real return is triggered by
+        // an ore break or a mob kill below, instead of faking a drop beside the player.
+        if (mode == 2 || mode == 3) {
+            data.putLong(RETURN_AT, 0L);
+            player.sendSystemMessage(Component.literal("§8[Talkative Blade DEBUG] §7"
+                    + (mode == 2 ? "MINING RETURN READY — รอขุดแร่" : "MONSTER RETURN READY — รอฆ่ามอนสเตอร์")));
+            return;
+        }
+
         HAUNTING.remove(player.getUUID());
         data.remove(RETURN_AT);
         data.remove(RETURN_MODE);
@@ -264,6 +279,53 @@ public final class TalkativeBladeEvents {
             title(player, eventTitle, line);
             say(player, line);
         }
+    }
+
+    @SubscribeEvent
+    public static void onHauntingMobDrop(LivingDropsEvent event) {
+        Entity attacker = event.getSource().getEntity();
+        if (!(attacker instanceof ServerPlayer player) || player.level().isClientSide()) return;
+        var data = player.getPersistentData();
+        if (data.getInt(RETURN_MODE) != 3 || data.getLong(RETURN_AT) != 0L) return;
+        ItemStack blade = HAUNTING.remove(player.getUUID());
+        if (blade == null || blade.isEmpty()) return;
+
+        ItemEntity returned = new ItemEntity(event.getEntity().level(),
+                event.getEntity().getX(), event.getEntity().getY() + 0.25D, event.getEntity().getZ(), blade);
+        returned.setPickUpDelay(10);
+        event.getDrops().add(returned);
+        data.remove(RETURN_MODE);
+        data.remove(RETURN_AT);
+        title(player, "MONSTER DROP?", "มอนสเตอร์ฝากข้ามาคืน... จริง ๆ นะ");
+        say(player, "ในที่สุดก็ฆ่าตัวที่ขังข้าไว้ได้สักที");
+    }
+
+    @SubscribeEvent
+    public static void onHauntingOreBreak(BlockEvent.BreakEvent event) {
+        if (!(event.getPlayer() instanceof ServerPlayer player) || player.level().isClientSide()) return;
+        var data = player.getPersistentData();
+        if (data.getInt(RETURN_MODE) != 2 || data.getLong(RETURN_AT) != 0L) return;
+        BlockState state = event.getState();
+        if (!isOre(state)) return;
+
+        ItemStack blade = HAUNTING.remove(player.getUUID());
+        if (blade == null || blade.isEmpty()) return;
+        ItemEntity returned = new ItemEntity(player.level(),
+                event.getPos().getX() + 0.5D, event.getPos().getY() + 0.5D, event.getPos().getZ() + 0.5D, blade);
+        returned.setPickUpDelay(10);
+        returned.setDeltaMovement(0.0D, 0.25D, 0.0D);
+        player.level().addFreshEntity(returned);
+        data.remove(RETURN_MODE);
+        data.remove(RETURN_AT);
+        title(player, "FOUND ME?", "ขุดเจอข้าแล้ว!");
+        say(player, "นึกว่าซ่อนในแร่เนียนแล้วนะ");
+    }
+
+    private static boolean isOre(BlockState state) {
+        return state.is(BlockTags.COAL_ORES) || state.is(BlockTags.COPPER_ORES)
+                || state.is(BlockTags.IRON_ORES) || state.is(BlockTags.GOLD_ORES)
+                || state.is(BlockTags.REDSTONE_ORES) || state.is(BlockTags.LAPIS_ORES)
+                || state.is(BlockTags.DIAMOND_ORES) || state.is(BlockTags.EMERALD_ORES);
     }
 
     private static String returnModeName(int mode) {
