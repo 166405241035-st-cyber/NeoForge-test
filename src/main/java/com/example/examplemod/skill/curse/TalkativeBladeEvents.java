@@ -121,17 +121,14 @@ public final class TalkativeBladeEvents {
 
             // Sometimes absolutely nothing strange happens: simply return the blade as a normal drop.
             if (player.getRandom().nextDouble() < 0.30D) {
-                player.sendSystemMessage(Component.literal("§8[Talkative Blade DEBUG] §7สุ่มเหตุการณ์: NOTHING — ไม่มีเหตุการณ์หลอน"));
                 player.level().addFreshEntity(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), HAUNTING.remove(player.getUUID())));
                 return;
             }
 
-            // DEBUG/testing: wait a random 10-30 seconds before the first return attempt.
-            data.putLong(RETURN_AT, now + 20L * (10 + player.getRandom().nextInt(21)));
+            // Normal gameplay: wait a random 5-12 minutes before the first return attempt.
+            data.putLong(RETURN_AT, now + 20L * (300 + player.getRandom().nextInt(421)));
             int returnMode = player.getRandom().nextInt(4);
             data.putInt(RETURN_MODE, returnMode);
-            player.sendSystemMessage(Component.literal("§8[Talkative Blade DEBUG] §7สุ่มเหตุการณ์: " + returnModeName(returnMode)
-                    + " | เริ่มเช็กการกลับใน 10-30 วินาที"));
             if (player.getRandom().nextDouble() < 0.45D) {
                 say(player, random(player, List.of("...", "เจ้าลืมอะไรหรือเปล่า?", "แน่ใจนะว่าจบแล้ว?", "ข้าเห็นเจ้านะ", "แล้วเราจะได้พบกันอีก...")));
             }
@@ -238,8 +235,6 @@ public final class TalkativeBladeEvents {
         // an ore break or a mob kill below, instead of faking a drop beside the player.
         if (mode == 2 || mode == 3) {
             data.putLong(RETURN_AT, 0L);
-            player.sendSystemMessage(Component.literal("§8[Talkative Blade DEBUG] §7"
-                    + (mode == 2 ? "MINING RETURN READY — รอขุดแร่" : "MONSTER RETURN READY — รอฆ่ามอนสเตอร์")));
             return;
         }
 
@@ -326,15 +321,6 @@ public final class TalkativeBladeEvents {
                 || state.is(BlockTags.IRON_ORES) || state.is(BlockTags.GOLD_ORES)
                 || state.is(BlockTags.REDSTONE_ORES) || state.is(BlockTags.LAPIS_ORES)
                 || state.is(BlockTags.DIAMOND_ORES) || state.is(BlockTags.EMERALD_ORES);
-    }
-
-    private static String returnModeName(int mode) {
-        return switch (mode) {
-            case 0 -> "INVENTORY RETURN — แอบกลับเข้ากระเป๋า";
-            case 1 -> "SURPRISE DROP — โผล่กลับมาใกล้ผู้เล่น";
-            case 2 -> "MINING RETURN — ทำเหมือนโผล่กลับมาจากการขุด";
-            default -> "MONSTER RETURN — ทำเหมือนมอนสเตอร์เอาดาบกลับมา";
-        };
     }
 
     private static void title(ServerPlayer player, String title, String subtitle) {
