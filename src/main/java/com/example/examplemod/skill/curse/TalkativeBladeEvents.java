@@ -117,12 +117,12 @@ public final class TalkativeBladeEvents {
                 return;
             }
 
-            // DEBUG/testing: wait exactly 1 minute before the first return attempt.
-            data.putLong(RETURN_AT, now + 20L * 60L);
+            // DEBUG/testing: wait a random 10-30 seconds before the first return attempt.
+            data.putLong(RETURN_AT, now + 20L * (10 + player.getRandom().nextInt(21)));
             int returnMode = player.getRandom().nextInt(4);
             data.putInt(RETURN_MODE, returnMode);
             player.sendSystemMessage(Component.literal("§8[Talkative Blade DEBUG] §7สุ่มเหตุการณ์: " + returnModeName(returnMode)
-                    + " | เริ่มเช็กการกลับใน 1 นาที"));
+                    + " | เริ่มเช็กการกลับใน 10-30 วินาที"));
             if (player.getRandom().nextDouble() < 0.45D) {
                 say(player, random(player, List.of("...", "เจ้าลืมอะไรหรือเปล่า?", "แน่ใจนะว่าจบแล้ว?", "ข้าเห็นเจ้านะ", "แล้วเราจะได้พบกันอีก...")));
             }
@@ -214,21 +214,32 @@ public final class TalkativeBladeEvents {
             title(player, "ข้ากลับมาแล้ว", "หาอะไรอยู่เหรอ?");
             say(player, "รู้แล้วว่าเจ้าขาดข้าไม่ได้");
         } else {
-            // Modes 1-3 materialize close to the player. This lets the blade seem to come from
-            // whatever the player is currently fighting/mining without creating a duplicate.
+            // Prototype illusion: modes 1-3 spawn the SAME hidden blade near the player.
+            // Mining/monster modes are intentionally theatrical for now; they are not tied to real loot events yet.
+            double angle = player.getRandom().nextDouble() * Math.PI * 2.0D;
+            double distance = mode == 2 ? 1.25D : (mode == 3 ? 1.75D : 1.0D);
+            double spawnY = mode == 2 ? player.getY() + 0.10D : player.getY() + 0.55D;
             ItemEntity returned = new ItemEntity(player.level(),
-                    player.getX() + (player.getRandom().nextDouble() - 0.5D) * 2.0D,
-                    player.getY() + 0.5D,
-                    player.getZ() + (player.getRandom().nextDouble() - 0.5D) * 2.0D,
+                    player.getX() + Math.cos(angle) * distance,
+                    spawnY,
+                    player.getZ() + Math.sin(angle) * distance,
                     blade);
             returned.setPickUpDelay(10);
+            if (mode == 2) returned.setDeltaMovement(0.0D, 0.28D, 0.0D); // pops up like an ore drop
+            if (mode == 3) returned.setDeltaMovement(-Math.sin(angle) * 0.12D, 0.22D, Math.cos(angle) * 0.12D);
             player.level().addFreshEntity(returned);
+
             String line = switch (mode) {
                 case 1 -> "SURPRISE! คิดว่าจะหนีข้าพ้นเหรอ?";
-                case 2 -> "ขุดหาอะไรอยู่? หาข้าหรือเปล่า?";
-                default -> "มอนสเตอร์ฝากข้ามาคืน... จริง ๆ นะ";
+                case 2 -> "ขุดเจอข้าแล้ว! นึกว่าซ่อนเนียนแล้วนะ";
+                default -> "มอนสเตอร์ฝากข้ามาคืน... เชื่อข้าสิ";
             };
-            title(player, "MISS ME?", line);
+            String eventTitle = switch (mode) {
+                case 2 -> "FOUND ME?";
+                case 3 -> "MONSTER DROP?";
+                default -> "MISS ME?";
+            };
+            title(player, eventTitle, line);
             say(player, line);
         }
     }
