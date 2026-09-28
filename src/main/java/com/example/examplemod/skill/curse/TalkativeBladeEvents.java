@@ -406,7 +406,7 @@ public final class TalkativeBladeEvents {
         String raw = scene.get(step);
         int split = raw.indexOf('|');
         String line = split >= 0 ? raw.substring(split + 1) : raw;
-        player.sendSystemMessage(Component.literal("§f" + line));
+        player.sendSystemMessage(Component.literal("§d[Talkative Blade] §f" + line));
 
         step++;
         if (step >= scene.size()) clearBladeConversation(data);
@@ -437,6 +437,6 @@ public final class TalkativeBladeEvents {
     }
 
     private static void say(ServerPlayer player, String message) {
-        player.sendSystemMessage(Component.literal("§f" + message));
+        player.sendSystemMessage(Component.literal("§d[Talkative Blade] §f" + message));
     }
 }
