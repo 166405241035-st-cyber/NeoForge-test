@@ -37,6 +37,12 @@ public final class TalkativeBladeEvents {
     private static final String ABANDON_COUNT = "TalkativeBladeAbandonCount";
     private static final String RETURN_AT = "TalkativeBladeReturnAt";
     private static final String RETURN_MODE = "TalkativeBladeReturnMode";
+    private static final String LOW_HP_ACTIVE = "TalkativeBladeLowHpActive";
+    private static final String FIRE_ACTIVE = "TalkativeBladeFireActive";
+    private static final String LAST_CONVERSATION = "TalkativeBladeLastConversation";
+    private static final String HISTORY_CURSOR = "TalkativeBladeHistoryCursor";
+    private static final String HISTORY_SIZE = "TalkativeBladeHistorySize";
+    private static final int HISTORY_LIMIT = 48;
     private static final ConcurrentHashMap<UUID, ItemStack> HAUNTING = new ConcurrentHashMap<>();
 
     private static final List<String> IDLE = List.of(
@@ -136,6 +142,9 @@ public final class TalkativeBladeEvents {
 
         if (!hasTalkativeBlade(player)) return;
 
+        // Critical states speak once when entered, then stay quiet until the state clears.
+        if (handleCriticalSituations(player, data)) return;
+
         // Multi-blade dialogue: one line at a time, with a readable pause.
         int bladeCount = countTalkativeBlades(player);
         if (data.getInt(BLADE_CONVERSATION_STEP) > 0) {
@@ -188,26 +197,87 @@ public final class TalkativeBladeEvents {
 
         if (now < data.getLong(NEXT_CHAT)) return;
 
-        // 70% contextual line, 30% unrelated/random chatter.
-        List<String> pool = player.getRandom().nextDouble() < 0.70D ? choosePool(player) : IDLE;
-        say(player, random(player, pool));
+        // 70% contextual chatter, 30% broad random chatter.
+        String line;
+        if (player.getRandom().nextDouble() < 0.70D) {
+            line = freshRandom(player, choosePool(player));
+        } else {
+            line = freshGeneral(player);
+        }
+        say(player, line);
         // Talkative really means talkative: 7-15 seconds between ordinary lines.
         data.putLong(NEXT_CHAT, now + 20L * (7 + player.getRandom().nextInt(9)));
     }
 
     private static List<String> choosePool(ServerPlayer player) {
-        if (player.isOnFire()) return FIRE;
-        if (player.getHealth() <= player.getMaxHealth() * 0.30F) return LOW_HP;
-        if (player.getFoodData().getFoodLevel() <= 6) return HUNGRY;
+        if (player.getFoodData().getFoodLevel() <= 6) return TalkativeBladeDialogue.HUNGRY;
         String dimension = player.level().dimension().location().toString();
-        if (dimension.contains("the_nether")) return NETHER;
-        if (dimension.contains("the_end")) return END;
-        if (player.isInWater()) return WATER;
-        if (player.level().isRaining()) return RAIN;
-        if (player.level().isNight()) return NIGHT;
-        return IDLE;
+        if (dimension.contains("the_nether")) return TalkativeBladeDialogue.NETHER;
+        if (dimension.contains("the_end")) return TalkativeBladeDialogue.END;
+        if (player.isInWater()) return TalkativeBladeDialogue.WATER;
+        if (player.level().isRaining()) return TalkativeBladeDialogue.RAIN;
+        if (player.level().isNight()) return TalkativeBladeDialogue.NIGHT;
+        return TalkativeBladeDialogue.IDLE;
     }
 
+
+    private static boolean handleCriticalSituations(ServerPlayer player, net.minecraft.nbt.CompoundTag data) {
+        boolean onFire = player.isOnFire();
+        boolean fireWasActive = data.getBoolean(FIRE_ACTIVE);
+        if (!onFire) data.putBoolean(FIRE_ACTIVE, false);
+        else if (!fireWasActive) {
+            data.putBoolean(FIRE_ACTIVE, true);
+            say(player, freshRandom(player, TalkativeBladeDialogue.FIRE));
+            data.putLong(NEXT_CHAT, player.level().getGameTime() + 20L * 12L);
+            return true;
+        }
+
+        boolean lowHp = player.getHealth() <= player.getMaxHealth() * 0.30F;
+        boolean lowHpWasActive = data.getBoolean(LOW_HP_ACTIVE);
+        if (!lowHp) data.putBoolean(LOW_HP_ACTIVE, false);
+        else if (!lowHpWasActive) {
+            data.putBoolean(LOW_HP_ACTIVE, true);
+            say(player, freshRandom(player, TalkativeBladeDialogue.LOW_HP));
+            data.putLong(NEXT_CHAT, player.level().getGameTime() + 20L * 12L);
+            return true;
+        }
+        return false;
+    }
+
+    private static String freshGeneral(ServerPlayer player) {
+        String candidate = TalkativeBladeDialogue.randomGeneral(player.getRandom());
+        for (int i = 0; i < 24 && wasRecentlySaid(player, candidate); i++) {
+            candidate = TalkativeBladeDialogue.randomGeneral(player.getRandom());
+        }
+        return candidate;
+    }
+
+    private static String freshRandom(ServerPlayer player, List<String> lines) {
+        if (lines.isEmpty()) return "...";
+        String candidate = lines.get(player.getRandom().nextInt(lines.size()));
+        for (int i = 0; i < Math.min(24, lines.size() * 3) && wasRecentlySaid(player, candidate); i++) {
+            candidate = lines.get(player.getRandom().nextInt(lines.size()));
+        }
+        return candidate;
+    }
+
+    private static boolean wasRecentlySaid(ServerPlayer player, String line) {
+        int hash = line.hashCode();
+        var data = player.getPersistentData();
+        int size = Math.min(HISTORY_LIMIT, data.getInt(HISTORY_SIZE));
+        for (int i = 0; i < size; i++) {
+            if (data.getInt("TalkativeBladeHistory" + i) == hash) return true;
+        }
+        return false;
+    }
+
+    private static void rememberLine(ServerPlayer player, String line) {
+        var data = player.getPersistentData();
+        int cursor = Math.floorMod(data.getInt(HISTORY_CURSOR), HISTORY_LIMIT);
+        data.putInt("TalkativeBladeHistory" + cursor, line.hashCode());
+        data.putInt(HISTORY_CURSOR, (cursor + 1) % HISTORY_LIMIT);
+        data.putInt(HISTORY_SIZE, Math.min(HISTORY_LIMIT, data.getInt(HISTORY_SIZE) + 1));
+    }
 
     private static ItemEntity findRecentlyDroppedBlade(ServerPlayer player) {
         for (ItemEntity entity : player.level().getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(4.0D))) {
@@ -376,7 +446,13 @@ public final class TalkativeBladeEvents {
     }
 
     private static void startBladeConversation(ServerPlayer player, net.minecraft.nbt.CompoundTag data, long now) {
-        data.putInt(BLADE_CONVERSATION_ID, player.getRandom().nextInt(BLADE_CONVERSATIONS.size()));
+        int last = data.getInt(LAST_CONVERSATION) - 1;
+        int id = player.getRandom().nextInt(BLADE_CONVERSATIONS.size());
+        if (BLADE_CONVERSATIONS.size() > 1 && id == last) {
+            id = (id + 1 + player.getRandom().nextInt(BLADE_CONVERSATIONS.size() - 1)) % BLADE_CONVERSATIONS.size();
+        }
+        data.putInt(LAST_CONVERSATION, id + 1);
+        data.putInt(BLADE_CONVERSATION_ID, id);
         data.putInt(BLADE_CONVERSATION_STEP, 1);
         data.putLong(BLADE_CONVERSATION_NEXT, now);
         continueBladeConversation(player, data, now);
@@ -393,6 +469,7 @@ public final class TalkativeBladeEvents {
         int split = raw.indexOf('|');
         String line = split >= 0 ? raw.substring(split + 1) : raw;
         player.sendSystemMessage(Component.literal("§d[Talkative Blade] §f" + line));
+        rememberLine(player, line);
 
         step++;
         if (step >= scene.size()) clearBladeConversation(data);
@@ -424,5 +501,6 @@ public final class TalkativeBladeEvents {
 
     private static void say(ServerPlayer player, String message) {
         player.sendSystemMessage(Component.literal("§d[Talkative Blade] §f" + message));
+        rememberLine(player, message);
     }
 }
