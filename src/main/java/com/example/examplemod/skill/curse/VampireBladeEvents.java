@@ -28,7 +28,7 @@ public final class VampireBladeEvents {
         if (player.level().isClientSide()) return;
 
         if (hasVampireBladeInInventory(player)) {
-            player.addEffect(new MobEffectInstance(ExampleMod.VAMPIRE_BLADE, 30, 0, false, false, true));
+            player.addEffect(new MobEffectInstance(ExampleMod.VAMPIRE_BLADE, 100, 0, false, false, true));
         } else {
             player.removeEffect(ExampleMod.VAMPIRE_BLADE);
         }
