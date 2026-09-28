@@ -23,6 +23,9 @@ public final class TalkativeBladeEvents {
     private static final String NEXT_EMERGENCY = "TalkativeBladeNextEmergency";
     private static final String CREEPER_ACTIVE = "TalkativeBladeCreeperActive";
     private static final String NEXT_BLADE_CONVERSATION = "TalkativeBladeNextBladeConversation";
+    private static final String BLADE_CONVERSATION_ID = "TalkativeBladeConversationId";
+    private static final String BLADE_CONVERSATION_STEP = "TalkativeBladeConversationStep";
+    private static final String BLADE_CONVERSATION_NEXT = "TalkativeBladeConversationNext";
     private static final String NEXT_TROLL = "TalkativeBladeNextTroll";
     private static final String TROLL_LEFT = "TalkativeBladeTrollLeft";
     private static final String TROLL_NEXT = "TalkativeBladeTrollNext";
@@ -131,12 +134,18 @@ public final class TalkativeBladeEvents {
 
         if (!hasTalkativeBlade(player)) return;
 
-        // Two or more cursed blades may start talking to each other. Keep this on a
-        // separate, long cooldown so multi-blade inventories do not flood chat.
+        // Multi-blade dialogue: one line at a time, with a readable pause.
         int bladeCount = countTalkativeBlades(player);
+        if (data.getInt(BLADE_CONVERSATION_STEP) > 0) {
+            if (bladeCount < 2) clearBladeConversation(data);
+            else if (now >= data.getLong(BLADE_CONVERSATION_NEXT)) {
+                continueBladeConversation(player, data, now);
+                return;
+            }
+        }
         if (bladeCount >= 2 && now >= data.getLong(NEXT_BLADE_CONVERSATION)
                 && player.getRandom().nextDouble() < 0.12D) {
-            startBladeConversation(player, bladeCount);
+            startBladeConversation(player, data, now);
             data.putLong(NEXT_BLADE_CONVERSATION, now + 20L * (90 + player.getRandom().nextInt(151)));
             data.putLong(NEXT_CHAT, now + 20L * 20L);
             return;
@@ -318,20 +327,37 @@ public final class TalkativeBladeEvents {
         return count;
     }
 
-    private static void startBladeConversation(ServerPlayer player, int bladeCount) {
-        List<String> conversation = randomConversation(player);
-        player.sendSystemMessage(Component.literal("§8[Talkative Blades] §7ดาบ " + bladeCount + " เล่มเริ่มคุยกัน..."));
-        for (String entry : conversation) {
-            int split = entry.indexOf('|');
-            String speaker = split > 0 ? entry.substring(0, split) : "A";
-            String line = split > 0 ? entry.substring(split + 1) : entry;
-            String color = speaker.equals("A") ? "§d" : "§b";
-            player.sendSystemMessage(Component.literal(color + "[Blade " + speaker + "] §f" + line));
+    private static void startBladeConversation(ServerPlayer player, net.minecraft.nbt.CompoundTag data, long now) {
+        data.putInt(BLADE_CONVERSATION_ID, player.getRandom().nextInt(BLADE_CONVERSATIONS.size()));
+        data.putInt(BLADE_CONVERSATION_STEP, 1);
+        data.putLong(BLADE_CONVERSATION_NEXT, now);
+        continueBladeConversation(player, data, now);
+    }
+
+    private static void continueBladeConversation(ServerPlayer player, net.minecraft.nbt.CompoundTag data, long now) {
+        int id = data.getInt(BLADE_CONVERSATION_ID);
+        int step = data.getInt(BLADE_CONVERSATION_STEP) - 1;
+        if (id < 0 || id >= BLADE_CONVERSATIONS.size()) { clearBladeConversation(data); return; }
+        List<String> scene = BLADE_CONVERSATIONS.get(id);
+        if (step < 0 || step >= scene.size()) { clearBladeConversation(data); return; }
+
+        String raw = scene.get(step);
+        int split = raw.indexOf('|');
+        String line = split >= 0 ? raw.substring(split + 1) : raw;
+        player.sendSystemMessage(Component.literal("§f" + line));
+
+        step++;
+        if (step >= scene.size()) clearBladeConversation(data);
+        else {
+            data.putInt(BLADE_CONVERSATION_STEP, step + 1);
+            data.putLong(BLADE_CONVERSATION_NEXT, now + 80L + player.getRandom().nextInt(81)); // 4-8 sec
         }
     }
 
-    private static List<String> randomConversation(ServerPlayer player) {
-        return BLADE_CONVERSATIONS.get(player.getRandom().nextInt(BLADE_CONVERSATIONS.size()));
+    private static void clearBladeConversation(net.minecraft.nbt.CompoundTag data) {
+        data.remove(BLADE_CONVERSATION_ID);
+        data.remove(BLADE_CONVERSATION_STEP);
+        data.remove(BLADE_CONVERSATION_NEXT);
     }
 
     private static boolean hasTalkativeBlade(ServerPlayer player) {
@@ -349,6 +375,6 @@ public final class TalkativeBladeEvents {
     }
 
     private static void say(ServerPlayer player, String message) {
-        player.sendSystemMessage(Component.literal("§d[Talkative Blade] §f" + message));
+        player.sendSystemMessage(Component.literal("§f" + message));
     }
 }
