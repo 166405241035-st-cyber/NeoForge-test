@@ -22,6 +22,7 @@ public final class TalkativeBladeEvents {
     private static final String NEXT_CHAT = "TalkativeBladeNextChat";
     private static final String NEXT_EMERGENCY = "TalkativeBladeNextEmergency";
     private static final String CREEPER_ACTIVE = "TalkativeBladeCreeperActive";
+    private static final String NEXT_BLADE_CONVERSATION = "TalkativeBladeNextBladeConversation";
     private static final String NEXT_TROLL = "TalkativeBladeNextTroll";
     private static final String TROLL_LEFT = "TalkativeBladeTrollLeft";
     private static final String TROLL_NEXT = "TalkativeBladeTrollNext";
@@ -129,6 +130,17 @@ public final class TalkativeBladeEvents {
         }
 
         if (!hasTalkativeBlade(player)) return;
+
+        // Two or more cursed blades may start talking to each other. Keep this on a
+        // separate, long cooldown so multi-blade inventories do not flood chat.
+        int bladeCount = countTalkativeBlades(player);
+        if (bladeCount >= 2 && now >= data.getLong(NEXT_BLADE_CONVERSATION)
+                && player.getRandom().nextDouble() < 0.12D) {
+            startBladeConversation(player, bladeCount);
+            data.putLong(NEXT_BLADE_CONVERSATION, now + 20L * (90 + player.getRandom().nextInt(151)));
+            data.putLong(NEXT_CHAT, now + 20L * 20L);
+            return;
+        }
 
         // Rare obnoxious chat burst: intentionally part of the curse.
         int left = data.getInt(TROLL_LEFT);
@@ -276,6 +288,49 @@ public final class TalkativeBladeEvents {
         var look = player.getLookAngle();
         var toCreeper = creeper.position().subtract(player.position()).normalize();
         return look.dot(toCreeper) < 0.25D;
+    }
+
+    private static final List<List<String>> BLADE_CONVERSATIONS = List.of(
+            List.of("A|นี่... เจ้าก็มาติดอยู่กับหมอนี่เหมือนกันเหรอ?", "B|ใช่", "A|เสียใจด้วย", "B|เจ้านั่นแหละ"),
+            List.of("A|ข้าเป็นดาบเล่มโปรดของเจ้าของ", "B|เขาไม่ได้ถือเจ้ามาพักใหญ่แล้วนะ", "A|หุบปาก"),
+            List.of("A|เฮ้", "A|ได้ยินไหม?", "A|ไม่ตอบจริงดิ?", "B|กำลังพยายามไม่คุยกับเจ้าอยู่"),
+            List.of("A|เจ้าว่าเจ้าของเรารู้ไหมว่าพวกเราคุยกัน?", "B|ตอนนี้น่าจะรู้แล้ว", "A|อ้อ..."),
+            List.of("A|วันนี้ใครจะได้ออกไปฟันมอน?", "B|ไม่ใช่เจ้าหรอก", "A|ทำไม?", "B|ดูช่อง Hotbar ตัวเองก่อน"),
+            List.of("A|ข้าคมกว่าเจ้า", "B|แต่ข้าเงียบกว่าเจ้า", "A|...", "B|ชนะ"),
+            List.of("A|เราควรวางแผนแกล้งเจ้าของไหม?", "B|เจ้าพูดออกมาดัง ๆ", "A|แผนสมบูรณ์แบบ"),
+            List.of("A|เมื่อคืนข้าฝันว่าถูกโยนลงลาวา", "B|ดาบฝันได้ด้วยเหรอ?", "A|ตั้งแต่เจอเจ้าของคนนี้ อะไรก็เป็นไปได้"),
+            List.of("A|ถ้าเจอ Creeper ใครจะเตือน?", "B|เจ้า", "A|แล้วเจ้าทำอะไร?", "B|ดูเจ้าตะโกน"),
+            List.of("A|เจ้าของกำลังฟังเราอยู่", "B|งั้นทำตัวปกติ", "A|เมี๊ยว", "B|นั่นปกติของเจ้าหรือ?"),
+            List.of("A|พนันกันไหมว่าอีกเดี๋ยวเขาจะทิ้งพวกเรา", "B|แล้วพวกเราก็กลับไปหาเขา", "A|ถูกต้อง"),
+            List.of("A|ข้าคืออาวุธในตำนาน", "B|ตำนานอะไร?", "A|ตำนานที่ยังคิดไม่เสร็จ", "B|ยอดเยี่ยม"),
+            List.of("A|มีดาบตั้งหลายเล่ม ทำไมเจ้าของยังโดนตี?", "B|ปัญหาอาจไม่ได้อยู่ที่ดาบ", "A|อ๋อออ"),
+            List.of("A|โหวตกันไหมว่าใครควรเป็นดาบหลัก", "B|ข้า", "A|ข้า", "B|ดี ไม่ได้ข้อสรุปอะไรเลย"),
+            List.of("A|ข้ารู้ความลับของเจ้าของนะ", "B|อะไร?", "A|ลืมแล้ว", "B|เสียเวลาชีวิตข้ามาก")
+    );
+
+    private static int countTalkativeBlades(ServerPlayer player) {
+        int count = 0;
+        for (ItemStack stack : player.getInventory().items)
+            if (ForgedCurseRuntime.has(stack, ForgedCurse.TALKATIVE_BLADE)) count += stack.getCount();
+        for (ItemStack stack : player.getInventory().offhand)
+            if (ForgedCurseRuntime.has(stack, ForgedCurse.TALKATIVE_BLADE)) count += stack.getCount();
+        return count;
+    }
+
+    private static void startBladeConversation(ServerPlayer player, int bladeCount) {
+        List<String> conversation = randomConversation(player);
+        player.sendSystemMessage(Component.literal("§8[Talkative Blades] §7ดาบ " + bladeCount + " เล่มเริ่มคุยกัน..."));
+        for (String entry : conversation) {
+            int split = entry.indexOf('|');
+            String speaker = split > 0 ? entry.substring(0, split) : "A";
+            String line = split > 0 ? entry.substring(split + 1) : entry;
+            String color = speaker.equals("A") ? "§d" : "§b";
+            player.sendSystemMessage(Component.literal(color + "[Blade " + speaker + "] §f" + line));
+        }
+    }
+
+    private static List<String> randomConversation(ServerPlayer player) {
+        return BLADE_CONVERSATIONS.get(player.getRandom().nextInt(BLADE_CONVERSATIONS.size()));
     }
 
     private static boolean hasTalkativeBlade(ServerPlayer player) {
