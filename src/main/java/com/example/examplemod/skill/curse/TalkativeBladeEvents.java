@@ -205,8 +205,8 @@ public final class TalkativeBladeEvents {
             line = freshGeneral(player);
         }
         say(player, line);
-        // Talkative really means talkative: 7-15 seconds between ordinary lines.
-        data.putLong(NEXT_CHAT, now + 20L * (7 + player.getRandom().nextInt(9)));
+        // Ordinary chatter: random 7-20 seconds between lines.
+        data.putLong(NEXT_CHAT, now + 20L * (7 + player.getRandom().nextInt(14)));
     }
 
     private static List<String> choosePool(ServerPlayer player) {
