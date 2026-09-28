@@ -6,6 +6,7 @@ import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
 import com.example.examplemod.skill.curse.BerserkerMobEffect;
+import com.example.examplemod.skill.curse.VampireBladeMobEffect;
 
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
@@ -66,6 +67,8 @@ public class ExampleMod {
             () -> new BleedingMobEffect(MobEffectCategory.HARMFUL, 0xD11A2A));
     public static final DeferredHolder<MobEffect, MobEffect> BERSERKER = MOB_EFFECTS.register("berserker",
             () -> new BerserkerMobEffect(MobEffectCategory.HARMFUL, 0xB32020));
+    public static final DeferredHolder<MobEffect, MobEffect> VAMPIRE_BLADE = MOB_EFFECTS.register("vampire_blade",
+            () -> new VampireBladeMobEffect(MobEffectCategory.HARMFUL, 0x7A1026));
 
     public static final DeferredHolder<MenuType<?>, MenuType<ForgeMenu>> FORGE_MENU = MENUS.register("forge_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new ForgeMenu(windowId, inventory)));
     public static final DeferredHolder<MenuType<?>, MenuType<AnvilMenu>> ANVIL_MENU = MENUS.register("anvil_menu", () -> IMenuTypeExtension.create((windowId, inventory, data) -> new AnvilMenu(windowId, inventory)));
