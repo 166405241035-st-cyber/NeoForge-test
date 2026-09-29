@@ -173,11 +173,13 @@ public final class ForgedEffectEvents {
         EffectTier vampiric = ForgedEffectRuntime.tier(weapon, ForgingEffect.VAMPIRIC_VITALITY);
         if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE)) {
             // Instant healing: Tier I = 2 hearts, II = 3 hearts, III = 4 hearts.
-            player.heal(switch (vampiric) {
+            float heal = switch (vampiric) {
                 case I -> 4.0F;
                 case II -> 6.0F;
                 case III -> 8.0F;
-            });
+            };
+            if (DoubleTriggerRuntime.rollAttack(player, weapon)) heal *= 2.0F;
+            player.heal(heal);
         }
 
         EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
@@ -933,6 +935,11 @@ public final class ForgedEffectEvents {
                 if (player.getRandom().nextDouble() < rewardChance) {
                     ItemStack reward = new ItemStack(player.getRandom().nextDouble() < 0.01D
                             ? Items.ENCHANTED_GOLDEN_APPLE : Items.GOLDEN_APPLE);
+                    if (ForgedFarmingPlotData.get(natureLevel)
+                            .hasDoubleTrigger(event.getPos().below(), ForgingEffect.NATURE_GOD_BLESS)
+                            && player.getRandom().nextDouble() < DoubleTriggerRuntime.CHANCE) {
+                        reward.setCount(2);
+                    }
                     Block.popResource(player.level(), event.getPos(), reward);
                 }
             }
@@ -1168,6 +1175,14 @@ public final class ForgedEffectEvents {
         // The planted crop mutates into either Nether Wart or a Wither Rose.
         Block mutatedBlock = player.getRandom().nextBoolean() ? Blocks.NETHER_WART : Blocks.WITHER_ROSE;
         player.level().setBlockAndUpdate(event.getPos(), mutatedBlock.defaultBlockState());
+
+        // A second mutation cannot replace the same planted block twice in a useful way,
+        // so Double Trigger pays out one matching mutation result as the bonus result.
+        if (ForgedFarmingPlotData.get(serverLevel)
+                .hasDoubleTrigger(farmlandPos, ForgingEffect.NETHER_MUTATION)
+                && player.getRandom().nextDouble() < DoubleTriggerRuntime.CHANCE) {
+            Block.popResource(player.level(), event.getPos(), new ItemStack(mutatedBlock));
+        }
     }
 
     /**
