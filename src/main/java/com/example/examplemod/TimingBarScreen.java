@@ -127,7 +127,7 @@ public class TimingBarScreen extends Screen {
         ForgedHeadResult headResult = new ForgedHeadResult(metal, blueprint, monsterMaterial, effect, tier);
         if (minecraft.player != null) {
             ItemStack forgedHead = ForgedHeadItem.create(headResult);
-            if (!minecraft.player.getInventory().add(forgedHead)) minecraft.player.drop(forgedHead, false);
+            ForgedEffectNetwork.sendForgingReward(forgedHead);
         }
         minecraft.setScreen(new ForgingResultScreen(result, headResult));
     }
