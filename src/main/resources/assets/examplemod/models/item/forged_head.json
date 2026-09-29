@@ -1,0 +1,398 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "smeltingandforging:item/sword_header_bone"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "examplemod:variant": 1
+      },
+      "model": "examplemod:item/forged_head_sword_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 2
+      },
+      "model": "examplemod:item/forged_head_sword_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 3
+      },
+      "model": "examplemod:item/forged_head_sword_string"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 4
+      },
+      "model": "examplemod:item/forged_head_sword_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 5
+      },
+      "model": "examplemod:item/forged_head_sword_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 6
+      },
+      "model": "examplemod:item/forged_head_sword_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 7
+      },
+      "model": "examplemod:item/forged_head_sword_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 8
+      },
+      "model": "examplemod:item/forged_head_sword_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 9
+      },
+      "model": "examplemod:item/forged_head_sword_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 10
+      },
+      "model": "examplemod:item/forged_head_sword_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 11
+      },
+      "model": "examplemod:item/forged_head_sword_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 12
+      },
+      "model": "examplemod:item/forged_head_sword_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 13
+      },
+      "model": "examplemod:item/forged_head_sword_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 14
+      },
+      "model": "examplemod:item/forged_head_axe_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 15
+      },
+      "model": "examplemod:item/forged_head_axe_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 16
+      },
+      "model": "examplemod:item/forged_head_axe_string"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 17
+      },
+      "model": "examplemod:item/forged_head_axe_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 18
+      },
+      "model": "examplemod:item/forged_head_axe_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 19
+      },
+      "model": "examplemod:item/forged_head_axe_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 20
+      },
+      "model": "examplemod:item/forged_head_axe_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 21
+      },
+      "model": "examplemod:item/forged_head_axe_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 22
+      },
+      "model": "examplemod:item/forged_head_axe_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 23
+      },
+      "model": "examplemod:item/forged_head_axe_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 24
+      },
+      "model": "examplemod:item/forged_head_axe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 25
+      },
+      "model": "examplemod:item/forged_head_axe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 26
+      },
+      "model": "examplemod:item/forged_head_axe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 27
+      },
+      "model": "examplemod:item/forged_head_pickaxe_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 28
+      },
+      "model": "examplemod:item/forged_head_pickaxe_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 29
+      },
+      "model": "examplemod:item/forged_head_pickaxe_string"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 30
+      },
+      "model": "examplemod:item/forged_head_pickaxe_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 31
+      },
+      "model": "examplemod:item/forged_head_pickaxe_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 32
+      },
+      "model": "examplemod:item/forged_head_pickaxe_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 33
+      },
+      "model": "examplemod:item/forged_head_pickaxe_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 34
+      },
+      "model": "examplemod:item/forged_head_pickaxe_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 35
+      },
+      "model": "examplemod:item/forged_head_pickaxe_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 36
+      },
+      "model": "examplemod:item/forged_head_pickaxe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 37
+      },
+      "model": "examplemod:item/forged_head_pickaxe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 38
+      },
+      "model": "examplemod:item/forged_head_pickaxe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 39
+      },
+      "model": "examplemod:item/forged_head_pickaxe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 40
+      },
+      "model": "examplemod:item/forged_head_shovel_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 41
+      },
+      "model": "examplemod:item/forged_head_shovel_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 42
+      },
+      "model": "examplemod:item/forged_head_shovel_string"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 43
+      },
+      "model": "examplemod:item/forged_head_shovel_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 44
+      },
+      "model": "examplemod:item/forged_head_shovel_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 45
+      },
+      "model": "examplemod:item/forged_head_shovel_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 46
+      },
+      "model": "examplemod:item/forged_head_shovel_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 47
+      },
+      "model": "examplemod:item/forged_head_shovel_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 48
+      },
+      "model": "examplemod:item/forged_head_shovel_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 49
+      },
+      "model": "examplemod:item/forged_head_shovel_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 50
+      },
+      "model": "examplemod:item/forged_head_shovel_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 51
+      },
+      "model": "examplemod:item/forged_head_shovel_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 52
+      },
+      "model": "examplemod:item/forged_head_shovel_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 53
+      },
+      "model": "examplemod:item/forged_head_hoe_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 54
+      },
+      "model": "examplemod:item/forged_head_hoe_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 55
+      },
+      "model": "examplemod:item/forged_head_hoe_string"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 56
+      },
+      "model": "examplemod:item/forged_head_hoe_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 57
+      },
+      "model": "examplemod:item/forged_head_hoe_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 58
+      },
+      "model": "examplemod:item/forged_head_hoe_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 59
+      },
+      "model": "examplemod:item/forged_head_hoe_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 60
+      },
+      "model": "examplemod:item/forged_head_hoe_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 61
+      },
+      "model": "examplemod:item/forged_head_hoe_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 62
+      },
+      "model": "examplemod:item/forged_head_hoe_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 63
+      },
+      "model": "examplemod:item/forged_head_hoe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 64
+      },
+      "model": "examplemod:item/forged_head_hoe_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 65
+      },
+      "model": "examplemod:item/forged_head_hoe_default"
+    }
+  ]
+}

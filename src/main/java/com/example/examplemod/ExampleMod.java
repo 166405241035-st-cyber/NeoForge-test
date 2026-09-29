@@ -12,7 +12,9 @@ import com.example.examplemod.skill.curse.LastStandMobEffect;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -29,6 +31,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
@@ -111,6 +114,24 @@ public class ExampleMod {
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static final class ClientEvents {
         private ClientEvents() {}
+        @net.neoforged.bus.api.SubscribeEvent
+        public static void registerForgedItemVariants(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                ResourceLocation variant = ResourceLocation.fromNamespaceAndPath(MODID, "variant");
+                ItemProperties.register(FORGED_HEAD_ITEM.get(), variant, (stack, level, entity, seed) -> {
+                    ForgedHeadResult result = ForgedHeadItem.readResult(stack);
+                    return result == null ? 0 : result.blueprint().ordinal() * MonsterMaterial.values().length + result.monsterMaterial().ordinal() + 1;
+                });
+                ItemProperties.register(FORGED_CORE_ITEM.get(), variant, (stack, level, entity, seed) -> {
+                    ForgedCoreResult result = ForgedCoreItem.readResult(stack);
+                    return result == null ? 0 : result.monsterMaterial().ordinal() + 1;
+                });
+                ItemProperties.register(FORGED_ROD_ITEM.get(), variant, (stack, level, entity, seed) -> {
+                    ForgedRodResult result = ForgedRodItem.readResult(stack);
+                    return result == null ? 0 : result.monsterMaterial().ordinal() + 1;
+                });
+            });
+        }
         @net.neoforged.bus.api.SubscribeEvent
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(FORGE_MENU.get(), ForgingScreen::new);

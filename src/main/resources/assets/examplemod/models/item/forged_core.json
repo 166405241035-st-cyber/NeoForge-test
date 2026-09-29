@@ -1,0 +1,86 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "smeltingandforging:item/core_bone"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "examplemod:variant": 1
+      },
+      "model": "examplemod:item/forged_core_core_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 2
+      },
+      "model": "examplemod:item/forged_core_core_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 3
+      },
+      "model": "examplemod:item/forged_core_core_string"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 4
+      },
+      "model": "examplemod:item/forged_core_core_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 5
+      },
+      "model": "examplemod:item/forged_core_core_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 6
+      },
+      "model": "examplemod:item/forged_core_core_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 7
+      },
+      "model": "examplemod:item/forged_core_core_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 8
+      },
+      "model": "examplemod:item/forged_core_core_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 9
+      },
+      "model": "examplemod:item/forged_core_core_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 10
+      },
+      "model": "examplemod:item/forged_core_core_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 11
+      },
+      "model": "examplemod:item/forged_core_core_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 12
+      },
+      "model": "examplemod:item/forged_core_core_default"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 13
+      },
+      "model": "examplemod:item/forged_core_core_default"
+    }
+  ]
+}

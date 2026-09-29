@@ -59,20 +59,16 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
         g.fill(x+24,y+53,x+280,y+114,0xFF1D2228);
         slot(g,x+67,y+66,0xFFE08A42); slot(g,x+142,y+66,0xFF64B5E8); slot(g,x+217,y+66,0xFFA56BCB);
 
-        // Connector lines converge above a small anvil-style output plate.
+        // Connector lines converge into one downward arrow.
         g.fill(x+77,y+91,x+78,y+101,COPPER);
         g.fill(x+152,y+91,x+153,y+101,COPPER);
         g.fill(x+227,y+91,x+228,y+101,COPPER);
         g.fill(x+77,y+100,x+228,y+101,COPPER);
-        // The three component lines meet at a centered downward assembly arrow.
-        g.fill(x+152,y+100,x+153,y+103,COPPER);
-        g.fill(x+149,y+103,x+156,y+105,COPPER);
-        g.fill(x+150,y+105,x+155,y+107,COPPER);
-        g.fill(x+151,y+107,x+154,y+109,COPPER);
-        g.fill(x+152,y+109,x+153,y+111,COPPER);
-        g.fill(x+152,y+111,x+153,y+115,COPPER);
-        g.fill(x+151,y+115,x+154,y+117,COPPER);
-        g.fill(x+152,y+117,x+153,y+119,COPPER);
+        g.fill(x+152,y+100,x+153,y+113,COPPER);
+        g.fill(x+149,y+113,x+156,y+115,COPPER);
+        g.fill(x+150,y+115,x+155,y+117,COPPER);
+        g.fill(x+151,y+117,x+154,y+119,COPPER);
+        g.fill(x+152,y+119,x+153,y+121,COPPER);
 
         g.fill(x+34,y+126,x+270,y+127,STEEL_LIGHT);
         g.fill(x+48,y+127,x+256,y+128,COPPER);

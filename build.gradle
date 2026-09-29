@@ -27,6 +27,13 @@ sourceSets.main.resources {
     exclude("src/generated/**/.cache") // datagen cache files
 }
 
+// Package the original MCreator item sprites without importing its separate mod metadata.
+tasks.named('processResources') {
+    from('mcreator-reference/src/main/resources') {
+        include 'assets/smeltingandforging/textures/item/**'
+    }
+}
+
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
 }
