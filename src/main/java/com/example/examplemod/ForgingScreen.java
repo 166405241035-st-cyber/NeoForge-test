@@ -40,8 +40,8 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         ForgingBlueprintType blueprint = menu.selectedBlueprint();
         ForgingMetal metal = menu.selectedMetal();
         MonsterMaterial monster = menu.selectedMonster();
-        menu.consumeRecipe();
-        if (minecraft == null) return;
+        if (minecraft == null || minecraft.gameMode == null) return;
+        minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 0);
         if (blueprint == ForgingBlueprintType.CORE) minecraft.setScreen(new CoreTimingBarScreen(metal, monster));
         else if (blueprint == ForgingBlueprintType.ROD) minecraft.setScreen(new RodTimingBarScreen(metal, monster));
         else if (blueprint != null && blueprint.headType() != null) minecraft.setScreen(new TimingBarScreen(metal, blueprint.headType(), monster));
