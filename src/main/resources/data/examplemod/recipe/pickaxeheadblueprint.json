@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:ink_sac"
+    },
+    {
+      "item": "minecraft:wooden_pickaxe"
+    }
+  ],
+  "result": {
+    "id": "examplemod:pickaxeheadblueprint",
+    "count": 1
+  }
+}

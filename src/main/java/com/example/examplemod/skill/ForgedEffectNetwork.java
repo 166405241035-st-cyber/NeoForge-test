@@ -100,6 +100,8 @@ public final class ForgedEffectNetwork {
                             && !(stack.getItem() instanceof ForgedCoreItem)
                             && !(stack.getItem() instanceof ForgedRodItem)
                             && !(stack.getItem() instanceof ForgedEquipmentItem)) return;
+                    if (!(stack.getItem() instanceof ForgedEquipmentItem)
+                            && !ForgeRewardSession.accept(context.player(), stack)) return;
                     ItemStack reward = stack.copy();
                     if (!context.player().getInventory().add(reward)) {
                         context.player().drop(reward, false);

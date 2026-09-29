@@ -12,5 +12,12 @@
   "examplemod.configuration.magicNumberIntroduction": "Magic Number Text",
   "examplemod.configuration.magicNumber": "Magic Number",
   "block.examplemod.forging_block": "Forge",
-  "block.examplemod.forging_anvil": "Forging Anvil"
+  "block.examplemod.forging_anvil": "Forging Anvil",
+  "item.examplemod.swordheadblueprint": "Sword Head Blueprint",
+  "item.examplemod.axeheadblueprint": "Axe Head Blueprint",
+  "item.examplemod.pickaxeheadblueprint": "Pickaxe Head Blueprint",
+  "item.examplemod.shovelheadblueprint": "Shovel Head Blueprint",
+  "item.examplemod.hoeheadblueprint": "Hoe Head Blueprint",
+  "item.examplemod.coreblueprint": "Core Blueprint",
+  "item.examplemod.rodeblueprint": "Rod Blueprint"
 }

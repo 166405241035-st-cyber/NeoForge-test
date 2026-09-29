@@ -117,7 +117,8 @@ public class ForgeMenu extends AbstractContainerMenu {
     private void consumeRecipe() {
         fuel -= ForgeIngredientResolver.forgeCost(selectedMetal());
         fuelSaver.accept(fuel);
-        stackAt(BLUEPRINT_SLOT).shrink(1); stackAt(MONSTER_SLOT).shrink(1);
+        // The blueprint is a reusable pattern; only materials and energy are spent.
+        stackAt(MONSTER_SLOT).shrink(1);
         for (int slot = METAL_START; slot < METAL_END; slot++) stackAt(slot).shrink(1);
         forgeInventory.setChanged(); broadcastChanges();
     }
@@ -125,7 +126,11 @@ public class ForgeMenu extends AbstractContainerMenu {
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (id == 0 && hasValidRecipe() && fuel >= ForgeIngredientResolver.forgeCost(selectedMetal())) {
+            ForgingBlueprintType blueprint = selectedBlueprint();
+            ForgingMetal metal = selectedMetal();
+            MonsterMaterial material = selectedMonster();
             consumeRecipe();
+            if (!player.level().isClientSide()) ForgeRewardSession.begin(player, blueprint, metal, material);
             return true;
         }
         return false;
