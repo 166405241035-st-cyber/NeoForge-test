@@ -32,6 +32,8 @@ public class AnvilRhythmForgingScreen extends Screen {
     private float previousApproachRadius;
     private int feedbackTicks;
     private boolean lastHit;
+    private int visualTicks;
+    private final int[] roundGrades = new int[TOTAL_ROUNDS];
     private boolean finished;
     private ForgedBlessing rolledBlessing;
     private ForgedCurse rolledCurse;
@@ -52,11 +54,11 @@ public class AnvilRhythmForgingScreen extends Screen {
     private float goodWindow() { return Math.max(greatWindow()+1F, GOOD_WINDOW - (metal.difficulty()-1)*2F); }
 
     @Override protected void init() { spawnTarget(); }
-    private void spawnTarget() { int mx=90,tm=80,bm=80;targetX=mx+random.nextInt(Math.max(1,width-mx*2));targetY=tm+random.nextInt(Math.max(1,height-tm-bm));direction=Direction.values()[random.nextInt(Direction.values().length)];approachRadius=APPROACH_START_RADIUS;previousApproachRadius=approachRadius; }
-    @Override public void tick(){if(finished)return;if(feedbackTicks>0){if(--feedbackTicks==0){if(round>=TOTAL_ROUNDS){finished=true;MinigameFeedback.complete();finish();}else spawnTarget();}return;}previousApproachRadius=approachRadius;approachRadius-=speed();if(approachRadius<TARGET_RADIUS-goodWindow())miss("TOO LATE!");}
+    private void spawnTarget() { targetX=width/2;targetY=height/2+12;direction=Direction.values()[random.nextInt(Direction.values().length)];approachRadius=APPROACH_START_RADIUS;previousApproachRadius=approachRadius; }
+    @Override public void tick(){visualTicks++;if(finished)return;if(feedbackTicks>0){if(--feedbackTicks==0){if(round>=TOTAL_ROUNDS){finished=true;MinigameFeedback.complete();finish();}else spawnTarget();}return;}previousApproachRadius=approachRadius;approachRadius-=speed();if(approachRadius<TARGET_RADIUS-goodWindow())miss("TOO LATE!");}
     private void attempt(int key){if(finished||feedbackTicks>0)return;Direction pressed=Direction.fromKey(key);if(pressed==null)return;if(pressed!=direction){miss("WRONG KEY!");return;}float d=Math.abs(approachRadius-TARGET_RADIUS);if(d<=perfectWindow())hit("PERFECT!",0xFF66FF66,100,100,0);else if(d<=greatWindow())hit("GREAT!",0xFF22CC55,75,75,1);else if(d<=goodWindow())hit("GOOD!",0xFFFFCC33,50,50,2);else miss("TOO EARLY!");}
-    private void hit(String text,int color,int base,int accuracy,int grade){resultText=text+" +"+base;resultColor=color;if(grade==0)perfectCount++;else if(grade==1)greatCount++;else goodCount++;currentCombo++;maxCombo=Math.max(maxCombo,currentCombo);score+=base+Math.max(0,currentCombo-1)*5;weightedAccuracyPoints+=accuracy;lastHit=true;MinigameFeedback.hit(grade);next();}
-    private void miss(String why){resultText=why+" MISS!";resultColor=0xFFFF5555;missCount++;currentCombo=0;lastHit=false;MinigameFeedback.miss();next();}
+    private void hit(String text,int color,int base,int accuracy,int grade){resultText=text+" +"+base;resultColor=color;if(grade==0)perfectCount++;else if(grade==1)greatCount++;else goodCount++;currentCombo++;maxCombo=Math.max(maxCombo,currentCombo);score+=base+Math.max(0,currentCombo-1)*5;weightedAccuracyPoints+=accuracy;roundGrades[round]=3-grade;lastHit=true;MinigameFeedback.hit(grade);next();}
+    private void miss(String why){resultText=why+" MISS!";resultColor=0xFFFF5555;missCount++;currentCombo=0;roundGrades[round]=0;lastHit=false;MinigameFeedback.miss();next();}
     private void next(){round++;feedbackTicks=10;}
 
     private void finish(){
@@ -130,11 +132,37 @@ public class AnvilRhythmForgingScreen extends Screen {
         g.drawCenteredString(font,"FINAL FORGING - "+metal.displayName(),width/2,16,0xFFFFFF);
         g.drawCenteredString(font,"Round: "+Math.min(round+1,TOTAL_ROUNDS)+"/"+TOTAL_ROUNDS+"   Score: "+score+"   Combo: x"+currentCombo,width/2,35,0xDDDDDD);
         g.drawCenteredString(font,resultText,width/2,56,resultColor);
+        ForgingMinigameArt.progress(g,width/2,84,roundGrades,round);
         drawTarget(g,p);
         g.drawCenteredString(font,"W=UP  A=LEFT  S=DOWN  D=RIGHT",width/2,height-24,0xFFFFFF);
         super.render(g,mx,my,p);
     }
-    private void drawTarget(GuiGraphics g,float partialTick){int r=TARGET_RADIUS;g.fill(targetX-r-2,targetY-r-2,targetX+r+2,targetY+r+2,0xFF8A562B);g.fill(targetX-r,targetY-r,targetX+r,targetY+r,0xCC222222);g.fill(targetX-r+3,targetY-r+3,targetX+r-3,targetY+r-3,0xCCEEEEEE);g.fill(targetX-r+6,targetY-r+6,targetX+r-6,targetY+r-6,0xCC333333);float displayedRadius=feedbackTicks>0?approachRadius:previousApproachRadius+(approachRadius-previousApproachRadius)*partialTick;int ar=Math.max(1,Math.round(displayedRadius));int color=feedbackTicks>0?(lastHit?resultColor:0xFFFF5555):0xFFFFFFFF;g.fill(targetX-ar,targetY-ar,targetX+ar,targetY-ar+2,color);g.fill(targetX-ar,targetY+ar-2,targetX+ar,targetY+ar,color);g.fill(targetX-ar,targetY-ar,targetX-ar+2,targetY+ar,color);g.fill(targetX+ar-2,targetY-ar,targetX+ar,targetY+ar,color);g.drawCenteredString(font,direction.symbol+" "+direction.key,targetX,targetY-4,0xFFFFFF);}
+    private void drawTarget(GuiGraphics g,float partialTick){
+        int r=TARGET_RADIUS;
+        // Anvil body and hot workpiece behind the timing target.
+        g.fill(targetX-42,targetY+32,targetX+42,targetY+38,0xFF59636E);
+        g.fill(targetX-26,targetY+38,targetX+26,targetY+47,0xFF3A424B);
+        g.fill(targetX-32,targetY+47,targetX+32,targetY+51,0xFF20252B);
+        ForgingMinigameArt.backdrop(g,targetX-r-6,targetY-r-6,2*r+12,2*r+12,visualTicks);
+        g.fill(targetX-r,targetY-r,targetX+r,targetY+r,0xFF39424B);
+        g.fill(targetX-r+3,targetY-r+3,targetX+r-3,targetY+r-3,0xFF171B20);
+        g.fill(targetX-11,targetY-4,targetX+11,targetY+5,0xFFB85426);
+        g.fill(targetX-7,targetY-3,targetX+7,targetY-1,0xFFFFAA4C);
+        float displayedRadius=feedbackTicks>0?approachRadius:previousApproachRadius+(approachRadius-previousApproachRadius)*partialTick;
+        int ar=Math.max(1,Math.round(displayedRadius));
+        int color=feedbackTicks>0?(lastHit?resultColor:0xFFFF5555):0xFFFFD28A;
+        int hammerX=targetX,hammerY=targetY;
+        switch(direction){
+            case UP -> hammerY-=ar;
+            case DOWN -> hammerY+=ar;
+            case LEFT -> hammerX-=ar;
+            case RIGHT -> hammerX+=ar;
+        }
+        g.fill(hammerX-9,hammerY-5,hammerX+9,hammerY+5,0xFF0B0E12);
+        g.fill(hammerX-7,hammerY-3,hammerX+7,hammerY+3,color);
+        g.drawCenteredString(font,direction.symbol+" "+direction.key,targetX,targetY-17,0xFFFFFF);
+        if(feedbackTicks>0&&lastHit)ForgingMinigameArt.sparks(g,targetX,targetY,feedbackTicks,0xFFFFC45E);
+    }
     @Override public void onClose(){if(minecraft!=null)minecraft.setScreen(null);}
     @Override public boolean isPauseScreen(){return false;}
     private enum Direction{UP(GLFW.GLFW_KEY_W,"W","^"),LEFT(GLFW.GLFW_KEY_A,"A","<"),DOWN(GLFW.GLFW_KEY_S,"S","v"),RIGHT(GLFW.GLFW_KEY_D,"D",">");final int code;final String key,symbol;Direction(int c,String k,String s){code=c;key=k;symbol=s;}static Direction fromKey(int k){for(Direction d:values())if(d.code==k)return d;return null;}}

@@ -53,6 +53,8 @@ public class CoreTimingBarScreen extends Screen {
     private int weightedAccuracyPoints;
     private boolean finished;
     private int feedbackTicks;
+    private final int[] roundGrades = new int[TOTAL_ROUNDS];
+    private int visualTicks;
     private float hitPosition;
     private boolean lastHit;
     private String resultText = "Press SPACE on the best colored zone";
@@ -79,6 +81,7 @@ public class CoreTimingBarScreen extends Screen {
 
     @Override
     public void tick() {
+        visualTicks++;
         if (finished) return;
         if (feedbackTicks > 0) {
             if (--feedbackTicks == 0) {
@@ -142,6 +145,7 @@ public class CoreTimingBarScreen extends Screen {
         }
 
         lastHit = baseScore > 0;
+        roundGrades[round] = baseScore == 100 ? 3 : baseScore == 75 ? 2 : baseScore == 50 ? 1 : 0;
         score += baseScore + (baseScore > 0 ? Math.max(0, currentCombo - 1) * 5 : 0);
         weightedAccuracyPoints += accuracyPoints;
         round++;
@@ -185,11 +189,13 @@ public class CoreTimingBarScreen extends Screen {
         int top = barY - 105;
         int bottom = barY + 82;
         guiGraphics.fill(left, top, right, bottom, 0xB0000000);
+        ForgingMinigameArt.backdrop(guiGraphics, barX - 28, barY - 105, BAR_WIDTH + 56, 187, visualTicks);
         guiGraphics.drawCenteredString(font, "CORE FORGING - " + metal.displayName() + " [Difficulty " + metal.difficulty() + "/3]", width / 2, barY - 88, 0xFFFFFF);
         guiGraphics.drawCenteredString(font, "CORE BLUEPRINT + " + formatName(monsterMaterial.name()), width / 2, barY - 74, 0xCCCCCC);
         guiGraphics.drawCenteredString(font, "ROUND " + Math.min(round + 1, TOTAL_ROUNDS) + " / " + TOTAL_ROUNDS, width / 2, barY - 56, 0xDDDDDD);
         guiGraphics.drawCenteredString(font, resultText, width / 2, barY - 38, resultColor);
 
+        ForgingMinigameArt.rail(guiGraphics, barX, barY, BAR_WIDTH, BAR_HEIGHT);
         guiGraphics.fill(barX - 2, barY - 2, barX + BAR_WIDTH + 2, barY + BAR_HEIGHT + 2, 0xFF111111);
         guiGraphics.fill(barX, barY, barX + BAR_WIDTH, barY + BAR_HEIGHT, 0xFFAA2222);
         guiGraphics.fill(barX + greenStart, barY, barX + greenStart + greenWidth, barY + BAR_HEIGHT, GOOD_ZONE_COLOR);
@@ -199,7 +205,7 @@ public class CoreTimingBarScreen extends Screen {
         guiGraphics.fill(barX + Math.round(center - halfWidth * PERFECT_RATIO), barY, barX + Math.round(center + halfWidth * PERFECT_RATIO), barY + BAR_HEIGHT, PERFECT_ZONE_COLOR);
         float displayedCursor = feedbackTicks > 0 ? cursorPosition : previousCursorPosition + (cursorPosition - previousCursorPosition) * partialTick;
         int cursorX = barX + Math.round(displayedCursor);
-        guiGraphics.fill(cursorX, barY - 5, cursorX + CURSOR_WIDTH, barY + BAR_HEIGHT + 5, 0xFFFFFFFF);
+        ForgingMinigameArt.hammer(guiGraphics, cursorX, barY, BAR_HEIGHT, feedbackTicks > 0);
         if (feedbackTicks > 0) {
             int flash = feedbackTicks * 9 / 10 + 2;
             int impactX = barX + Math.round(hitPosition);
@@ -207,6 +213,8 @@ public class CoreTimingBarScreen extends Screen {
             guiGraphics.fill(impactX - flash, barY - 7, impactX + flash, barY - 5, color);
             guiGraphics.fill(impactX - flash, barY + BAR_HEIGHT + 5, impactX + flash, barY + BAR_HEIGHT + 7, color);
         }
+        ForgingMinigameArt.progress(guiGraphics, width / 2, barY - 23, roundGrades, round);
+        if (lastHit && feedbackTicks > 0) ForgingMinigameArt.sparks(guiGraphics, barX + Math.round(hitPosition), barY + BAR_HEIGHT / 2, feedbackTicks, 0xFFFFC45E);
         guiGraphics.drawString(font, "Score: " + score, barX, barY + 38, 0xFFFFFF);
         guiGraphics.drawString(font, "Combo: x" + currentCombo, barX + 115, barY + 38, 0xFFFFFF);
         guiGraphics.drawCenteredString(font, "SPACE = HIT   |   ESC = BACK", width / 2, barY + 68, 0xDDDDDD);
