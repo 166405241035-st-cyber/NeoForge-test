@@ -193,6 +193,7 @@ public final class ForgedActiveSkills {
         // Mob Swap intentionally has no cooldown. It is also excluded from Double Trigger:
         // swapping twice would immediately undo the first swap.
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: สำเร็จ"), true);
+        ForgedSkillSounds.play(player, ForgingEffect.MOB_SWAP);
         damageEquipment(player, 3);
     }
 
@@ -347,6 +348,7 @@ public final class ForgedActiveSkills {
                 tool, tag -> tag.putLong("forgedGravitationalSlamCharge", chargeToken));
         player.getPersistentData().putLong("ForgedGravitationalSlamChargeToken", chargeToken);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam: Charging..."), true);
+        ForgedSkillSounds.play(player, ForgingEffect.GRAVATIONAL_SLAM);
     }
 
     private static ItemStack findGravitationalSlamTool(Player player, ItemStack currentTool) {
@@ -427,6 +429,7 @@ public final class ForgedActiveSkills {
         }
         syncHeldEquipmentHud(player);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam!"), true);
+        ForgedSkillSounds.play(player, ForgingEffect.GRAVATIONAL_SLAM);
     }
 
     private static void ironFortress(Player player, ItemStack tool, EffectTier tier) {
@@ -703,6 +706,7 @@ public final class ForgedActiveSkills {
         // The invisible support is permanent. It only disappears when a player
         // deliberately breaks it; Tier affects durability cost only.
         player.level().setBlockAndUpdate(pos, ExampleMod.INVISIBLE_SUPPORT_BLOCK.get().defaultBlockState());
+        ForgedSkillSounds.play(player, ForgingEffect.BLOCK_LEVITATION);
         damageEquipment(player, cost);
     }
 
@@ -747,6 +751,7 @@ public final class ForgedActiveSkills {
 
         boolean broken = player.level().destroyBlock(pos, true, player);
         if (!broken) player.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        ForgedSkillSounds.play(player, ForgingEffect.OBSIDIAN_BREAKER);
         damageEquipment(player, cost);
     }
 
@@ -781,6 +786,8 @@ public final class ForgedActiveSkills {
     private static void openStorage(Player player, ItemStack tool) {
         int size = ForgedStorageMenu.storageSize(tool);
         if (size <= 0) return;
+        ForgedSkillSounds.play(player, ForgedEffectRuntime.tier(tool, ForgingEffect.POCKET_DIMENSION) != null
+                ? ForgingEffect.POCKET_DIMENSION : ForgingEffect.INTERNAL_STORAGE);
         player.openMenu(new net.minecraft.world.SimpleMenuProvider(
                 (id, inv, p) -> new ForgedStorageMenu(id, inv, tool),
                 net.minecraft.network.chat.Component.literal("Forged Storage")));
@@ -929,6 +936,7 @@ public final class ForgedActiveSkills {
         player.getPersistentData().putBoolean("ForgedSkyBridgeActive", active);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal(
                 "Sky Bridge Walk: " + (active ? "ON" : "OFF")), true);
+        ForgedSkillSounds.play(player, ForgingEffect.SKY_BRIDGE_WALK);
     }
 
     private static void toggleAegis(Player player, ItemStack tool, EffectTier tier) {
@@ -936,12 +944,14 @@ public final class ForgedActiveSkills {
         if (active) {
             player.getPersistentData().putBoolean("ForgedAegisActive", false);
             player.displayClientMessage(net.minecraft.network.chat.Component.literal("Aegis Shield: OFF"), true);
+            ForgedSkillSounds.play(player, ForgingEffect.AEGIS_SHIELD);
             return;
         }
 
         player.getPersistentData().putBoolean("ForgedAegisActive", true);
         player.getPersistentData().putLong("ForgedAegisNextDrain", player.level().getGameTime() + 100L);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Aegis Shield: ON"), true);
+        ForgedSkillSounds.play(player, ForgingEffect.AEGIS_SHIELD);
     }
 
     public static void tickWorldEffects(Player player, ItemStack tool) {
@@ -1267,6 +1277,12 @@ public final class ForgedActiveSkills {
 
     private static void startCooldown(ItemStack tool, Player player, String key, long cooldownTicks) {
         setItemCooldownReadyAt(tool, key, player.level().getGameTime() + cooldownTicks);
+        for (ForgingEffect effect : ForgingEffect.values()) {
+            if (key.equals(cooldownKey(effect))) {
+                ForgedSkillSounds.play(player, effect);
+                break;
+            }
+        }
     }
 
     private static void damageEquipment(Player player, int amount) {

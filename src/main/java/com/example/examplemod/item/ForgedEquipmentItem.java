@@ -185,6 +185,7 @@ public class ForgedEquipmentItem extends Item {
         Vec3 direction = player.getLookAngle().normalize();
         projectile.setDeltaMovement(direction.scale(2.5D));
         level.addFreshEntity(projectile);
+        ForgedSkillSounds.play(player, ForgingEffect.BOOMERANG_WEAPON);
 
         // Double Trigger creates one extra boomerang projectile from the same activation.
         // The real item is consumed/removed only once, so there is no extra durability/item cost.
@@ -246,6 +247,17 @@ public class ForgedEquipmentItem extends Item {
                 }
 
                 context.getLevel().setBlock(context.getClickedPos(), modified, 11);
+
+                if (type == HeadBlueprintType.HOE && action == ItemAbilities.HOE_TILL
+                        && context.getPlayer() != null) {
+                    // Only one cue per tilling action, even when a hoe carries several plot effects.
+                    if (modified.is(ExampleMod.MOISTURE_RETAIN_FARMLAND.get()))
+                        ForgedSkillSounds.play(context.getPlayer(), ForgingEffect.MOISTURE_RETAIN);
+                    else if (ForgedEffectRuntime.tier(stack, ForgingEffect.HYPER_GROWTH_SOIL) != null)
+                        ForgedSkillSounds.play(context.getPlayer(), ForgingEffect.HYPER_GROWTH_SOIL);
+                    else if (ForgedEffectRuntime.tier(stack, ForgingEffect.EXTENDED_REACH_TILLING) != null)
+                        ForgedSkillSounds.play(context.getPlayer(), ForgingEffect.EXTENDED_REACH_TILLING);
+                }
 
                 // Healing Harvest belongs to the plot that was actually tilled, not to
                 // whatever tool the player happens to hold later while harvesting.

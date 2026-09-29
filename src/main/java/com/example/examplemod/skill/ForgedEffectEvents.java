@@ -133,6 +133,7 @@ public final class ForgedEffectEvents {
                 case III -> 3.0D;
             };
             event.setAmount((float)(event.getAmount() * multiplier));
+            ForgedSkillSounds.play(player, ForgingEffect.WITHER_CURSE_POWER);
         }
 
         EffectTier gravitationalSlam = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVATIONAL_SLAM);
@@ -173,12 +174,14 @@ public final class ForgedEffectEvents {
             }
             // Double Trigger is a free replay: durability is paid once.
             ForgedBlessingRuntime.damage(weapon, 3);
+            ForgedSkillSounds.play(player, ForgingEffect.GRAVATIONAL_SLAM);
         }
 
         EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
         if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE)) {
             int duration = DoubleTriggerRuntime.rollAttack(player, weapon) ? 120 : 60;
             target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 0));
+            ForgedSkillSounds.play(player, ForgingEffect.CRIPPLING_STRIKE);
         }
 
         EffectTier vampiric = ForgedEffectRuntime.tier(weapon, ForgingEffect.VAMPIRIC_VITALITY);
@@ -191,6 +194,7 @@ public final class ForgedEffectEvents {
             };
             if (DoubleTriggerRuntime.rollAttack(player, weapon)) heal *= 2.0F;
             player.heal(heal);
+            ForgedSkillSounds.play(player, ForgingEffect.VAMPIRIC_VITALITY);
         }
 
         EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
@@ -198,6 +202,7 @@ public final class ForgedEffectEvents {
             int duration = tierValue(levitation, LEVITATION_DURATION);
             if (DoubleTriggerRuntime.rollAttack(player, weapon)) duration *= 2;
             target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, duration, 0));
+            ForgedSkillSounds.play(player, ForgingEffect.LEVITATION_BLOW);
         }
 
         EffectTier spineSpike = ForgedEffectRuntime.tier(weapon, ForgingEffect.SPINE_SPIKE);
@@ -206,6 +211,7 @@ public final class ForgedEffectEvents {
             // Tier changes proc chance only.
             int duration = DoubleTriggerRuntime.rollAttack(player, weapon) ? 200 : 100;
             target.addEffect(new MobEffectInstance(ExampleMod.BLEEDING, duration, 0));
+            ForgedSkillSounds.play(player, ForgingEffect.SPINE_SPIKE);
         }
 
         EffectTier graveGrasp = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVE_GRASP);
@@ -216,6 +222,7 @@ public final class ForgedEffectEvents {
             target.setDeltaMovement(Vec3.ZERO);
             target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 255));
             target.addEffect(new MobEffectInstance(MobEffects.JUMP, duration, 128));
+            ForgedSkillSounds.play(player, ForgingEffect.GRAVE_GRASP);
         }
 
         EffectTier riftTeleport = ForgedEffectRuntime.tier(weapon, ForgingEffect.RIFT_TELEPORT_ATTACK);
@@ -223,6 +230,7 @@ public final class ForgedEffectEvents {
             double distance = switch (riftTeleport) { case I -> 4.0D; case II -> 8.0D; case III -> 15.0D; };
             if (DoubleTriggerRuntime.rollAttack(player, weapon)) distance *= 2.0D;
             teleportTargetAway(player, target, distance);
+            ForgedSkillSounds.play(player, ForgingEffect.RIFT_TELEPORT_ATTACK);
         }
 
         EffectTier webTrap = ForgedEffectRuntime.tier(weapon, ForgingEffect.WEB_TRAP);
@@ -239,6 +247,7 @@ public final class ForgedEffectEvents {
                 target.getPersistentData().putInt("ForgedWebTrapX", webPos.getX());
                 target.getPersistentData().putInt("ForgedWebTrapY", webPos.getY());
                 target.getPersistentData().putInt("ForgedWebTrapZ", webPos.getZ());
+                ForgedSkillSounds.play(player, ForgingEffect.WEB_TRAP);
             }
         }
 
@@ -252,12 +261,14 @@ public final class ForgedEffectEvents {
             away = away.normalize().scale(knockbackPower);
             target.setDeltaMovement(target.getDeltaMovement().add(away.x, 0.25D, away.z));
             target.hurtMarked = true;
+            ForgedSkillSounds.play(player, ForgingEffect.UNSTOPPABLE_KNOCKBACK);
         }
 
         EffectTier slimeTrail = ForgedEffectRuntime.tier(weapon, ForgingEffect.SLIME_TRAIL_STRIKE);
         if (slimeTrail != null && player.getRandom().nextDouble() < tierValue(slimeTrail, SLIME_TRAIL_CHANCE)) {
             BlockPos floor = target.blockPosition().below();
             applySlimeTrail(player, floor, slimeTrail);
+            ForgedSkillSounds.play(player, ForgingEffect.SLIME_TRAIL_STRIKE);
             if (DoubleTriggerRuntime.rollAttack(player, weapon)) {
                 // A second patch is shifted forward so the bonus result is visible
                 // instead of trying to replace the exact same blocks twice.
@@ -272,6 +283,7 @@ public final class ForgedEffectEvents {
             target.addEffect(new MobEffectInstance(MobEffects.WITHER, doubled ? 160 : 80, 0));
             float heal = tierValue(witherDrain, WITHER_DRAIN_HEAL);
             player.heal(doubled ? heal * 2.0F : heal);
+            ForgedSkillSounds.play(player, ForgingEffect.WITHER_DRAIN);
         }
 
         EffectTier comboDetonation = ForgedEffectRuntime.tier(weapon, ForgingEffect.COMBO_DETONATION);
@@ -306,6 +318,7 @@ public final class ForgedEffectEvents {
                 for (int i = 0; i < activations; i++) {
                     safeForgedExplosion(player, target.getX(), target.getY(), target.getZ(), 1.25F);
                 }
+                ForgedSkillSounds.play(player, ForgingEffect.COMBO_DETONATION);
             }
         }
 
@@ -317,6 +330,7 @@ public final class ForgedEffectEvents {
             for (int i = 0; i < blasts; i++) {
                 safeForgedExplosion(player, target.getX(), target.getY(), target.getZ(), 1.5F);
             }
+            ForgedSkillSounds.play(player, ForgingEffect.CRITICAL_BLAST);
         }
 
         EffectTier poisonGas = ForgedEffectRuntime.tier(weapon, ForgingEffect.POISON_GAS_CLOUD);
@@ -338,6 +352,7 @@ public final class ForgedEffectEvents {
                     java.util.List.of(new MobEffectInstance(MobEffects.POISON, 40, 0))));
             cloud.getPersistentData().putUUID("ForgedPoisonGasOwner", player.getUUID());
             player.level().addFreshEntity(cloud);
+            ForgedSkillSounds.play(player, ForgingEffect.POISON_GAS_CLOUD);
         }
 
         EffectTier velocityStrike = ForgedEffectRuntime.tier(weapon, ForgingEffect.VELOCITY_STRIKE);
@@ -345,7 +360,10 @@ public final class ForgedEffectEvents {
             double horizontalSpeed = player.getDeltaMovement().horizontalDistance();
             double speedFactor = Math.min(1.0D, horizontalSpeed / 0.20D);
             float bonus = (float)(event.getAmount() * tierValue(velocityStrike, VELOCITY_STRIKE_MAX_BONUS) * speedFactor);
-            if (bonus > 0.0F) event.setAmount(event.getAmount() + bonus);
+            if (bonus > 0.0F) {
+                event.setAmount(event.getAmount() + bonus);
+                ForgedSkillSounds.play(player, ForgingEffect.VELOCITY_STRIKE);
+            }
         }
     }
 
@@ -490,6 +508,7 @@ public final class ForgedEffectEvents {
 
             if (tool.isDamageableItem())
                 ForgedBlessingRuntime.damage(tool, 2);
+            ForgedSkillSounds.play(player, ForgingEffect.EARTHY_SHOCKWAVE);
         }
 
         if (groundedNow) player.getPersistentData().putBoolean("ForgedEarthyWasFalling", false);
@@ -521,6 +540,8 @@ public final class ForgedEffectEvents {
                     e -> e.isAlive() && e.distanceToSqr(player) <= radius * radius)) {
                 BlockPos below = mob.blockPosition().below();
                 if (player.level().getBlockState(below).is(Blocks.FARMLAND)) {
+                    if (mob.getRemainingFireTicks() <= 0)
+                        ForgedSkillSounds.play(player, ForgingEffect.THERMAL_CROP_BARRIER);
                     mob.setRemainingFireTicks(Math.max(mob.getRemainingFireTicks(), burnSeconds * 20));
                 }
             }
@@ -552,6 +573,7 @@ public final class ForgedEffectEvents {
             int repair = tierValue(selfRepair, SELF_REPAIR_AMOUNT);
             if (DoubleTriggerRuntime.rollResult(player, tool)) repair *= 2;
             tool.setDamageValue(Math.max(0, tool.getDamageValue() - repair));
+            ForgedSkillSounds.play(player, ForgingEffect.SELF_REPAIRING);
         }
 
         ForgedActiveSkills.tickAegis(player, tool);
@@ -667,6 +689,7 @@ public final class ForgedEffectEvents {
                 event.getDrops().add(new ItemEntity(event.getLevel(),
                         pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                         new ItemStack(smelted, output)));
+                ForgedSkillSounds.play(player, ForgingEffect.AUTO_SMELT_MINING);
             }
         }
 
@@ -694,9 +717,11 @@ public final class ForgedEffectEvents {
                 }
 
                 if (destination != null) {
+                    boolean movedAny = false;
                     for (java.util.Iterator<ItemEntity> it = event.getDrops().iterator(); it.hasNext();) {
                         ItemEntity drop = it.next();
                         ItemStack remaining = drop.getItem().copy();
+                        int originalCount = remaining.getCount();
                         for (int slot = 0; slot < destination.getContainerSize() && !remaining.isEmpty(); slot++) {
                             ItemStack existing = destination.getItem(slot);
                             if (existing.isEmpty()) {
@@ -719,8 +744,10 @@ public final class ForgedEffectEvents {
                         } else {
                             drop.setItem(remaining);
                         }
+                        movedAny |= remaining.getCount() < originalCount;
                     }
                     destination.setChanged();
+                    if (movedAny) ForgedSkillSounds.play(player, ForgingEffect.AUTO_CHEST_TRANSPORT);
                 }
             }
         }
@@ -766,6 +793,7 @@ public final class ForgedEffectEvents {
                 drop.setDeltaMovement(Vec3.ZERO);
                 drop.getPersistentData().putLong("ForgedStaticHoverUntil", hoverUntil);
             }
+            ForgedSkillSounds.play(player, ForgingEffect.STATIC_HOVER_DROP);
         }
 
         // BlockDropsEvent already contains the drops from THIS block. Moving these
@@ -777,6 +805,7 @@ public final class ForgedEffectEvents {
                 drop.setPos(player.getX(), player.getY() + 0.5D, player.getZ());
                 drop.setDeltaMovement(Vec3.ZERO);
             }
+            ForgedSkillSounds.play(player, ForgingEffect.VOID_VACUUM_PICK);
 
             if (tool.isDamageableItem()) {
                 int cost = switch (vacuum) { case I -> 5; case II -> 3; case III -> 1; };
@@ -821,6 +850,7 @@ public final class ForgedEffectEvents {
             minion.getPersistentData().putUUID("ForgingMinionOwner", player.getUUID());
             level.addFreshEntity(minion);
         }
+        ForgedSkillSounds.play(player, ForgingEffect.ZOMBIE_MINION_CALLING);
     }
 
     @SubscribeEvent
@@ -883,6 +913,9 @@ public final class ForgedEffectEvents {
         player.getPersistentData().putInt("ForgedLastMinedY", event.getPos().getY());
         player.getPersistentData().putInt("ForgedLastMinedZ", event.getPos().getZ());
 
+        if (ForgedEffectRuntime.tier(tool, ForgingEffect.AIRBORNE_MINING) != null && !player.onGround()) {
+            ForgedSkillSounds.play(player, ForgingEffect.AIRBORNE_MINING);
+        }
         if (ForgedEffectRuntime.tier(tool, ForgingEffect.FRENZY_DIGGING) != null) {
             long now = player.level().getGameTime();
             long last = player.getPersistentData().getLong("ForgedFrenzyLastMine");
@@ -890,6 +923,7 @@ public final class ForgedEffectEvents {
                     ? player.getPersistentData().getInt("ForgedFrenzyChain") + 1 : 1;
             player.getPersistentData().putInt("ForgedFrenzyChain", Math.min(chain, 5));
             player.getPersistentData().putLong("ForgedFrenzyLastMine", now);
+            if (chain == 5) ForgedSkillSounds.play(player, ForgingEffect.FRENZY_DIGGING);
         }
 
         // Multi-block mining skills. Generated block breaks are guarded so they do not
@@ -917,6 +951,7 @@ public final class ForgedEffectEvents {
         if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE)) {
             int count = DoubleTriggerRuntime.rollResult(player, tool) ? 2 : 1;
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL, count));
+            ForgedSkillSounds.play(player, ForgingEffect.BONE_DUST_EXTRACT);
         }
 
         // Soul Sand Extraction: each successfully mined block can create one bonus Soul Sand.
@@ -924,6 +959,7 @@ public final class ForgedEffectEvents {
         if (soulSand != null && player.getRandom().nextDouble() < tierValue(soulSand, SOUL_SAND_CHANCE)) {
             int count = DoubleTriggerRuntime.rollResult(player, tool) ? 2 : 1;
             Block.popResource(player.level(), event.getPos(), new ItemStack(Items.SOUL_SAND, count));
+            ForgedSkillSounds.play(player, ForgingEffect.SOUL_SAND_EXTRACTION);
         }
 
         EffectTier scavenger = ForgedEffectRuntime.tier(tool, ForgingEffect.SCAVENGER_DIG);
@@ -936,6 +972,7 @@ public final class ForgedEffectEvents {
             };
             int count = DoubleTriggerRuntime.rollResult(player, tool) ? 2 : 1;
             Block.popResource(player.level(), event.getPos(), new ItemStack(bonus, count));
+            ForgedSkillSounds.play(player, ForgingEffect.SCAVENGER_DIG);
         }
 
         // Unrefined Ore Discovery: bonus ore comes out as nuggets, not raw ore.
@@ -944,6 +981,7 @@ public final class ForgedEffectEvents {
             Item nugget = player.getRandom().nextBoolean() ? Items.IRON_NUGGET : Items.GOLD_NUGGET;
             int count = DoubleTriggerRuntime.rollResult(player, tool) ? 2 : 1;
             Block.popResource(player.level(), event.getPos(), new ItemStack(nugget, count));
+            ForgedSkillSounds.play(player, ForgingEffect.UNREFINED_ORE_DISCOVERY);
         }
 
         // Nature God Bless reward belongs to the plot and only rolls on a mature harvest.
@@ -963,6 +1001,7 @@ public final class ForgedEffectEvents {
                     ItemStack reward = new ItemStack(player.getRandom().nextDouble() < 0.01D
                             ? Items.ENCHANTED_GOLDEN_APPLE : Items.GOLDEN_APPLE);
                     Block.popResource(player.level(), event.getPos(), reward);
+                    ForgedSkillSounds.play(player, ForgingEffect.NATURE_GOD_BLESS);
                 }
             }
         }
@@ -986,6 +1025,7 @@ public final class ForgedEffectEvents {
                                                     Registries.POTION,
                                                     net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "healing")))));
                 }
+                ForgedSkillSounds.play(player, ForgingEffect.HEALING_HARVEST);
             }
         }
     }
@@ -1013,6 +1053,7 @@ public final class ForgedEffectEvents {
                 // Only the normal patch contributes durability cost.
                 if (changed > 0 && tool.isDamageableItem())
                     ForgedBlessingRuntime.damage(tool, changed);
+                if (changed > 0) ForgedSkillSounds.play(player, ForgingEffect.EXPLOSIVE_TILLING);
             }
         }
 
@@ -1038,6 +1079,7 @@ public final class ForgedEffectEvents {
             };
             if (DoubleTriggerRuntime.rollResult(player, tool)) soilDrop.setCount(2);
             Block.popResource(player.level(), clicked, soilDrop);
+            ForgedSkillSounds.play(player, ForgingEffect.ROTTEN_COMPOST);
         }
 
         EffectTier floraAegis = ForgedEffectRuntime.tier(tool, ForgingEffect.FLORA_AEGIS);
@@ -1049,14 +1091,17 @@ public final class ForgedEffectEvents {
         if (organic != null && canUseTimedTrigger(player, "OrganicCatalyst", Math.round(tierValue(organic, ORGANIC_CATALYST_COOLDOWN)))) {
             BlockPos center = clicked.above();
             boolean doubled = DoubleTriggerRuntime.rollResult(player, tool);
+            boolean grewCrop = false;
             for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
                 if (isCrop(player.level().getBlockState(pos))) {
+                    grewCrop = true;
                     BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player.level(), pos, player);
                     if (doubled) {
                         BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player.level(), pos, player);
                     }
                 }
             }
+            if (grewCrop) ForgedSkillSounds.play(player, ForgingEffect.ORGANIC_CATALYST);
         }
 
     }
@@ -1174,6 +1219,7 @@ public final class ForgedEffectEvents {
                 if (owner.level() == serverLevel
                         && owner.getPersistentData().getLong("ForgedProtectedFarmlandPos") == trampled) {
                     event.setCanceled(true);
+                    ForgedSkillSounds.play(owner, ForgingEffect.FLORA_AEGIS);
                     return;
                 }
             }
@@ -1197,6 +1243,7 @@ public final class ForgedEffectEvents {
         // The planted crop mutates into either Nether Wart or a Wither Rose.
         Block mutatedBlock = player.getRandom().nextBoolean() ? Blocks.NETHER_WART : Blocks.WITHER_ROSE;
         player.level().setBlockAndUpdate(event.getPos(), mutatedBlock.defaultBlockState());
+        ForgedSkillSounds.play(player, ForgingEffect.NETHER_MUTATION);
 
         // A second mutation cannot replace the same planted block twice in a useful way,
         // so Double Trigger pays out one matching mutation result as the bonus result.
