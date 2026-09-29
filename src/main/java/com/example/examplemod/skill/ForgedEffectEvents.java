@@ -112,6 +112,13 @@ public final class ForgedEffectEvents {
 
         ItemStack weapon = player.getMainHandItem();
 
+        // Remember whether THIS melee hit was fully charged. Death-triggered abilities
+        // (notably Zombie Minion Calling) can then obey the same full-charge rule even
+        // though the vanilla attack meter may already be reset by LivingDeathEvent.
+        target.getPersistentData().putUUID("ForgedLastMeleeOwner", player.getUUID());
+        target.getPersistentData().putBoolean("ForgedLastMeleeDoubleEligible",
+                DoubleTriggerRuntime.isFullChargeAttack(player, weapon));
+
         EffectTier witherCurse = ForgedEffectRuntime.tier(weapon, ForgingEffect.WITHER_CURSE_POWER);
         if (witherCurse != null) {
             double multiplier = switch (witherCurse) {
@@ -237,18 +244,11 @@ public final class ForgedEffectEvents {
         EffectTier slimeTrail = ForgedEffectRuntime.tier(weapon, ForgingEffect.SLIME_TRAIL_STRIKE);
         if (slimeTrail != null && player.getRandom().nextDouble() < tierValue(slimeTrail, SLIME_TRAIL_CHANCE)) {
             BlockPos floor = target.blockPosition().below();
-            if (slimeTrail == EffectTier.I) {
-                replaceFloorWithSlime(player, floor);
-            } else if (slimeTrail == EffectTier.II) {
-                replaceFloorWithSlime(player, floor);
-                replaceFloorWithSlime(player, floor.north());
-                replaceFloorWithSlime(player, floor.south());
-                replaceFloorWithSlime(player, floor.east());
-                replaceFloorWithSlime(player, floor.west());
-            } else {
-                for (int x = -1; x <= 1; x++)
-                    for (int z = -1; z <= 1; z++)
-                        replaceFloorWithSlime(player, floor.offset(x, 0, z));
+            applySlimeTrail(player, floor, slimeTrail);
+            if (DoubleTriggerRuntime.rollAttack(player, weapon)) {
+                // A second patch is shifted forward so the bonus result is visible
+                // instead of trying to replace the exact same blocks twice.
+                applySlimeTrail(player, floor.relative(player.getDirection(), 2), slimeTrail);
             }
         }
 
@@ -779,13 +779,22 @@ public final class ForgedEffectEvents {
         EffectTier tier = ForgedEffectRuntime.tier(weapon, ForgingEffect.ZOMBIE_MINION_CALLING);
         if (tier == null || player.getRandom().nextDouble() >= tierValue(tier, ZOMBIE_MINION_CHANCE)) return;
 
-        Zombie minion = new Zombie(level);
-        minion.moveTo(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ(), player.getYRot(), 0.0F);
-        minion.setCustomName(net.minecraft.network.chat.Component.literal("Zombie Minion"));
-        minion.setCustomNameVisible(true);
-        minion.setPersistenceRequired();
-        minion.getPersistentData().putUUID("ForgingMinionOwner", player.getUUID());
-        level.addFreshEntity(minion);
+        boolean fullCharge = event.getEntity().getPersistentData().hasUUID("ForgedLastMeleeOwner")
+                && event.getEntity().getPersistentData().getUUID("ForgedLastMeleeOwner").equals(player.getUUID())
+                && event.getEntity().getPersistentData().getBoolean("ForgedLastMeleeDoubleEligible");
+        int minionCount = fullCharge && DoubleTriggerRuntime.has(weapon)
+                && player.getRandom().nextDouble() < DoubleTriggerRuntime.CHANCE ? 2 : 1;
+
+        for (int i = 0; i < minionCount; i++) {
+            Zombie minion = new Zombie(level);
+            minion.moveTo(event.getEntity().getX() + i * 0.6D, event.getEntity().getY(),
+                    event.getEntity().getZ(), player.getYRot(), 0.0F);
+            minion.setCustomName(net.minecraft.network.chat.Component.literal("Zombie Minion"));
+            minion.setCustomNameVisible(true);
+            minion.setPersistenceRequired();
+            minion.getPersistentData().putUUID("ForgingMinionOwner", player.getUUID());
+            level.addFreshEntity(minion);
+        }
     }
 
     @SubscribeEvent
@@ -937,12 +946,17 @@ public final class ForgedEffectEvents {
                     .tier(farmlandPos, ForgingEffect.HEALING_HARVEST);
             if (healingHarvest != null
                     && player.getRandom().nextDouble() < tierValue(healingHarvest, HEALING_HARVEST_CHANCE)) {
-                Block.popResource(player.level(), event.getPos(),
-                        PotionContents.createItemStack(Items.POTION,
-                                net.minecraft.core.registries.BuiltInRegistries.POTION.getHolderOrThrow(
-                                        net.minecraft.resources.ResourceKey.create(
-                                                Registries.POTION,
-                                                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "healing")))));
+                int potionCount = ForgedFarmingPlotData.get(farmingLevel)
+                        .hasDoubleTrigger(farmlandPos, ForgingEffect.HEALING_HARVEST)
+                        && player.getRandom().nextDouble() < DoubleTriggerRuntime.CHANCE ? 2 : 1;
+                for (int i = 0; i < potionCount; i++) {
+                    Block.popResource(player.level(), event.getPos(),
+                            PotionContents.createItemStack(Items.POTION,
+                                    net.minecraft.core.registries.BuiltInRegistries.POTION.getHolderOrThrow(
+                                            net.minecraft.resources.ResourceKey.create(
+                                                    Registries.POTION,
+                                                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "healing")))));
+                }
             }
         }
     }
@@ -1250,6 +1264,22 @@ public final class ForgedEffectEvents {
                 && !player.onClimbable()
                 && !player.isInWater()
                 && !player.isPassenger();
+    }
+
+    private static void applySlimeTrail(Player player, BlockPos floor, EffectTier tier) {
+        if (tier == EffectTier.I) {
+            replaceFloorWithSlime(player, floor);
+        } else if (tier == EffectTier.II) {
+            replaceFloorWithSlime(player, floor);
+            replaceFloorWithSlime(player, floor.north());
+            replaceFloorWithSlime(player, floor.south());
+            replaceFloorWithSlime(player, floor.east());
+            replaceFloorWithSlime(player, floor.west());
+        } else {
+            for (int x = -1; x <= 1; x++)
+                for (int z = -1; z <= 1; z++)
+                    replaceFloorWithSlime(player, floor.offset(x, 0, z));
+        }
     }
 
     private static void replaceFloorWithSlime(Player player, BlockPos pos) {
