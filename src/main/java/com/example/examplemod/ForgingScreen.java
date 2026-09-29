@@ -66,14 +66,6 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
 
         // recipe area
         g.fill(x+16,y+51,x+304,y+119,PANEL);
-        // Blueprint / Material cards
-        card(g,x+26,y+55,50,52,0xFF477DB1);
-        card(g,x+87,y+55,50,52,0xFF8B50AF);
-        // Metals card
-        card(g,x+146,y+51,82,62,FRAME);
-        // Fuel card
-        card(g,x+244,y+55,40,52,0xFF555D66);
-
         slot(g,x+41,y+64,0xFF58A4EA);
         slot(g,x+102,y+64,0xFFB565DB);
         slot(g,x+156,y+56,COPPER); slot(g,x+180,y+56,COPPER); slot(g,x+204,y+56,COPPER);
