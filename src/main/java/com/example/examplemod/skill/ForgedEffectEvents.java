@@ -110,6 +110,12 @@ public final class ForgedEffectEvents {
         if (!(attacker instanceof Player player) || player.level().isClientSide()) return;
         if (player.getPersistentData().getBoolean("ForgedEffectDamageGuard")) return;
 
+        // Projectiles spawned by forged active skills (for example Fireball Shoot)
+        // must not be treated as a fresh melee hit. Otherwise one R cast could
+        // accidentally trigger Crippling, Combo, Web Trap, Double Trigger, etc.
+        Entity direct = event.getSource().getDirectEntity();
+        if (direct != null && direct.getPersistentData().getBoolean("ForgedSkillProjectile")) return;
+
         ItemStack weapon = player.getMainHandItem();
 
         // Remember whether THIS melee hit was fully charged. Death-triggered abilities
