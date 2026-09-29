@@ -90,8 +90,21 @@ public class AnvilRhythmForgingScreen extends Screen {
             finalBlessingChance = Math.max(0.05D, Math.min(0.95D, blessingChance));
 
             if (random.nextDouble() < finalBlessingChance) {
-                ForgedBlessing[] pool = ForgedBlessing.values();
-                rolledBlessing = pool[random.nextInt(pool.length)];
+                // Double Trigger is only useful when at least one main effect on this
+                // forged item has a meaningful replay/result/effect rule. Do not award
+                // a dead blessing to an item made entirely from passive, storage,
+                // toggle-only, or Mob Swap effects.
+                boolean supportsDoubleTrigger = assembly.effects().stream()
+                        .anyMatch(effect -> DoubleTriggerRuntime.supports(effect.effect()));
+
+                java.util.List<ForgedBlessing> pool = new java.util.ArrayList<>();
+                for (ForgedBlessing blessing : ForgedBlessing.values()) {
+                    if (blessing != ForgedBlessing.DOUBLE_TRIGGER || supportsDoubleTrigger) {
+                        pool.add(blessing);
+                    }
+                }
+
+                rolledBlessing = pool.get(random.nextInt(pool.size()));
                 ForgedBlessingRuntime.set(equipment, rolledBlessing);
             } else {
                 ForgedCurse[] pool = ForgedCurse.values();
