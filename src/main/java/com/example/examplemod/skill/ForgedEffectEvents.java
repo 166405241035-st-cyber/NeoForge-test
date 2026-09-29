@@ -159,8 +159,7 @@ public final class ForgedEffectEvents {
                     }
                 }
             }
-            player.level().explode(player, target.getX(), target.getY(), target.getZ(),
-                    2.0F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+            safeForgedExplosion(player, target.getX(), target.getY(), target.getZ(), 2.0F);
             ForgedBlessingRuntime.damage(weapon, 3);
         }
 
@@ -290,8 +289,7 @@ public final class ForgedEffectEvents {
                     } finally {
                         player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
                     }
-                    player.level().explode(player, target.getX(), target.getY(), target.getZ(),
-                            1.25F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+                    safeForgedExplosion(player, target.getX(), target.getY(), target.getZ(), 1.25F);
                 }
             }
         }
@@ -302,8 +300,7 @@ public final class ForgedEffectEvents {
             // Small non-block-breaking blast so the proc does not destroy terrain.
             int blasts = DoubleTriggerRuntime.rollAttack(player, weapon) ? 2 : 1;
             for (int i = 0; i < blasts; i++) {
-                player.level().explode(player, target.getX(), target.getY(), target.getZ(),
-                        1.5F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+                safeForgedExplosion(player, target.getX(), target.getY(), target.getZ(), 1.5F);
             }
         }
 
@@ -1323,6 +1320,22 @@ public final class ForgedEffectEvents {
     private static void replaceFloorWithSlime(Player player, BlockPos pos) {
         if (!player.level().getBlockState(pos).isAir())
             player.level().setBlockAndUpdate(pos, Blocks.SLIME_BLOCK.defaultBlockState());
+    }
+
+    /**
+     * Forged explosions can damage several entities and fire LivingIncomingDamageEvent again.
+     * Guard the entire explosion so Combo/Critical/other hit effects cannot recursively
+     * trigger themselves from their own bonus explosion.
+     */
+    private static void safeForgedExplosion(Player player, double x, double y, double z, float radius) {
+        boolean previous = player.getPersistentData().getBoolean("ForgedEffectDamageGuard");
+        player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+        try {
+            player.level().explode(player, x, y, z, radius,
+                    net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+        } finally {
+            player.getPersistentData().putBoolean("ForgedEffectDamageGuard", previous);
+        }
     }
 
     private static void teleportTargetAway(Player player, LivingEntity target, double distance) {
