@@ -6,6 +6,7 @@ import com.example.examplemod.entity.*;
 import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
+import com.example.examplemod.skill.blessing.DoubleTriggerRuntime;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -101,6 +102,20 @@ public final class ForgedActiveSkills {
         fireball.setDeltaMovement(look.scale(1.35D));
         fireball.hurtMarked = true;
         player.level().addFreshEntity(fireball);
+
+        // Double Trigger: a second projectile is a free bonus cast.
+        // It does not start another cooldown and does not consume durability.
+        if (DoubleTriggerRuntime.rollActive(player, tool)) {
+            Vec3 side = look.cross(new Vec3(0.0D, 1.0D, 0.0D));
+            if (side.lengthSqr() > 0.0001D) side = side.normalize().scale(0.18D);
+            SmallFireball second = new SmallFireball(player.level(), player, look);
+            Vec3 secondSpawn = spawn.add(side);
+            second.setPos(secondSpawn.x, secondSpawn.y - 0.10D, secondSpawn.z);
+            second.setDeltaMovement(look.scale(1.35D));
+            second.hurtMarked = true;
+            player.level().addFreshEntity(second);
+        }
+
         startCooldown(tool, player, "FireballShoot", cooldown);
         damageEquipment(player, 3);
     }
@@ -115,6 +130,8 @@ public final class ForgedActiveSkills {
             case II -> 1.55D;
             case III -> 1.90D;
         };
+        // A simultaneous second dash is represented as double travel impulse.
+        if (DoubleTriggerRuntime.rollActive(player, tool)) power *= 2.0D;
 
         player.setDeltaMovement(
                 look.x * power,
@@ -136,7 +153,9 @@ public final class ForgedActiveSkills {
         Vec3 pull = player.position().subtract(target.position());
         if (pull.lengthSqr() < 0.01D) return;
 
-        Vec3 velocity = pull.normalize().scale(1.0D + tierIndex(tier) * 0.25D);
+        double pullPower = 1.0D + tierIndex(tier) * 0.25D;
+        if (DoubleTriggerRuntime.rollActive(player, tool)) pullPower *= 2.0D;
+        Vec3 velocity = pull.normalize().scale(pullPower);
         target.setDeltaMovement(velocity.x, Math.max(velocity.y, 0.15D), velocity.z);
         target.hurtMarked = true;
         startCooldown(tool, player, "HarpoonPull", cooldown);
@@ -156,9 +175,6 @@ public final class ForgedActiveSkills {
             return;
         }
 
-        long cooldown = ForgedSkillConfig.swap(tier);
-        if (!ready(tool, player, "MobSwap", cooldown)) return;
-
         Vec3 playerPos = player.position();
         float playerYaw = player.getYRot();
         float playerPitch = player.getXRot();
@@ -171,7 +187,8 @@ public final class ForgedActiveSkills {
         target.setYRot(playerYaw);
         target.setXRot(playerPitch);
 
-        startCooldown(tool, player, "MobSwap", cooldown);
+        // Mob Swap intentionally has no cooldown. It is also excluded from Double Trigger:
+        // swapping twice would immediately undo the first swap.
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Mob Swap: สำเร็จ"), true);
         damageEquipment(player, 3);
     }
@@ -180,7 +197,8 @@ public final class ForgedActiveSkills {
         long cooldown = ForgedSkillConfig.airSlash(tier);
         if (!ready(tool, player, "AirSlashRupture", cooldown)) return;
 
-        double damage = 6.0D; // 3 hearts for every Tier.
+        boolean doubled = DoubleTriggerRuntime.rollActive(player, tool);
+        double damage = doubled ? 12.0D : 6.0D; // bonus cast deals the same damage again.
 
         AABB area = player.getBoundingBox().inflate(6.0D);
         for (LivingEntity target : player.level().getEntitiesOfClass(
@@ -192,7 +210,8 @@ public final class ForgedActiveSkills {
                 player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
             }
             Vec3 away = target.position().subtract(player.position()).normalize();
-            target.setDeltaMovement(target.getDeltaMovement().add(away.x * 0.5D, 0.25D, away.z * 0.5D));
+            double push = doubled ? 1.0D : 0.5D;
+            target.setDeltaMovement(target.getDeltaMovement().add(away.x * push, doubled ? 0.50D : 0.25D, away.z * push));
             target.hurtMarked = true;
         }
 
@@ -204,6 +223,7 @@ public final class ForgedActiveSkills {
         long cooldown = ForgedSkillConfig.lava(tier);
         if (!ready(tool, player, "LavaWave", cooldown)) return;
 
+        boolean doubled = DoubleTriggerRuntime.rollActive(player, tool);
         Vec3 view = player.getLookAngle();
         Vec3 look = new Vec3(view.x, 0.0D, view.z);
         if (look.lengthSqr() < 0.0001D) look = new Vec3(0.0D, 0.0D, 1.0D);
@@ -226,12 +246,16 @@ public final class ForgedActiveSkills {
                     LivingEntity.class, area, e -> e != player && e.isAlive())) {
                 player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
                 try {
-                    target.hurt(player.damageSources().playerAttack(player), tier == EffectTier.I ? 3.0F : tier == EffectTier.II ? 5.0F : 7.0F);
+                    float waveDamage = tier == EffectTier.I ? 3.0F : tier == EffectTier.II ? 5.0F : 7.0F;
+                    target.hurt(player.damageSources().playerAttack(player), doubled ? waveDamage * 2.0F : waveDamage);
                 } finally {
                     player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
                 }
-                target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(), (tier == EffectTier.I ? 3 : tier == EffectTier.II ? 5 : 7) * 20));
-                target.setDeltaMovement(target.getDeltaMovement().add(look.x * 0.35D, 0.20D, look.z * 0.35D));
+                int burnSeconds = tier == EffectTier.I ? 3 : tier == EffectTier.II ? 5 : 7;
+                if (doubled) burnSeconds *= 2;
+                target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(), burnSeconds * 20));
+                double push = doubled ? 0.70D : 0.35D;
+                target.setDeltaMovement(target.getDeltaMovement().add(look.x * push, doubled ? 0.40D : 0.20D, look.z * push));
                 target.hurtMarked = true;
             }
         }
@@ -248,6 +272,7 @@ public final class ForgedActiveSkills {
             case II -> 200;  // 10 sec
             case III -> 300; // 15 sec
         };
+        if (DoubleTriggerRuntime.rollActive(player, tool)) duration *= 2;
         double radius = 8.0D; // Fixed radius for every Tier.
         AABB area = player.getBoundingBox().inflate(radius);
         long frozenUntil = player.level().getGameTime() + duration;
@@ -308,6 +333,8 @@ public final class ForgedActiveSkills {
         player.getPersistentData().putBoolean("ForgedGravitationalSlamOldInvulnerable", player.isInvulnerable());
         player.setInvulnerable(true);
         player.getPersistentData().putLong("ForgedGravitationalSlamBaseCooldown", cooldown);
+        player.getPersistentData().putBoolean("ForgedGravitationalSlamDouble",
+                DoubleTriggerRuntime.rollActive(player, tool));
         // Bind this charge to the exact forged equipment stack that started it.
         // The token is stored on the item, so hotbar switching cannot move the
         // resulting cooldown/durability to a different weapon.
@@ -345,7 +372,10 @@ public final class ForgedActiveSkills {
         double z = player.getPersistentData().getDouble("ForgedGravitationalSlamZ");
         Vec3 center = new Vec3(x, y, z);
 
-        // 18-block spherical blast radius, 120 damage, no block damage.
+        // 18-block spherical blast radius. Double Trigger doubles the skill result,
+        // but still spends only the original cooldown and durability.
+        boolean doubled = player.getPersistentData().getBoolean("ForgedGravitationalSlamDouble");
+        float slamDamage = doubled ? 240.0F : 120.0F;
         int killedBySlam = 0;
         double blastRadius = 18.0D;
         AABB blast = new AABB(x - blastRadius, y - blastRadius, z - blastRadius,
@@ -355,7 +385,7 @@ public final class ForgedActiveSkills {
                 e -> e != player && e.isAlive() && e.distanceToSqr(center) <= blastRadius * blastRadius)) {
             player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
             try {
-                target.hurt(player.damageSources().playerAttack(player), 120.0F);
+                target.hurt(player.damageSources().playerAttack(player), slamDamage);
             } finally {
                 player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
             }
@@ -373,6 +403,7 @@ public final class ForgedActiveSkills {
         }
         player.getPersistentData().remove("ForgedGravitationalSlamBaseCooldown");
         player.getPersistentData().remove("ForgedGravitationalSlamChargeToken");
+        player.getPersistentData().remove("ForgedGravitationalSlamDouble");
         if (killedBySlam > 0) {
             player.displayClientMessage(net.minecraft.network.chat.Component.literal(
                     "Gravitational Slam cooldown reduced by " + (killedBySlam * 10) + "s!"), true);
@@ -404,6 +435,7 @@ public final class ForgedActiveSkills {
             case II -> 80L;
             case III -> 120L;
         };
+        if (DoubleTriggerRuntime.rollActive(player, tool)) duration *= 2L;
         player.getPersistentData().putLong("ForgedIronFortressUntil", player.level().getGameTime() + duration);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Iron Fortress Guard: ON"), true);
         startCooldown(tool, player, "IronFortressGuard", cooldown + duration);
@@ -419,6 +451,8 @@ public final class ForgedActiveSkills {
         long now = player.level().getGameTime();
         player.getPersistentData().putLong("ForgedDivineBeaconUntil", now + 100L);
         player.getPersistentData().putLong("ForgedDivineBeaconNextHit", now);
+        player.getPersistentData().putBoolean("ForgedDivineBeaconDouble",
+                DoubleTriggerRuntime.rollActive(player, tool));
 
         startCooldown(tool, player, "DivineBeaconLight", cooldown);
         damageEquipment(player, 6);
@@ -435,7 +469,10 @@ public final class ForgedActiveSkills {
         if (!ready(tool, player, "UltimateLaserBreaker", cooldown)) return;
         if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
 
-        // Active R laser: fixed 3 x 3 x 16 volume following the player's look direction.
+        boolean doubled = DoubleTriggerRuntime.rollActive(player, tool);
+        int laserDepth = doubled ? 32 : 16;
+
+        // Active R laser: normally 3 x 3 x 16; Double Trigger extends the same cast to 3 x 3 x 32.
         // Bedrock is deliberately protected from the laser; the normal mining ability
         // of the Ultimate tool is handled separately.
         Vec3 start = player.getEyePosition();
@@ -453,7 +490,7 @@ public final class ForgedActiveSkills {
 
         BlockPos origin = BlockPos.containing(start.add(look.scale(1.0D)));
         java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
-        for (int depth = 0; depth < 16; depth++) {
+        for (int depth = 0; depth < laserDepth; depth++) {
             BlockPos center = origin.relative(depthDirection, depth);
             for (int width = -1; width <= 1; width++) {
                 for (int height = -1; height <= 1; height++) {
@@ -466,7 +503,7 @@ public final class ForgedActiveSkills {
         // The particle cross-section follows the same right/up axes as the 3x3 mining volume.
         Vec3 rightVec = new Vec3(right.getStepX(), right.getStepY(), right.getStepZ());
         Vec3 upVec = new Vec3(up.getStepX(), up.getStepY(), up.getStepZ());
-        for (double d = 0.5D; d <= 16.0D; d += 0.35D) {
+        for (double d = 0.5D; d <= laserDepth; d += 0.35D) {
             Vec3 centerPoint = start.add(look.scale(d));
             for (int px = -1; px <= 1; px++) {
                 for (int py = -1; py <= 1; py++) {
@@ -478,12 +515,16 @@ public final class ForgedActiveSkills {
         }
 
         int broken = 0;
+        int baseBroken = 0;
         player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
         try {
             for (BlockPos pos : targets) {
                 var state = level.getBlockState(pos);
                 if (state.isAir() || state.is(Blocks.BEDROCK)) continue;
-                if (level.destroyBlock(pos, true, player)) broken++;
+                if (level.destroyBlock(pos, true, player)) {
+                    broken++;
+                    if (baseTargets.contains(pos)) baseBroken++;
+                }
             }
         } finally {
             player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
@@ -520,14 +561,19 @@ public final class ForgedActiveSkills {
                 : (depthDirection.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST);
         Direction up = depthDirection.getAxis() == Direction.Axis.Y ? Direction.SOUTH : Direction.UP;
 
+        boolean doubled = DoubleTriggerRuntime.rollActive(player, tool);
+        int effectiveDepth = doubled ? depth * 2 : depth;
         int w0 = -(width / 2);
         int h0 = -(height / 2);
         java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
-        for (int d = 0; d < depth; d++) {
+        java.util.LinkedHashSet<BlockPos> baseTargets = new java.util.LinkedHashSet<>();
+        for (int d = 0; d < effectiveDepth; d++) {
             BlockPos center = origin.relative(depthDirection, d);
             for (int w = 0; w < width; w++) {
                 for (int h = 0; h < height; h++) {
-                    targets.add(center.relative(right, w0 + w).relative(up, h0 + h));
+                    BlockPos targetPos = center.relative(right, w0 + w).relative(up, h0 + h);
+                    targets.add(targetPos);
+                    if (d < depth) baseTargets.add(targetPos);
                 }
             }
         }
@@ -556,7 +602,8 @@ public final class ForgedActiveSkills {
 
         if (broken > 0) {
             startCooldown(tool, player, key, cooldown);
-            int extraCost = (broken + 1) / 2;
+            // Bonus blocks from Double Trigger are free; durability is based on the normal cast only.
+            int extraCost = (baseBroken + 1) / 2;
             if (tool.isDamageableItem())
                 tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + extraCost));
         }
@@ -590,15 +637,22 @@ public final class ForgedActiveSkills {
         Direction right = (depthDirection.getAxis() == Direction.Axis.Y) ? Direction.EAST
                 : (depthDirection.getAxis() == Direction.Axis.X ? Direction.SOUTH : Direction.EAST);
 
+        boolean doubled = DoubleTriggerRuntime.rollActive(player, tool);
+        int penetrationDepth = doubled ? 30 : 15;
         java.util.LinkedHashSet<BlockPos> targets = new java.util.LinkedHashSet<>();
-        for (int depth = 0; depth < 15; depth++) {
+        java.util.LinkedHashSet<BlockPos> baseTargets = new java.util.LinkedHashSet<>();
+        for (int depth = 0; depth < penetrationDepth; depth++) {
             BlockPos center = origin.relative(depthDirection, depth);
-            for (int width = -1; width <= 1; width++) targets.add(center.relative(right, width));
+            for (int width = -1; width <= 1; width++) {
+                BlockPos targetPos = center.relative(right, width);
+                targets.add(targetPos);
+                if (depth < 15) baseTargets.add(targetPos);
+            }
         }
 
         // Visible laser from the player's eyes to the target/maximum range.
         Vec3 hitPoint = blockHit.getLocation();
-        double laserLength = Math.min(15.0D, startPos.distanceTo(hitPoint) + 14.0D);
+        double laserLength = Math.min((double) penetrationDepth, startPos.distanceTo(hitPoint) + penetrationDepth - 1.0D);
         for (double d = 0.5D; d <= laserLength; d += 0.35D) {
             Vec3 point = startPos.add(look.scale(d));
             level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
@@ -606,12 +660,16 @@ public final class ForgedActiveSkills {
         }
 
         int broken = 0;
+        int baseBroken = 0;
         player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
         try {
             for (BlockPos pos : targets) {
                 var state = level.getBlockState(pos);
                 if (state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) continue;
-                if (level.destroyBlock(pos, true, player)) broken++;
+                if (level.destroyBlock(pos, true, player)) {
+                    broken++;
+                    if (baseTargets.contains(pos)) baseBroken++;
+                }
             }
         } finally {
             player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
@@ -619,7 +677,7 @@ public final class ForgedActiveSkills {
 
         if (broken > 0) {
             startCooldown(tool, player, "LinearPenetration3x15", cooldown);
-            int extraCost = (broken + 1) / 2;
+            int extraCost = (baseBroken + 1) / 2;
             if (tool.isDamageableItem())
                 tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + extraCost));
         }
@@ -664,7 +722,7 @@ public final class ForgedActiveSkills {
         // Tier changes cooldown only: 30 / 15 / 8 seconds.
         for (net.minecraft.world.entity.item.ItemEntity drop : player.level().getEntitiesOfClass(
                 net.minecraft.world.entity.item.ItemEntity.class,
-                new AABB(centerPos).inflate(4.0D))) {
+                new AABB(centerPos).inflate(DoubleTriggerRuntime.rollActive(player, tool) ? 8.0D : 4.0D))) {
             drop.setPos(center.x, center.y, center.z);
             drop.setDeltaMovement(Vec3.ZERO);
         }
@@ -694,7 +752,13 @@ public final class ForgedActiveSkills {
         if (!ready(tool, player, "NatureGodBless", cooldown)) return;
 
         long now = player.level().getGameTime();
-        player.getPersistentData().putLong("ForgedNatureGodBlessFortuneUntil", now + 300L); // 15 sec
+        long fortuneUntil = now + 300L; // 15 sec
+        player.getPersistentData().putLong("ForgedNatureGodBlessFortuneUntil", fortuneUntil);
+        if (DoubleTriggerRuntime.rollActive(player, tool)) {
+            player.getPersistentData().putLong("ForgedNatureGodBlessDoubleUntil", fortuneUntil);
+        } else {
+            player.getPersistentData().remove("ForgedNatureGodBlessDoubleUntil");
+        }
         startCooldown(tool, player, "NatureGodBless", cooldown);
 
         // Show the vanilla potion-style HUD icon and swirling status particles
@@ -733,6 +797,7 @@ public final class ForgedActiveSkills {
             case II -> 9;
             case III -> 14;
         };
+        if (DoubleTriggerRuntime.rollActive(player, tool)) maxBlocks *= 2;
 
         Vec3 look = player.getLookAngle();
         boolean vertical = Math.abs(look.y) >= 0.65D;
@@ -780,6 +845,7 @@ public final class ForgedActiveSkills {
                         point.x, point.y, point.z, 4, 0.22D, 0.22D, 0.22D, 0.04D);
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
                         point.x, point.y, point.z, 2, 0.18D, 0.12D, 0.18D, 0.015D);
+                }
             }
         }
 
@@ -821,10 +887,13 @@ public final class ForgedActiveSkills {
         }
 
         int placed = 0;
-        // 3 blocks wide x 3 blocks high x 1 block thick.
-        for (int y = 0; y < 3; y++) {
-            for (int i = -1; i <= 1; i++) {
-                BlockPos sidePos = center.relative(side, i);
+        int thickness = DoubleTriggerRuntime.rollActive(player, tool) ? 2 : 1;
+        // Normal cast is 3x3x1. Double Trigger adds one free layer behind it.
+        for (int depth = 0; depth < thickness; depth++) {
+            BlockPos depthCenter = center.relative(forward, depth);
+            for (int y = 0; y < 3; y++) {
+                for (int i = -1; i <= 1; i++) {
+                BlockPos sidePos = depthCenter.relative(side, i);
                 BlockPos pos = new BlockPos(sidePos.getX(), baseY + y, sidePos.getZ());
                 // Break any block occupying the wall area first, then raise the wall.
                 // destroyBlock(..., true, player) makes the original block drop normally.
@@ -880,6 +949,7 @@ public final class ForgedActiveSkills {
             if (now >= divineUntil) {
                 player.getPersistentData().remove("ForgedDivineBeaconUntil");
                 player.getPersistentData().remove("ForgedDivineBeaconNextHit");
+                player.getPersistentData().remove("ForgedDivineBeaconDouble");
             } else {
                 Vec3 beamStart = player.getEyePosition();
                 Vec3 beamLook = player.getLookAngle().normalize();
@@ -899,7 +969,9 @@ public final class ForgedActiveSkills {
                     if (target != null) {
                         player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
                         try {
-                            target.hurt(player.damageSources().playerAttack(player), 12.0F);
+                            float beamDamage = player.getPersistentData().getBoolean("ForgedDivineBeaconDouble")
+                                    ? 24.0F : 12.0F;
+                            target.hurt(player.damageSources().playerAttack(player), beamDamage);
                             target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(), 80));
                         } finally {
                             player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
@@ -1123,7 +1195,7 @@ public final class ForgedActiveSkills {
             case FIREBALL_SHOOT -> "FireballShoot";
             case FRONT_DASH -> "FrontDash";
             case HARPOON_PULL -> "HarpoonPull";
-            case MOB_SWAP -> "MobSwap";
+
             case AIR_SLASH_RUPTURE -> "AirSlashRupture";
             case LAVA_WAVE -> "LavaWave";
             case STUN_TIME_STOP -> "StunTimeStop";
