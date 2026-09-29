@@ -62,6 +62,7 @@ public class ForgeMenu extends AbstractContainerMenu {
         addMetalSlot(2, 157, 57); addMetalSlot(3, 181, 57); addMetalSlot(4, 205, 57); addMetalSlot(5, 169, 81); addMetalSlot(6, 193, 81);
         addSlot(new Slot(forgeInventory, FUEL_SLOT, 256, 65) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgeIngredientResolver.isFuel(stack, owner.level()); }
+            @Override public void setChanged() { super.setChanged(); absorbFuel(); }
         });
         for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(playerInventory, col + row * 9 + 9, 75 + col * 18, 179 + row * 18));
         for (int col = 0; col < 9; col++) addSlot(new Slot(playerInventory, col, 75 + col * 18, 237));

@@ -75,8 +75,6 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         slot(g,x+156,y+56,COPPER); slot(g,x+180,y+56,COPPER); slot(g,x+204,y+56,COPPER);
         slot(g,x+168,y+80,COPPER); slot(g,x+192,y+80,COPPER);
         slot(g,x+255,y+64,0xFF777E86);
-        energyBar(g,x+22,y+51,Math.min(menu.fuel(),75));
-        energyBar(g,x+290,y+51,Math.max(0,menu.fuel()-75));
 
         // Thin forged divider and status/button bay.
         g.fill(x+24,y+123,x+296,y+124,STEEL_LIGHT);
@@ -89,6 +87,8 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         g.fill(x+63,y+171,x+257,y+252,PANEL);
         for(int r=0;r<3;r++) for(int c=0;c<9;c++) invSlot(g,x+74+c*18,y+178+r*18);
         for(int c=0;c<9;c++) invSlot(g,x+74+c*18,y+236);
+        energyBar(g,x+43,y+180,Math.min(menu.fuel(),75));
+        energyBar(g,x+269,y+180,Math.max(0,menu.fuel()-75));
     }
 
     private void forgedFrame(GuiGraphics g,int x,int y,int w,int h){

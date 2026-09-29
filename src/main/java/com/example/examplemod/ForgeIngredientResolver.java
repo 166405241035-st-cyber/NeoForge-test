@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 
 public final class ForgeIngredientResolver {
     public static final int MAX_FUEL = 150;
-    private static final int BURN_TICKS_PER_ENERGY = 80;
+    private static final int BURN_TICKS_PER_ENERGY = 200;
 
     private ForgeIngredientResolver() {
     }
@@ -62,7 +62,7 @@ public final class ForgeIngredientResolver {
 
     /**
      * Converts normal furnace burn time into Forge Energy.
-     * Coal = 1600 ticks -> 20 energy. Coal blocks and lava buckets cap at 150.
+     * Coal = 1600 ticks -> 8 energy; lava = 20000 ticks -> 100 energy.
      * Any vanilla/modded item accepted by the furnace fuel system is supported.
      */
     public static int fuelValue(ItemStack stack, Level level) {
