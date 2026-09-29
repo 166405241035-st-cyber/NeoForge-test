@@ -17,6 +17,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
     private String status = "Insert the required components";
 
     private static final int BG = 0xFF20252B, PANEL = 0xFF171B20, PANEL2 = 0xFF292F36;
+    private static final int STEEL_DARK = 0xFF0B0E12, STEEL = 0xFF3A424B, STEEL_LIGHT = 0xFF59636E;
     private static final int FRAME = 0xFF6F3D20, COPPER = 0xFFD27A34, TEXT = 0xFFF4E9D8;
     private static final int MUTED = 0xFFA8B0B8, READY = 0xFF77DC5B, WARN = 0xFFFFB24D;
 
@@ -55,33 +56,56 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
 
     @Override protected void renderBg(GuiGraphics g,float pt,int mx,int my) {
         int x=leftPos,y=topPos;
-        // outer frame
-        g.fill(x,y,x+320,y+262,0xFF101317);
-        g.fill(x+2,y+2,x+318,y+260,FRAME);
-        g.fill(x+6,y+6,x+314,y+256,BG);
+        // Forged-anvil frame: black shell, steel bevel, thin copper inlay.
+        forgedFrame(g,x,y,320,262);
 
-        // title
-        g.fill(x+12,y+10,x+308,y+42,PANEL);
-        g.fill(x+12,y+42,x+308,y+45,COPPER);
+        // Separate metal nameplate instead of a flat full-width header.
+        metalPlate(g,x+65,y+8,190,37);
+        g.fill(x+18,y+28,x+65,y+30,STEEL);
+        g.fill(x+255,y+28,x+302,y+30,STEEL);
+        g.fill(x+18,y+31,x+65,y+32,COPPER);
+        g.fill(x+255,y+31,x+302,y+32,COPPER);
 
-        // recipe area
+        // Open work surface: no bulky component cards.
         g.fill(x+16,y+51,x+304,y+119,PANEL);
+        g.fill(x+18,y+53,x+302,y+117,0xFF1D2228);
         slot(g,x+41,y+64,0xFF58A4EA);
         slot(g,x+102,y+64,0xFFB565DB);
         slot(g,x+156,y+56,COPPER); slot(g,x+180,y+56,COPPER); slot(g,x+204,y+56,COPPER);
         slot(g,x+168,y+80,COPPER); slot(g,x+192,y+80,COPPER);
         slot(g,x+255,y+64,0xFF777E86);
 
-        // status + button area
-        g.fill(x+16,y+124,x+304,y+162,PANEL);
-        g.fill(x+16,y+161,x+304,y+164,FRAME);
+        // Thin forged divider and status/button bay.
+        g.fill(x+24,y+123,x+296,y+124,STEEL_LIGHT);
+        g.fill(x+38,y+124,x+282,y+125,COPPER);
+        g.fill(x+28,y+128,x+292,y+160,PANEL);
 
-        // inventory
-        g.fill(x+62,y+169,x+258,y+255,PANEL);
+        // Inventory is inset like a recessed tool tray.
+        g.fill(x+58,y+166,x+262,y+256,STEEL_DARK);
+        g.fill(x+60,y+168,x+260,y+254,STEEL);
+        g.fill(x+63,y+171,x+257,y+252,PANEL);
         for(int r=0;r<3;r++) for(int c=0;c<9;c++) invSlot(g,x+74+c*18,y+178+r*18);
         for(int c=0;c<9;c++) invSlot(g,x+74+c*18,y+236);
     }
 
+    private void forgedFrame(GuiGraphics g,int x,int y,int w,int h){
+        g.fill(x,y,x+w,y+h,STEEL_DARK);
+        g.fill(x+3,y+3,x+w-3,y+h-3,STEEL_LIGHT);
+        g.fill(x+6,y+6,x+w-6,y+h-6,STEEL);
+        g.fill(x+8,y+8,x+w-8,y+h-8,COPPER);
+        g.fill(x+10,y+10,x+w-10,y+h-10,BG);
+        // reinforced corner plates
+        corner(g,x+3,y+3); corner(g,x+w-15,y+3);
+        corner(g,x+3,y+h-15); corner(g,x+w-15,y+h-15);
+    }
+    private void corner(GuiGraphics g,int x,int y){
+        g.fill(x,y,x+12,y+4,STEEL_LIGHT); g.fill(x,y,x+4,y+12,STEEL_LIGHT);
+        g.fill(x+2,y+2,x+10,y+3,COPPER); g.fill(x+2,y+2,x+3,y+10,COPPER);
+    }
+    private void metalPlate(GuiGraphics g,int x,int y,int w,int h){
+        g.fill(x,y,x+w,y+h,STEEL_DARK); g.fill(x+2,y+2,x+w-2,y+h-2,STEEL_LIGHT);
+        g.fill(x+4,y+4,x+w-4,y+h-4,PANEL); g.fill(x+5,y+h-6,x+w-5,y+h-4,COPPER);
+    }
     private void card(GuiGraphics g,int x,int y,int w,int h,int accent){
         g.fill(x,y,x+w,y+h,0xFF0F1216); g.fill(x+1,y+1,x+w-1,y+h-1,accent);
         g.fill(x+3,y+3,x+w-3,y+h-3,PANEL2);
@@ -97,7 +121,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
 
     @Override protected void renderLabels(GuiGraphics g,int mx,int my){
         g.drawCenteredString(font,"MONSTER FORGE",160,14,TEXT);
-        g.drawCenteredString(font,"Prepare components for forging",160,28,MUTED);
+        g.drawCenteredString(font,"Prepare components for forging",160,27,MUTED);
 
         g.drawCenteredString(font,"BLUEPRINT",51,47,0xFF9CCFFF);
         g.drawCenteredString(font,"MATERIAL",112,47,0xFFE2B6FF);
