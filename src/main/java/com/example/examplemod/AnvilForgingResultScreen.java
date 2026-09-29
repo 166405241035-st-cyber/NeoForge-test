@@ -39,36 +39,36 @@ public class AnvilForgingResultScreen extends Screen {
 
     @Override protected void init() {
         addRenderableWidget(Button.builder(Component.literal("Continue"), b -> { if (minecraft != null) minecraft.setScreen(null); })
-                .bounds(width/2-50,height/2+100,100,20).build());
+                .bounds(width/2-50,(height-Math.min(248,height-10))/2+Math.min(248,height-10)-27,100,20).build());
     }
 
     @Override public void renderBackground(GuiGraphics g,int x,int y,float p) {}
     @Override public void render(GuiGraphics g,int mx,int my,float p) {
-        int cx=width/2, top=height/2-125;
+        ForgingResultArt.Frame frame=ForgingResultArt.draw(g,font,width,height,"FINAL EQUIPMENT COMPLETE");
+        int cx=frame.center(), top=frame.top();
         int durability=ForgedEquipmentItem.calculateDurability(assembly.blueprint(),assembly.headMetal(),assembly.coreMetal(),assembly.rodMetal());
-        g.fill(cx-165,top,cx+165,height/2+135,0xD0000000);
-        g.drawCenteredString(font,"FINAL EQUIPMENT COMPLETE",cx,top+14,0xFFFFFF);
-        g.drawCenteredString(font,format(assembly.blueprint().name()),cx,top+32,0x55FFFF);
-        g.drawCenteredString(font,"Durability: "+durability+" / "+durability,cx,top+48,0xDDDDDD);
-        int y=top+68;
+        g.drawCenteredString(font,format(assembly.blueprint().name())+" EQUIPMENT",cx,top+43,0xFF80D5E5);
+        g.drawCenteredString(font,"DURABILITY  "+durability+" / "+durability,cx,top+61,ForgingResultArt.MUTED);
+        g.drawCenteredString(font,"FORGED EFFECTS",cx,top+75,ForgingResultArt.COPPER);
+        int y=top+96;
         for(AnvilAssemblyResult.FinalEffect effect:assembly.effects()){
-            g.drawCenteredString(font,effect.effect().displayName()+" "+effect.tier().name(),cx,y,0x55FF55);y+=16;
+            g.drawCenteredString(font,effect.effect().displayName()+" "+effect.tier().name(),cx,y,ForgingResultArt.GREAT);y+=14;
         }
-        y=Math.max(y+8,top+104);
-        g.drawCenteredString(font, "RANK: " + performanceRank, cx, y, 0xFF55FFFF);
-        y += 16;
-        y += 16;
-        y += 20;
+        g.drawCenteredString(font,"RANK  "+performanceRank,cx,top+141,0xFF80D5E5);
         if (blessing != null) {
-            g.drawCenteredString(font, "BLESSING: " + blessing.displayName(), cx, y, 0xFFFF55);
-            y += 18;
+            g.drawCenteredString(font,"BLESSING  "+blessing.displayName(),cx,top+155,ForgingResultArt.GOOD);
         } else if (curse != null) {
-            g.drawCenteredString(font, "CURSE: " + curse.displayName(), cx, y, 0xFFCC5577);
-            y += 18;
+            g.drawCenteredString(font,"CURSE  "+curse.displayName(),cx,top+155,ForgingResultArt.MISS);
         }
-        g.drawCenteredString(font,"SCORE: "+result.score(),cx,y,0xFFFF55);
-        g.drawCenteredString(font,String.format("ACCURACY: %.1f%%",result.accuracy()),cx,y+18,0xFFFFFF);
-        g.drawCenteredString(font,"MAX COMBO: x"+result.maxCombo(),cx,y+36,0xFFFFFF);
+        g.fill(frame.left()+20,top+173,frame.left()+frame.width()-20,top+174,ForgingResultArt.COPPER);
+        int cell=(frame.width()-24)/3,start=frame.left()+12;
+        String[] labels={"SCORE","ACCURACY","MAX COMBO"};
+        String[] values={Integer.toString(result.score()),String.format("%.1f%%",result.accuracy()),"x"+result.maxCombo()};
+        for(int i=0;i<3;i++){
+            int x=start+i*cell+cell/2;
+            g.drawCenteredString(font,labels[i],x,top+181,ForgingResultArt.MUTED);
+            g.drawCenteredString(font,values[i],x,top+197,i==0?ForgingResultArt.GOOD:ForgingResultArt.TEXT);
+        }
         super.render(g,mx,my,p);
     }
     private static String format(String value){String[] words=value.toLowerCase().split("_");StringBuilder b=new StringBuilder();for(String w:words){if(!b.isEmpty())b.append(' ');b.append(Character.toUpperCase(w.charAt(0))).append(w.substring(1));}return b.toString();}

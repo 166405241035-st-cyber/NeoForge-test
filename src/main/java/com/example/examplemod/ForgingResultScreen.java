@@ -29,7 +29,7 @@ public class ForgingResultScreen extends Screen {
     protected void init() {
         this.addRenderableWidget(Button.builder(Component.literal("Continue"), button -> {
             if (this.minecraft != null) this.minecraft.setScreen(null);
-        }).bounds(this.width / 2 - 50, this.height / 2 + 95, 100, 20).build());
+        }).bounds(this.width / 2 - 50, (height - Math.min(248, height - 10)) / 2 + Math.min(248, height - 10) - 27, 100, 20).build());
     }
 
     @Override
@@ -38,35 +38,14 @@ public class ForgingResultScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        int centerX = this.width / 2;
-        int top = this.height / 2 - 125;
-        int left = centerX - 155;
-        int right = centerX + 155;
-        int bottom = this.height / 2 + 130;
-
-        guiGraphics.fill(left, top, right, bottom, 0xD0000000);
-        guiGraphics.drawCenteredString(this.font, "FORGING COMPLETE", centerX, top + 14, 0xFFFFFF);
-
+        ForgingResultArt.Frame frame = ForgingResultArt.draw(guiGraphics, font, width, height, "FORGING COMPLETE");
         if (headResult != null) {
-            guiGraphics.drawCenteredString(this.font,
+            ForgingResultArt.detail(guiGraphics, font, frame,
                     headResult.metal().displayName() + " " + formatName(headResult.blueprint().name()) + " Head",
-                    centerX, top + 34, 0x55FFFF);
-            guiGraphics.drawCenteredString(this.font,
-                    "Effect: " + headResult.effect().displayName() + " " + roman(headResult.tier()),
-                    centerX, top + 50, 0xAAFF55);
-            guiGraphics.drawCenteredString(this.font,
-                    "Source: " + formatName(headResult.monsterMaterial().name()),
-                    centerX, top + 66, 0xBBBBBB);
+                    headResult.effect().displayName() + " " + roman(headResult.tier()),
+                    "Source: " + formatName(headResult.monsterMaterial().name()));
         }
-
-        int statsTop = headResult == null ? top + 42 : top + 88;
-        guiGraphics.drawCenteredString(this.font, "SCORE: " + result.score(), centerX, statsTop, 0xFFFF55);
-        guiGraphics.drawCenteredString(this.font, String.format("ACCURACY: %.1f%%", result.accuracy()), centerX, statsTop + 18, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, "MAX COMBO: x" + result.maxCombo(), centerX, statsTop + 36, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, "PERFECT: " + result.perfectCount(), centerX, statsTop + 60, 0x55FF55);
-        guiGraphics.drawCenteredString(this.font, "GREAT: " + result.greatCount(), centerX, statsTop + 76, 0xAAFF55);
-        guiGraphics.drawCenteredString(this.font, "GOOD: " + result.goodCount(), centerX, statsTop + 92, 0xFFFF55);
-        guiGraphics.drawCenteredString(this.font, "MISS: " + result.missCount(), centerX, statsTop + 108, 0xFF5555);
+        ForgingResultArt.score(guiGraphics, font, frame, result);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 

@@ -25,28 +25,19 @@ public class RodForgingResultScreen extends Screen {
     protected void init() {
         addRenderableWidget(Button.builder(Component.literal("Continue"), button -> {
             if (minecraft != null) minecraft.setScreen(null);
-        }).bounds(width / 2 - 50, height / 2 + 95, 100, 20).build());
+        }).bounds(width / 2 - 50, ((height - Math.min(248, height - 10)) / 2 + Math.min(248, height - 10) - 27), 100, 20).build());
     }
 
     @Override public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        int centerX = width / 2;
-        int top = height / 2 - 125;
-        guiGraphics.fill(centerX - 155, top, centerX + 155, height / 2 + 130, 0xD0000000);
-        guiGraphics.drawCenteredString(font, "ROD FORGING COMPLETE", centerX, top + 14, 0xFFFFFF);
-        guiGraphics.drawCenteredString(font, rodResult.metal().displayName() + " Forged Rod", centerX, top + 34, 0x55FFFF);
-        guiGraphics.drawCenteredString(font, "Effect " + rodResult.tier().name(), centerX, top + 50, 0x55FFFF);
-        guiGraphics.drawCenteredString(font, "Source: " + formatName(rodResult.monsterMaterial().name()), centerX, top + 66, 0xBBBBBB);
-        int statsTop = top + 88;
-        guiGraphics.drawCenteredString(font, "SCORE: " + result.score(), centerX, statsTop, 0xFFFF55);
-        guiGraphics.drawCenteredString(font, String.format("ACCURACY: %.1f%%", result.accuracy()), centerX, statsTop + 18, 0xFFFFFF);
-        guiGraphics.drawCenteredString(font, "MAX COMBO: x" + result.maxCombo(), centerX, statsTop + 36, 0xFFFFFF);
-        guiGraphics.drawCenteredString(font, "PERFECT: " + result.perfectCount(), centerX, statsTop + 60, 0x55FF55);
-        guiGraphics.drawCenteredString(font, "GREAT: " + result.greatCount(), centerX, statsTop + 76, 0xAAFF55);
-        guiGraphics.drawCenteredString(font, "GOOD: " + result.goodCount(), centerX, statsTop + 92, 0xFFFF55);
-        guiGraphics.drawCenteredString(font, "MISS: " + result.missCount(), centerX, statsTop + 108, 0xFF5555);
+        ForgingResultArt.Frame frame = ForgingResultArt.draw(guiGraphics, font, width, height, "ROD FORGING COMPLETE");
+        ForgingResultArt.detail(guiGraphics, font, frame,
+                rodResult.metal().displayName() + " Forged Rod",
+                "Effect " + rodResult.tier().name(),
+                "Source: " + formatName(rodResult.monsterMaterial().name()));
+        ForgingResultArt.score(guiGraphics, font, frame, result);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
