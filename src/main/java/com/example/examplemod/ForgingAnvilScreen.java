@@ -53,9 +53,6 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
 
         // component assembly chamber
         g.fill(x+22,y+51,x+282,y+119,PANEL);
-        card(g,x+61,y+55,48,48,0xFFC97A38);
-        card(g,x+136,y+55,48,48,0xFF4D95C8);
-        card(g,x+211,y+55,48,48,0xFF8B56B0);
         slot(g,x+75,y+66,0xFFE08A42); slot(g,x+150,y+66,0xFF64B5E8); slot(g,x+225,y+66,0xFFA56BCB);
 
         // connector lines toward final equipment
