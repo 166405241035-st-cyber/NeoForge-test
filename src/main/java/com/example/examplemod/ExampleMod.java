@@ -3,6 +3,7 @@ package com.example.examplemod;
 import com.example.examplemod.block.*;
 import com.example.examplemod.entity.*;
 import com.example.examplemod.item.*;
+import com.example.examplemod.guide.ForgingGuideItem;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
 import com.example.examplemod.skill.curse.BerserkerMobEffect;
@@ -87,6 +88,7 @@ public class ExampleMod {
 
     public static final DeferredItem<Item> CORE_BLUEPRINT = ITEMS.registerSimpleItem("coreblueprint", new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> ROD_BLUEPRINT = ITEMS.registerSimpleItem("rodeblueprint", new Item.Properties().stacksTo(16));
+    public static final DeferredItem<ForgingGuideItem> FORGING_GUIDE = ITEMS.register("forging_guide", name -> new ForgingGuideItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> PICKAXE_HEAD_BLUEPRINT = ITEMS.registerSimpleItem("pickaxeheadblueprint", new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> AXE_HEAD_BLUEPRINT = ITEMS.registerSimpleItem("axeheadblueprint", new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> SWORD_HEAD_BLUEPRINT = ITEMS.registerSimpleItem("swordheadblueprint", new Item.Properties().stacksTo(16));
@@ -103,6 +105,7 @@ public class ExampleMod {
                 output.accept(FORGING_BLOCK_ITEM.get()); output.accept(FORGING_ANVIL_ITEM.get()); output.accept(EQUIPMENT_TEST_BLOCK_ITEM.get()); output.accept(BLESSING_CURSE_TEST_BLOCK_ITEM.get());
                 output.accept(SWORD_HEAD_BLUEPRINT.get()); output.accept(AXE_HEAD_BLUEPRINT.get()); output.accept(PICKAXE_HEAD_BLUEPRINT.get()); output.accept(SHOVEL_HEAD_BLUEPRINT.get()); output.accept(HOE_HEAD_BLUEPRINT.get());
                 output.accept(CORE_BLUEPRINT.get()); output.accept(ROD_BLUEPRINT.get());
+                output.accept(FORGING_GUIDE.get());
                 output.accept(FORGED_HEAD_ITEM.get()); output.accept(FORGED_CORE_ITEM.get()); output.accept(FORGED_ROD_ITEM.get()); output.accept(FORGED_EQUIPMENT_ITEM.get());
             }).build());
 

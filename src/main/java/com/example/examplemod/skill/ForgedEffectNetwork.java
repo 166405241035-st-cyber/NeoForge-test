@@ -6,6 +6,9 @@ import com.example.examplemod.entity.*;
 import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
+import com.example.examplemod.guide.ForgingGuideJournal;
+import com.example.examplemod.guide.ForgingGuideClientState;
+import net.minecraft.server.level.ServerPlayer;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -73,6 +76,22 @@ public final class ForgedEffectNetwork {
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
+    public record GuideRequestPayload() implements CustomPacketPayload {
+        public static final Type<GuideRequestPayload> TYPE =
+                new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "guide_request"));
+        public static final StreamCodec<ByteBuf, GuideRequestPayload> STREAM_CODEC =
+                StreamCodec.unit(new GuideRequestPayload());
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
+    public record GuideSnapshotPayload(String discoveries) implements CustomPacketPayload {
+        public static final Type<GuideSnapshotPayload> TYPE =
+                new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "guide_snapshot"));
+        public static final StreamCodec<ByteBuf, GuideSnapshotPayload> STREAM_CODEC =
+                ByteBufCodecs.STRING_UTF8.map(GuideSnapshotPayload::new, GuideSnapshotPayload::discoveries);
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
@@ -88,6 +107,14 @@ public final class ForgedEffectNetwork {
                         payload.selectedIndex(), payload.cooldownStates(), payload.readyAt(),
                         payload.slamUntil(), payload.aegisActive()))
         );
+        registrar.playToClient(GuideSnapshotPayload.TYPE, GuideSnapshotPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> ForgingGuideClientState.update(payload.discoveries())));
+        registrar.playToServer(GuideRequestPayload.TYPE, GuideRequestPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer player) {
+                        PacketDistributor.sendToPlayer(player, new GuideSnapshotPayload(ForgingGuideJournal.snapshot(player)));
+                    }
+                }));
         registrar.playToServer(
                 ForgingRewardPayload.TYPE,
                 ForgingRewardPayload.STREAM_CODEC,
@@ -106,6 +133,7 @@ public final class ForgedEffectNetwork {
                     if (!context.player().getInventory().add(reward)) {
                         context.player().drop(reward, false);
                     }
+                    ForgingGuideJournal.record(context.player(), stack);
                 })
         );
         registrar.playToServer(
@@ -135,6 +163,10 @@ public final class ForgedEffectNetwork {
         if (stack != null && !stack.isEmpty()) {
             PacketDistributor.sendToServer(new ForgingRewardPayload(stack.copy()));
         }
+    }
+
+    public static void requestGuide() {
+        PacketDistributor.sendToServer(new GuideRequestPayload());
     }
 
     public static void sendAction(int action) {
