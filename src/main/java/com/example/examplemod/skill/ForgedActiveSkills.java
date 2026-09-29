@@ -845,7 +845,6 @@ public final class ForgedActiveSkills {
                         point.x, point.y, point.z, 4, 0.22D, 0.22D, 0.22D, 0.04D);
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
                         point.x, point.y, point.z, 2, 0.18D, 0.12D, 0.18D, 0.015D);
-                }
             }
         }
 
@@ -911,6 +910,7 @@ public final class ForgedActiveSkills {
                             point.x, point.y + 0.15D, point.z, 2, 0.18D, 0.22D, 0.18D, 0.02D);
                 }
             }
+        }
         }
 
         if (placed == 0) return;
