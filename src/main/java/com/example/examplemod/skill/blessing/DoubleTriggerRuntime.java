@@ -32,7 +32,7 @@ public final class DoubleTriggerRuntime {
         return switch (effect) {
             // Active / repeatable actions.
             case HARPOON_PULL, COMBO_DETONATION, CRITICAL_BLAST, RIFT_TELEPORT_ATTACK,
-                 FIREBALL_SHOOT, LAVA_WAVE, BOOMERANG_WEAPON, POISON_GAS_CLOUD,
+                 FIREBALL_SHOOT, LAVA_WAVE, BOOMERANG_WEAPON,
                  GRAVATIONAL_SLAM, AIR_SLASH_RUPTURE, FRONT_DASH,
                  ROUGH_CLEAVE_3X3, TUNNEL_CHARGE_3X1, LINEAR_BLAST_1X5,
                  WIDE_EXCAVATION_4X4, LINEAR_PENETRATION_3X15,
@@ -48,7 +48,7 @@ public final class DoubleTriggerRuntime {
             // Timed/status/damage effects where replay is represented by doubled
             // duration, damage, healing, force, or another equivalent result.
             case CRIPPLING_STRIKE, SPINE_SPIKE, GRAVE_GRASP, WEB_TRAP,
-                 UNSTOPPABLE_KNOCKBACK, VAMPIRIC_VITALITY,
+                 UNSTOPPABLE_KNOCKBACK, VAMPIRIC_VITALITY, POISON_GAS_CLOUD,
                  WITHER_DRAIN, STUN_TIME_STOP, IRON_FORTRESS_GUARD,
                  LEVITATION_BLOW, STATIC_HOVER_DROP, MAGNETIC_CLUMPING,
                  EARTHY_SHOCKWAVE, ORGANIC_CATALYST -> DoubleTriggerType.DOUBLE_EFFECT;
