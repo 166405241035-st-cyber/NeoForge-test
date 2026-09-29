@@ -33,26 +33,26 @@ public class AnvilMenu extends AbstractContainerMenu {
         checkContainerSize(anvilInventory, ANVIL_SLOT_COUNT);
         anvilInventory.startOpen(playerInventory.player);
 
-        addSlot(new Slot(anvilInventory, HEAD_SLOT, 54, 58) {
+        addSlot(new Slot(anvilInventory, HEAD_SLOT, 76, 67) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgedHeadItem.readResult(stack) != null; }
             @Override public int getMaxStackSize() { return 1; }
         });
-        addSlot(new Slot(anvilInventory, CORE_SLOT, 109, 58) {
+        addSlot(new Slot(anvilInventory, CORE_SLOT, 151, 67) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgedCoreItem.readResult(stack) != null; }
             @Override public int getMaxStackSize() { return 1; }
         });
-        addSlot(new Slot(anvilInventory, ROD_SLOT, 164, 58) {
+        addSlot(new Slot(anvilInventory, ROD_SLOT, 226, 67) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgedRodItem.readResult(stack) != null; }
             @Override public int getMaxStackSize() { return 1; }
         });
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(playerInventory, col + row * 9 + 9, 37 + col * 18, 131 + row * 18));
+                addSlot(new Slot(playerInventory, col + row * 9 + 9, 72 + col * 18, 180 + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(playerInventory, col, 37 + col * 18, 189));
+            addSlot(new Slot(playerInventory, col, 72 + col * 18, 238));
         }
     }
 
