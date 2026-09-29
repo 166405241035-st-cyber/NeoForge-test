@@ -8,6 +8,7 @@ import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
 import com.example.examplemod.skill.blessing.ForgedBlessing;
 import com.example.examplemod.skill.blessing.ForgedBlessingRuntime;
+import com.example.examplemod.skill.blessing.DoubleTriggerRuntime;
 import com.example.examplemod.skill.curse.ForgedCurse;
 import com.example.examplemod.skill.curse.ForgedCurseRuntime;
 
@@ -185,6 +186,17 @@ public class ForgedEquipmentItem extends Item {
         projectile.setDeltaMovement(direction.scale(2.5D));
         level.addFreshEntity(projectile);
 
+        // Double Trigger creates one extra boomerang projectile from the same activation.
+        // The real item is consumed/removed only once, so there is no extra durability/item cost.
+        if (DoubleTriggerRuntime.rollActive(player, stack)) {
+            ForgedBoomerangEntity second = new ForgedBoomerangEntity(level, player, thrownStack, throwDamage);
+            Vec3 side = direction.cross(new Vec3(0.0D, 1.0D, 0.0D));
+            if (side.lengthSqr() > 0.0001D) side = side.normalize().scale(0.22D);
+            second.setPos(second.getX() + side.x, second.getY(), second.getZ() + side.z);
+            second.setDeltaMovement(direction.scale(2.5D));
+            level.addFreshEntity(second);
+        }
+
         if (!player.getAbilities().instabuild) stack.shrink(1);
     }
 
@@ -242,27 +254,32 @@ public class ForgedEquipmentItem extends Item {
                     EffectTier healingTier = ForgedEffectRuntime.tier(stack, ForgingEffect.HEALING_HARVEST);
                     if (healingTier != null) {
                         ForgedFarmingPlotData.get(serverLevel).set(
-                                context.getClickedPos(), ForgingEffect.HEALING_HARVEST, healingTier);
+                                context.getClickedPos(), ForgingEffect.HEALING_HARVEST, healingTier,
+                                ForgedBlessingRuntime.has(stack, ForgedBlessing.DOUBLE_TRIGGER));
                     }
                     EffectTier mutationTier = ForgedEffectRuntime.tier(stack, ForgingEffect.NETHER_MUTATION);
                     if (mutationTier != null) {
                         ForgedFarmingPlotData.get(serverLevel).set(
-                                context.getClickedPos(), ForgingEffect.NETHER_MUTATION, mutationTier);
+                                context.getClickedPos(), ForgingEffect.NETHER_MUTATION, mutationTier,
+                                ForgedBlessingRuntime.has(stack, ForgedBlessing.DOUBLE_TRIGGER));
                     }
                     EffectTier hyperGrowthTier = ForgedEffectRuntime.tier(stack, ForgingEffect.HYPER_GROWTH_SOIL);
                     if (hyperGrowthTier != null) {
                         ForgedFarmingPlotData.get(serverLevel).set(
-                                context.getClickedPos(), ForgingEffect.HYPER_GROWTH_SOIL, hyperGrowthTier);
+                                context.getClickedPos(), ForgingEffect.HYPER_GROWTH_SOIL, hyperGrowthTier,
+                                ForgedBlessingRuntime.has(stack, ForgedBlessing.DOUBLE_TRIGGER));
                     }
                     EffectTier autoChestTier = ForgedEffectRuntime.tier(stack, ForgingEffect.AUTO_CHEST_TRANSPORT);
                     if (autoChestTier != null) {
                         ForgedFarmingPlotData.get(serverLevel).set(
-                                context.getClickedPos(), ForgingEffect.AUTO_CHEST_TRANSPORT, autoChestTier);
+                                context.getClickedPos(), ForgingEffect.AUTO_CHEST_TRANSPORT, autoChestTier,
+                                ForgedBlessingRuntime.has(stack, ForgedBlessing.DOUBLE_TRIGGER));
                     }
                     EffectTier natureBlessTier = ForgedEffectRuntime.tier(stack, ForgingEffect.NATURE_GOD_BLESS);
                     if (natureBlessTier != null) {
                         ForgedFarmingPlotData.get(serverLevel).set(
-                                context.getClickedPos(), ForgingEffect.NATURE_GOD_BLESS, natureBlessTier);
+                                context.getClickedPos(), ForgingEffect.NATURE_GOD_BLESS, natureBlessTier,
+                                ForgedBlessingRuntime.has(stack, ForgedBlessing.DOUBLE_TRIGGER));
                     }
                 }
 
