@@ -84,7 +84,7 @@ public class RodTimingBarScreen extends Screen {
         ForgedRodResult rodResult = new ForgedRodResult(metal, monsterMaterial, tier);
         if (minecraft.player != null) {
             ItemStack stack = ForgedRodItem.create(rodResult);
-            if (!minecraft.player.getInventory().add(stack)) minecraft.player.drop(stack, false);
+            ForgedEffectNetwork.sendForgingReward(stack);
         }
         ForgingResult result = new ForgingResult(score, accuracy, maxCombo, perfectCount, greatCount, goodCount, missCount);
         minecraft.setScreen(new RodForgingResultScreen(result, rodResult));
