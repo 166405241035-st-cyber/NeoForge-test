@@ -67,7 +67,7 @@ public final class ForgeIngredientResolver {
      */
     public static int fuelValue(ItemStack stack, Level level) {
         if (stack == null || stack.isEmpty() || level == null) return 0;
-        int burnTicks = stack.getBurnTime(RecipeType.SMELTING, level.fuelValues());
+        int burnTicks = stack.getBurnTime(RecipeType.SMELTING);
         if (burnTicks <= 0) return 0;
         int energy = (burnTicks + BURN_TICKS_PER_ENERGY - 1) / BURN_TICKS_PER_ENERGY;
         return Math.max(1, Math.min(MAX_FUEL, energy));

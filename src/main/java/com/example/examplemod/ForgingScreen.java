@@ -37,6 +37,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
 
     private void startForge() {
         if (!menu.hasValidRecipe()) { status = missingRecipeMessage(); return; }
+        if (menu.fuel() < ForgeIngredientResolver.forgeCost(menu.selectedMetal())) { status = "Need " + ForgeIngredientResolver.forgeCost(menu.selectedMetal()) + " energy"; return; }
         ForgingBlueprintType blueprint = menu.selectedBlueprint();
         ForgingMetal metal = menu.selectedMetal();
         MonsterMaterial monster = menu.selectedMonster();
@@ -74,6 +75,8 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         slot(g,x+156,y+56,COPPER); slot(g,x+180,y+56,COPPER); slot(g,x+204,y+56,COPPER);
         slot(g,x+168,y+80,COPPER); slot(g,x+192,y+80,COPPER);
         slot(g,x+255,y+64,0xFF777E86);
+        energyBar(g,x+22,y+51,Math.min(menu.fuel(),75));
+        energyBar(g,x+290,y+51,Math.max(0,menu.fuel()-75));
 
         // Thin forged divider and status/button bay.
         g.fill(x+24,y+123,x+296,y+124,STEEL_LIGHT);
@@ -118,6 +121,12 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         g.fill(x,y,x+20,y+20,0xFF0D1014); g.fill(x+1,y+1,x+19,y+19,0xFF3B424B);
         g.fill(x+3,y+3,x+17,y+17,0xFF272D34);
     }
+    private void energyBar(GuiGraphics g,int x,int y,int amount) {
+        g.fill(x,y,x+8,y+69,STEEL_DARK);
+        g.fill(x+1,y+1,x+7,y+68,STEEL);
+        int height = amount * 65 / 75;
+        g.fill(x+2,y+67-height,x+6,y+67,0xFFFF9A39);
+    }
 
     @Override protected void renderLabels(GuiGraphics g,int mx,int my){
         g.drawCenteredString(font,"MONSTER FORGE",160,11,TEXT);
@@ -126,7 +135,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         g.drawCenteredString(font,"MATERIAL",112,47,0xFFE2B6FF);
         g.drawCenteredString(font,"METAL INGOTS",187,43,0xFFFFC27A);
         g.drawCenteredString(font,"FUEL",264,47,0xFFB5BAC0);
-        g.drawCenteredString(font,"RESERVED",264,93,0xFF70777E);
+        g.drawCenteredString(font,menu.fuel()+"/"+menu.maxFuel(),264,95,TEXT);
 
         boolean ready=menu.hasValidRecipe();
         if (ready) g.drawCenteredString(font,"RECIPE READY",160,125,READY);

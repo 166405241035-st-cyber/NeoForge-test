@@ -23,6 +23,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
@@ -48,9 +49,11 @@ public class ExampleMod {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MODID);
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, MODID);
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static final DeferredBlock<Block> FORGING_BLOCK = BLOCKS.register("forging_block", registryName -> new ForgingBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5F)));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ForgingBlockEntity>> FORGING_BLOCK_ENTITY = BLOCK_ENTITIES.register("forging_block", () -> BlockEntityType.Builder.of(ForgingBlockEntity::new, FORGING_BLOCK.get()).build(null));
     public static final DeferredItem<BlockItem> FORGING_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("forging_block", FORGING_BLOCK);
     public static final DeferredBlock<Block> FORGING_ANVIL = BLOCKS.register("forging_anvil", registryName -> new ForgingAnvilBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F)));
     public static final DeferredItem<BlockItem> FORGING_ANVIL_ITEM = ITEMS.registerSimpleBlockItem("forging_anvil", FORGING_ANVIL);
@@ -101,7 +104,7 @@ public class ExampleMod {
             }).build());
 
     public ExampleMod(IEventBus modEventBus, ModContainer modContainer) {
-        BLOCKS.register(modEventBus); ITEMS.register(modEventBus); MENUS.register(modEventBus); MOB_EFFECTS.register(modEventBus); ENTITY_TYPES.register(modEventBus); CREATIVE_MODE_TABS.register(modEventBus);
+        BLOCKS.register(modEventBus); ITEMS.register(modEventBus); MENUS.register(modEventBus); MOB_EFFECTS.register(modEventBus); ENTITY_TYPES.register(modEventBus); BLOCK_ENTITIES.register(modEventBus); CREATIVE_MODE_TABS.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, ForgedSkillConfig.SPEC, "examplemod-forged-skills.toml");
     }
 
