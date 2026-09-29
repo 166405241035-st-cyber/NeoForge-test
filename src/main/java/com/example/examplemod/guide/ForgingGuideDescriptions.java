@@ -4,108 +4,108 @@ import com.example.examplemod.skill.ForgingEffect;
 import com.example.examplemod.skill.blessing.ForgedBlessing;
 import com.example.examplemod.skill.curse.ForgedCurse;
 
-/** Short player-facing behavior summaries. Unlocked tiers are supplied by the journal. */
+/** Player-facing details for discovered skills, blessings, and curses. */
 public final class ForgingGuideDescriptions {
     private ForgingGuideDescriptions() {}
 
     public static String effect(ForgingEffect effect, int tier) {
         if (effect == ForgingEffect.FRENZY_DIGGING) {
             int bonus = tier == 1 ? 15 : tier == 2 ? 30 : 50;
-            return "ขุดต่อเนื่อง 5 บล็อกเพื่อเพิ่มความเร็วขุด " + bonus + "% หยุดขุดเกิน 5 วินาทีจะเริ่มนับใหม่";
+            return "Break 5 blocks in a row for +" + bonus + "% mining speed. The chain resets after 5 seconds idle.";
         }
         return switch (effect) {
-            case ZOMBIE_MINION_CALLING -> "โจมตีแล้วมีโอกาสเรียกซอมบี้มาช่วยต่อสู้";
-            case CRIPPLING_STRIKE -> "โจมตีแล้วมีโอกาสทำให้เป้าหมายเคลื่อนที่ช้าลง";
-            case SCAVENGER_DIG -> "ขุดแล้วมีโอกาสพบของเพิ่มเติมจากซากมอนสเตอร์";
-            case ROTTEN_COMPOST -> "ทำฟาร์มแล้วมีโอกาสได้ปุ๋ยจากเนื้อเน่า";
-            case UNREFINED_ORE_DISCOVERY -> "เก็บเกี่ยวแล้วมีโอกาสพบแร่ดิบ";
-            case SPINE_SPIKE -> "โจมตีแล้วสร้างหนามกระดูกใส่เป้าหมาย";
-            case GRAVE_GRASP -> "รั้งเป้าหมายให้ขยับได้ลำบากชั่วคราว";
-            case ROUGH_CLEAVE_3X3 -> "ใช้สกิลขุดพื้นที่ 3×3 ด้านหน้า";
-            case BONE_DUST_EXTRACT -> "ขุดแล้วมีโอกาสได้ผงกระดูก";
-            case ORGANIC_CATALYST -> "เร่งการเติบโตของพืชบริเวณที่เลือก";
-            case WEB_TRAP -> "โจมตีแล้วดักศัตรูด้วยใยแมงมุม";
-            case HARPOON_PULL -> "ใช้สกิลดึงเป้าหมายเข้ามา";
-            case STATIC_HOVER_DROP -> "หยุดการตกของตัวเองชั่วคราว";
-            case BLOCK_LEVITATION -> "ใช้สกิลสร้างสิ่งกีดขวางชั่วคราว";
-            case FLORA_AEGIS -> "ช่วยป้องกันพืชผลในแปลง";
-            case COMBO_DETONATION -> "โจมตีต่อเนื่องเพื่อปล่อยแรงระเบิด";
-            case CRITICAL_BLAST -> "โจมตีคริติคอลแล้วมีโอกาสเกิดระเบิด";
-            case TUNNEL_CHARGE_3X1 -> "ใช้สกิลเจาะทาง 3×1 ด้านหน้า";
-            case LINEAR_BLAST_1X5 -> "ใช้สกิลขุดเป็นเส้นตรง 1×5";
-            case EXPLOSIVE_TILLING -> "พรวนดินเป็นแนวด้วยแรงระเบิด";
-            case UNSTOPPABLE_KNOCKBACK -> "เพิ่มแรงผลักศัตรูเมื่อโจมตี";
-            case SLIME_TRAIL_STRIKE -> "โจมตีแล้วทิ้งร่องรอยสไลม์";
-            case MAGNETIC_CLUMPING -> "ดึงไอเท็มที่ตกอยู่เข้าหาตัว";
-            case EARTHY_SHOCKWAVE -> "สร้างคลื่นกระแทกจากพื้น";
-            case MOISTURE_RETAIN -> "ช่วยรักษาความชื้นของดินเพาะปลูก";
-            case MOB_SWAP -> "ใช้สกิลสลับตำแหน่งกับเป้าหมาย";
-            case RIFT_TELEPORT_ATTACK -> "โจมตีแล้วมีโอกาสย้ายตำแหน่งผ่านมิติ";
-            case VOID_VACUUM_PICK -> "เก็บไอเท็มจากการขุดเข้าสู่ตัว";
-            case LINE_BUILDER -> "ใช้สกิลวางบล็อกเป็นเส้น";
-            case POCKET_DIMENSION -> "เปิดพื้นที่เก็บของส่วนตัวด้วยสกิล";
-            case FIREBALL_SHOOT -> "ใช้สกิลยิงลูกไฟ";
-            case LAVA_WAVE -> "ปล่อยคลื่นลาวาไปด้านหน้า";
-            case THERMAL_CROP_BARRIER -> "ป้องกันแปลงปลูกด้วยความร้อน";
-            case AUTO_SMELT_MINING -> "หลอมผลผลิตจากการขุดโดยอัตโนมัติ";
-            case AEGIS_SHIELD -> "ใช้สกิลสร้างโล่ป้องกัน";
-            case VAMPIRIC_VITALITY -> "โจมตีแล้วมีโอกาสฟื้นฟูพลังชีวิต";
-            case AIR_SLASH_RUPTURE -> "ปล่อยคลื่นดาบจากอากาศ";
-            case SELF_REPAIRING -> "ซ่อมความทนทานของอุปกรณ์";
-            case HEALING_HARVEST -> "เก็บเกี่ยวแล้วมีโอกาสฟื้นฟูพลังชีวิต";
-            case WITHER_DRAIN -> "ดูดพลังชีวิตจากศัตรูที่ติด Wither";
-            case WITHER_CURSE_POWER -> "เพิ่มพลังโจมตีแลกกับผลเสียของ Wither";
-            case OBSIDIAN_BREAKER -> "ใช้สกิลทำลายบล็อกแข็งด้านหน้า";
-            case SOUL_SAND_EXTRACTION -> "ขุดแล้วมีโอกาสได้ทรายวิญญาณ";
-            case NETHER_MUTATION -> "ทำให้ผลผลิตในฟาร์มเปลี่ยนสภาพ";
-            case VELOCITY_STRIKE -> "ความเร็วเคลื่อนที่เพิ่มพลังโจมตี";
-            case BOOMERANG_WEAPON -> "ขว้างอาวุธให้ย้อนกลับมาหาตัว";
-            case AIRBORNE_MINING -> "ขุดได้เร็วขึ้นขณะลอยอยู่กลางอากาศ";
-            case FRONT_DASH -> "ใช้สกิลพุ่งตัวไปด้านหน้า";
-            case EXTENDED_REACH_TILLING -> "ใช้จอบพรวนดินได้ไกลขึ้น";
-            case POISON_GAS_CLOUD -> "สร้างกลุ่มก๊าซพิษใส่ศัตรู";
-            case STUN_TIME_STOP -> "ทำให้ศัตรูหยุดเคลื่อนไหวชั่วคราว";
-            case WIDE_EXCAVATION_4X4 -> "ใช้สกิลขุดพื้นที่กว้าง 4×4";
-            case LINEAR_PENETRATION_3X15 -> "ใช้สกิลเจาะแนวลึก 3×15";
-            case HYPER_GROWTH_SOIL -> "เร่งการเติบโตบนดินเพาะปลูก";
-            case IRON_FORTRESS_GUARD -> "เพิ่มการป้องกันขณะรับการโจมตี";
-            case LEVITATION_BLOW -> "โจมตีแล้วทำให้เป้าหมายลอยขึ้น";
-            case INTERNAL_STORAGE -> "เปิดที่เก็บของในอุปกรณ์";
-            case EARTHY_WALL_RISE -> "สร้างกำแพงจากพื้นดิน";
-            case AUTO_CHEST_TRANSPORT -> "ส่งผลผลิตไปยังหีบโดยอัตโนมัติ";
-            case DIVINE_BEACON_LIGHT -> "แสงศักดิ์สิทธิ์ช่วยผู้ถืออุปกรณ์";
-            case GRAVATIONAL_SLAM -> "กระแทกพื้นด้วยแรงโน้มถ่วง";
-            case ULTIMATE_LASER_BREAKER -> "ยิงลำแสงขุดบล็อกด้านหน้า";
-            case SKY_BRIDGE_WALK -> "สร้างทางเดินขณะเคลื่อนที่";
-            case NATURE_GOD_BLESS -> "เสริมผลของการเพาะปลูก";
+            case ZOMBIE_MINION_CALLING -> "Attacks may summon a zombie ally.";
+            case CRIPPLING_STRIKE -> "Attacks may slow the target.";
+            case SCAVENGER_DIG -> "Mining may uncover extra monster remains.";
+            case ROTTEN_COMPOST -> "Farming may produce compost from rotten flesh.";
+            case UNREFINED_ORE_DISCOVERY -> "Harvesting may reveal raw ore.";
+            case SPINE_SPIKE -> "Attacks send a bone spike at the target.";
+            case GRAVE_GRASP -> "Briefly restrains the target.";
+            case ROUGH_CLEAVE_3X3 -> "Active skill: break a 3x3 area ahead.";
+            case BONE_DUST_EXTRACT -> "Mining may yield bone meal.";
+            case ORGANIC_CATALYST -> "Speeds up nearby crop growth.";
+            case WEB_TRAP -> "Attacks can trap enemies in webs.";
+            case HARPOON_PULL -> "Active skill: pull a target closer.";
+            case STATIC_HOVER_DROP -> "Briefly suspends your fall.";
+            case BLOCK_LEVITATION -> "Active skill: raise a temporary barrier.";
+            case FLORA_AEGIS -> "Protects crops around you.";
+            case COMBO_DETONATION -> "Consecutive hits build up an explosion.";
+            case CRITICAL_BLAST -> "Critical hits may cause an explosion.";
+            case TUNNEL_CHARGE_3X1 -> "Active skill: carve a 3x1 tunnel.";
+            case LINEAR_BLAST_1X5 -> "Active skill: break a 1x5 line.";
+            case EXPLOSIVE_TILLING -> "Tills a line of soil with a blast.";
+            case UNSTOPPABLE_KNOCKBACK -> "Attacks push enemies farther away.";
+            case SLIME_TRAIL_STRIKE -> "Attacks leave a slime trail.";
+            case MAGNETIC_CLUMPING -> "Draws dropped items toward you.";
+            case EARTHY_SHOCKWAVE -> "Sends out a ground shockwave.";
+            case MOISTURE_RETAIN -> "Helps farmland stay hydrated.";
+            case MOB_SWAP -> "Active skill: swap places with a target.";
+            case RIFT_TELEPORT_ATTACK -> "Attacks may teleport through a rift.";
+            case VOID_VACUUM_PICK -> "Sends mined drops into your inventory.";
+            case LINE_BUILDER -> "Active skill: place blocks in a line.";
+            case POCKET_DIMENSION -> "Opens a personal storage space.";
+            case FIREBALL_SHOOT -> "Active skill: shoot a fireball.";
+            case LAVA_WAVE -> "Sends a wave of lava forward.";
+            case THERMAL_CROP_BARRIER -> "Guards farmland with heat.";
+            case AUTO_SMELT_MINING -> "Smelts mined drops automatically.";
+            case AEGIS_SHIELD -> "Active skill: raise a protective shield.";
+            case VAMPIRIC_VITALITY -> "Attacks may restore your health.";
+            case AIR_SLASH_RUPTURE -> "Releases a cutting air wave.";
+            case SELF_REPAIRING -> "Restores tool durability.";
+            case HEALING_HARVEST -> "Harvesting may restore health.";
+            case WITHER_DRAIN -> "Drains health from a Withered enemy.";
+            case WITHER_CURSE_POWER -> "Boosts damage at the cost of self-Wither.";
+            case OBSIDIAN_BREAKER -> "Active skill: destroy a tough block ahead.";
+            case SOUL_SAND_EXTRACTION -> "Mining may yield soul sand.";
+            case NETHER_MUTATION -> "Changes crops through Nether energy.";
+            case VELOCITY_STRIKE -> "Movement speed increases attack power.";
+            case BOOMERANG_WEAPON -> "Throw the weapon and catch it on return.";
+            case AIRBORNE_MINING -> "Mine faster while airborne.";
+            case FRONT_DASH -> "Active skill: dash forward.";
+            case EXTENDED_REACH_TILLING -> "Till farmland from farther away.";
+            case POISON_GAS_CLOUD -> "Creates a cloud of poison gas.";
+            case STUN_TIME_STOP -> "Briefly stops an enemy's movement.";
+            case WIDE_EXCAVATION_4X4 -> "Active skill: excavate a 4x4 area.";
+            case LINEAR_PENETRATION_3X15 -> "Active skill: bore through a 3x15 line.";
+            case HYPER_GROWTH_SOIL -> "Accelerates growth on farmland.";
+            case IRON_FORTRESS_GUARD -> "Adds protection when taking a hit.";
+            case LEVITATION_BLOW -> "Attacks lift the target into the air.";
+            case INTERNAL_STORAGE -> "Opens storage inside the tool.";
+            case EARTHY_WALL_RISE -> "Raises a wall from the ground.";
+            case AUTO_CHEST_TRANSPORT -> "Sends harvested items to a chest.";
+            case DIVINE_BEACON_LIGHT -> "A holy light aids the wielder.";
+            case GRAVATIONAL_SLAM -> "Slams the ground with gravity.";
+            case ULTIMATE_LASER_BREAKER -> "Fires a mining beam ahead.";
+            case SKY_BRIDGE_WALK -> "Creates a path as you move.";
+            case NATURE_GOD_BLESS -> "Enhances farming results.";
             case FRENZY_DIGGING -> throw new IllegalStateException("Handled above");
         };
     }
 
     public static String blessing(ForgedBlessing blessing) {
         return switch (blessing) {
-            case DOUBLE_TRIGGER -> "สกิลที่รองรับมีโอกาส 20% เกิดผลซ้ำหนึ่งครั้ง โดยไม่หักคูลดาวน์หรือความทนทานซ้ำ การโจมตีต้องชาร์จเต็ม";
-            case POWER_STRIKE -> "การโจมตีด้วยอุปกรณ์ชิ้นนี้แรงขึ้น 20%";
-            case HUNTERS_FORTUNE -> "ดรอปของจากมอนสเตอร์เพิ่มอีกหนึ่งชุด";
-            case LIFE_STEAL -> "โจมตีแล้วมีโอกาส 20% ฟื้นฟู 2 หน่วยพลังชีวิต";
-            case DURABILITY_GUARD -> "มีโอกาส 25% ที่การใช้หนึ่งครั้งจะไม่เสียความทนทาน";
-            case VEIN_BREAKER -> "ขุดแร่ชนิดเดียวกันที่ติดกันได้เพิ่มสูงสุด 8 บล็อก";
-            case MINING_HASTE -> "เพิ่มความเร็วขุด 50% ขณะถืออุปกรณ์";
-            case EXPERIENCE_BOOST -> "ค่าประสบการณ์จากมอนสเตอร์เพิ่ม 60%";
-            case DIVINE_EXECUTION -> "โจมตีชาร์จเต็มมีโอกาส 5% กำจัดมอนสเตอร์ทันที";
+            case DOUBLE_TRIGGER -> "Supported skills have a 20% chance to trigger twice. No extra cooldown or durability cost. Melee hits must be fully charged.";
+            case POWER_STRIKE -> "Attacks with this tool deal 20% more damage.";
+            case HUNTERS_FORTUNE -> "Duplicates the monster's actual drops.";
+            case LIFE_STEAL -> "Attacks have a 20% chance to restore 2 health.";
+            case DURABILITY_GUARD -> "25% chance to avoid one durability cost.";
+            case VEIN_BREAKER -> "Breaks up to 8 connected blocks of the same ore.";
+            case MINING_HASTE -> "+50% mining speed while holding this tool.";
+            case EXPERIENCE_BOOST -> "+60% experience from defeated monsters.";
+            case DIVINE_EXECUTION -> "Fully charged attacks have a 5% chance to execute a monster.";
         };
     }
 
     public static String curse(ForgedCurse curse) {
         return switch (curse) {
-            case TALKATIVE_BLADE -> "อาวุธพูดกับผู้ถือจากช่องเก็บของ และอาจแกล้งหายไปชั่วคราว";
-            case BERSERKER -> "เมื่อเลือดต่ำกว่าครึ่ง: โจมตีแรงขึ้น 50% เร็วขึ้น 30% แต่รับความเสียหายเพิ่ม 30%";
-            case GAMBLERS_STRIKE -> "โจมตีมีโอกาสเท่ากันระหว่างแรงขึ้นสองเท่ากับไม่สร้างความเสียหาย";
-            case POWER_ERASURE -> "ปิดการทำงานของสกิลหลักบนอุปกรณ์ชิ้นนี้โดยทั่วไป";
-            case LIFE_EXCHANGE -> "โจมตีมอนสเตอร์มีโอกาส 5% สลับพลังชีวิตปัจจุบันกับเป้าหมาย";
-            case VAMPIRE_BLADE -> "โจมตีฟื้นฟู 20% ของความเสียหาย แต่การฟื้นฟูตามธรรมชาติลดครึ่งหนึ่ง";
-            case LAST_STAND -> "เมื่อเลือดเหลือไม่เกิน 2 หน่วย การโจมตีครั้งถัดไปแรงขึ้น 3 เท่า คูลดาวน์ 120 วินาที";
-            case CRITICAL_FAILURE -> "โจมตีปกติแรงเหลือครึ่งเดียว แต่คริติคอลแรงขึ้น 75%";
+            case TALKATIVE_BLADE -> "The blade talks from your inventory and may briefly vanish as a prank.";
+            case BERSERKER -> "Below half health: +50% attack damage and +30% attack speed, but +30% incoming damage.";
+            case GAMBLERS_STRIKE -> "Each hit either deals double damage or no damage, at equal odds.";
+            case POWER_ERASURE -> "Normally suppresses the main skills on this piece of gear.";
+            case LIFE_EXCHANGE -> "5% chance on a monster hit to swap your current health with the target's.";
+            case VAMPIRE_BLADE -> "Heal for 20% of damage dealt, but natural regeneration is halved.";
+            case LAST_STAND -> "At 2 health or less, the next attack deals 3x damage. 120-second cooldown.";
+            case CRITICAL_FAILURE -> "Normal attacks deal half damage, while critical attacks gain 75%.";
         };
     }
 }

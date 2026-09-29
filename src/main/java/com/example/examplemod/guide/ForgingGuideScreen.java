@@ -16,15 +16,16 @@ import org.lwjgl.glfw.GLFW;
 
 /** Twelve-page interactive guide. Pages 10-12 show only the player's discovered entries. */
 public final class ForgingGuideScreen extends Screen {
-    private static final int W = 380, H = 266, INK = 0xFF302920, MUTED = 0xFF665640;
+    private static final int W = 380, H = 266, INK = 0xFF241F1A, MUTED = 0xFF534635;
     private static final int GOLD = 0xFF995E1C, GREEN = 0xFF298150, RED = 0xFF9A4336;
+    private static final float TITLE_SCALE = 1.5F, TEXT_SCALE = 1.25F, ICON_SCALE = 1.65F;
     private static final Item[] MATERIALS = {Items.ROTTEN_FLESH, Items.BONE, Items.STRING, Items.GUNPOWDER,
             Items.SLIME_BALL, Items.ENDER_PEARL, Items.BLAZE_ROD, Items.GHAST_TEAR,
             Items.WITHER_SKELETON_SKULL, Items.PHANTOM_MEMBRANE, Items.DRAGON_BREATH,
             Items.SHULKER_SHELL, Items.NETHER_STAR};
-    private static final String[] MATERIAL_NAMES = {"เนื้อเน่า", "กระดูก", "เส้นใย", "ดินปืน", "สไลม์",
-            "เอนเดอร์", "แท่งเบลซ", "น้ำตาแกสต์", "หัววิเทอร์", "เยื่อแฟนทอม",
-            "ลมหายใจมังกร", "เปลือกชัลเกอร์", "ดาวเนเธอร์"};
+    private static final String[] MATERIAL_NAMES = {"Rotten Flesh", "Bone", "String", "Gunpowder", "Slime Ball",
+            "Ender Pearl", "Blaze Rod", "Ghast Tear", "Wither Skull", "Phantom Mem.",
+            "Dragon Breath", "Shulker Shell", "Nether Star"};
     private static final String[] BLUEPRINT_NAMES = {"Sword", "Axe", "Pickaxe", "Shovel", "Hoe", "Core", "Rod"};
     private static final Item[] BLUEPRINT_BASES = {Items.WOODEN_SWORD, Items.WOODEN_AXE, Items.WOODEN_PICKAXE,
             Items.WOODEN_SHOVEL, Items.WOODEN_HOE, null, Items.STICK};
@@ -32,7 +33,7 @@ public final class ForgingGuideScreen extends Screen {
     private int left, top;
     private float scale = 1.0F;
 
-    private ForgingGuideScreen() { super(Component.literal("คู่มือการตีเหล็ก")); }
+    private ForgingGuideScreen() { super(Component.literal("Forging Guide")); }
 
     public static void open() {
         ForgingGuideClientState.clear();
@@ -47,7 +48,7 @@ public final class ForgingGuideScreen extends Screen {
     }
 
     @Override public void renderBackground(GuiGraphics g, int mx, int my, float partial) {
-        g.fill(0, 0, width, height, 0xAA14181B);
+        g.fill(0, 0, width, height, 0x7714181B);
     }
 
     @Override public void render(GuiGraphics g, int mx, int my, float partial) {
@@ -55,9 +56,9 @@ public final class ForgingGuideScreen extends Screen {
         g.pose().pushPose();
         g.pose().translate(left * (1.0F - scale), top * (1.0F - scale), 0);
         g.pose().scale(scale, scale, 1);
-        g.fill(left, top, left + W, top + H, 0xFF3C3229);
-        g.fill(left + 5, top + 5, left + W - 5, top + H - 5, 0xFFE6D7B8);
-        g.fill(left + 11, top + 11, left + W - 11, top + H - 11, 0xFFEEDDCA);
+        g.fill(left, top, left + W, top + H, 0xFF6D5133);
+        g.fill(left + 4, top + 4, left + W - 4, top + H - 4, 0xFFFFF8E9);
+        g.fill(left + 9, top + 9, left + W - 9, top + H - 9, 0xFFF9EED6);
         g.fill(left + 17, top + 17, left + 42, top + 39, 0xFF4B3828);
         g.drawCenteredString(font, Integer.toString(page), left + 29, top + 24, 0xFFEEE0C2);
         line(g, 16, 48, W - 16, 50, GOLD);
@@ -78,68 +79,89 @@ public final class ForgingGuideScreen extends Screen {
         }
         button(g, 17, H - 20, 45, 19, "<", page > 1);
         button(g, W - 62, H - 20, 45, 19, ">", page < 12);
-        g.drawCenteredString(font, page + " / 12", left + W / 2, top + H - 15, MUTED);
+        centered(g, W / 2, H - 17, page + " / 12", MUTED, TEXT_SCALE);
         g.pose().popPose();
-        super.render(g, mx, my, partial);
+        // No widgets are registered. Screen.render would paint another dim background over the book.
     }
 
-    private void title(GuiGraphics g, String text) { g.drawString(font, text, left + 51, top + 24, INK, false); }
+    private void drawScaled(GuiGraphics g, String text, int x, int y, int color, float size) {
+        g.pose().pushPose();
+        g.pose().translate(left + x, top + y, 0);
+        g.pose().scale(size, size, 1.0F);
+        g.drawString(font, text, 0, 0, color, false);
+        g.pose().popPose();
+    }
+    private void centered(GuiGraphics g, int x, int y, String text, int color, float size) {
+        drawScaled(g, text, x - Math.round(font.width(text) * size / 2.0F), y, color, size);
+    }
+    private void title(GuiGraphics g, String text) { drawScaled(g, text, 51, 20, INK, TITLE_SCALE); }
     private void label(GuiGraphics g, int x, int y, String text, int color) {
-        g.drawString(font, text, left + x, top + y, color, false);
+        drawScaled(g, text, x, y, color, TEXT_SCALE);
     }
     private void line(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
         g.fill(left + x1, top + y1, left + x2, top + y2, color);
     }
-    private void item(GuiGraphics g, Item item, int x, int y) { if (item != null) g.renderItem(new ItemStack(item), left + x, top + y); }
+    private void item(GuiGraphics g, Item item, int x, int y) {
+        if (item == null) return;
+        g.pose().pushPose();
+        g.pose().translate(left + x, top + y, 0);
+        g.pose().scale(ICON_SCALE, ICON_SCALE, 1.0F);
+        g.renderItem(new ItemStack(item), 0, 0);
+        g.pose().popPose();
+    }
     private void button(GuiGraphics g, int x, int y, int w, int h, String text, boolean enabled) {
         g.fill(left + x, top + y, left + x + w, top + y + h, enabled ? 0xFFBAA17B : 0xFFD3C3A5);
-        g.drawCenteredString(font, text, left + x + w / 2, top + y + 5, enabled ? INK : MUTED);
+        centered(g, x + w / 2, y + 3, text, enabled ? INK : MUTED, TEXT_SCALE);
     }
     private int wrap(GuiGraphics g, String content, int x, int y, int maxWidth, int color) {
-        for (FormattedCharSequence row : font.split(Component.literal(content), maxWidth)) {
-            g.drawString(font, row, left + x, top + y, color, false);
-            y += 13;
+        for (FormattedCharSequence row : font.split(Component.literal(content), Math.max(1, (int)(maxWidth / TEXT_SCALE)))) {
+            g.pose().pushPose();
+            g.pose().translate(left + x, top + y, 0);
+            g.pose().scale(TEXT_SCALE, TEXT_SCALE, 1.0F);
+            g.drawString(font, row, 0, 0, color, false);
+            g.pose().popPose();
+            y += 16;
         }
         return y;
     }
 
     private void cover(GuiGraphics g) {
-        title(g, "คู่มือการตีเหล็ก");
-        item(g, ExampleMod.FORGING_BLOCK_ITEM.get(), 91, 85);
-        item(g, ExampleMod.FORGING_ANVIL_ITEM.get(), 154, 85);
-        item(g, ExampleMod.FORGED_EQUIPMENT_ITEM.get(), 218, 85);
-        label(g, 34, 118, "ตีชิ้นส่วน • ประกอบอุปกรณ์ • ค้นพบสกิล", INK);
-        wrap(g, "เปิดอ่านสูตรคราฟต์ วิธีตี และบันทึกสิ่งที่คุณค้นพบ", 34, 148, 310, MUTED);
-        label(g, 34, 197, "คราฟต์: หนังสือ + กระดาษ + ถุงหมึก", GOLD);
+        title(g, "Forging Guide");
+        item(g, ExampleMod.FORGING_BLOCK_ITEM.get(), 90, 77);
+        item(g, ExampleMod.FORGING_ANVIL_ITEM.get(), 168, 77);
+        item(g, ExampleMod.FORGED_EQUIPMENT_ITEM.get(), 246, 77);
+        label(g, 37, 119, "Forge parts > Assemble gear > Find skills", INK);
+        wrap(g, "Recipes, forging steps, and your personal discovery journal.", 37, 148, 310, MUTED);
+        label(g, 37, 204, "Craft: Book + Paper + Ink Sac", GOLD);
     }
     private void overview(GuiGraphics g) {
-        title(g, "เริ่มตีอุปกรณ์");
-        item(g, ExampleMod.FORGING_BLOCK_ITEM.get(), 28, 75);
-        wrap(g, "1. ใส่ Blueprint + วัตถุดิบมอนสเตอร์ + โลหะ 5 ชิ้น + เชื้อเพลิงในเตา", 54, 74, 292, INK);
-        item(g, ExampleMod.FORGED_HEAD_ITEM.get(), 28, 117);
-        wrap(g, "2. เล่นมินิเกมเพื่อรับหัว, Core และด้าม โดย Blueprint ใช้ซ้ำได้", 54, 115, 292, INK);
-        item(g, ExampleMod.FORGING_ANVIL_ITEM.get(), 28, 162);
-        wrap(g, "3. นำทั้งสามชิ้นไปประกอบที่ทั่ง แล้วเล่นมินิเกมจังหวะเพื่อรับพรหรือคำสาป", 54, 159, 292, INK);
+        title(g, "Getting Started");
+        item(g, ExampleMod.FORGING_BLOCK_ITEM.get(), 25, 67);
+        wrap(g, "1. Add a Blueprint, monster drop, 5 matching metal items, and fuel to the Forge.", 66, 65, 284, INK);
+        item(g, ExampleMod.FORGED_HEAD_ITEM.get(), 25, 125);
+        wrap(g, "2. Play the timing game to make a Head, Core, and Rod. Blueprints are reusable.", 66, 123, 284, INK);
+        item(g, ExampleMod.FORGING_ANVIL_ITEM.get(), 25, 183);
+        wrap(g, "3. Assemble all three parts at the Anvil. The rhythm game awards a Blessing or Curse.", 66, 181, 284, INK);
     }
     private void grid(GuiGraphics g, Item[] cells, int x, int y) {
         for (int i = 0; i < 9; i++) {
-            int bx = x + (i % 3) * 22, by = y + (i / 3) * 22;
-            g.fill(left + bx, top + by, left + bx + 20, top + by + 20, 0xFFBDA985);
-            if (cells[i] != null) item(g, cells[i], bx + 2, by + 2);
+            int bx = x + (i % 3) * 31, by = y + (i / 3) * 31;
+            g.fill(left + bx, top + by, left + bx + 29, top + by + 29, 0xFFE3D0AB);
+            if (cells[i] != null) item(g, cells[i], bx + 1, by + 1);
         }
     }
     private void blockRecipes(GuiGraphics g) {
-        title(g, "สูตรคราฟต์บล็อก");
-        button(g, 23, 57, 116, 19, blockRecipe == 0 ? "[ เตาหลอม ]" : "เตาหลอม", true);
-        button(g, 145, 57, 116, 19, blockRecipe == 1 ? "[ ทั่งตีเหล็ก ]" : "ทั่งตีเหล็ก", true);
+        title(g, "Crafting Stations");
+        button(g, 23, 57, 116, 22, blockRecipe == 0 ? "[ Forge ]" : "Forge", true);
+        button(g, 145, 57, 116, 22, blockRecipe == 1 ? "[ Anvil ]" : "Anvil", true);
         Item brick = Items.STONE_BRICKS, iron = Items.IRON_INGOT;
         Item[] cells = blockRecipe == 0
                 ? new Item[]{brick, iron, brick, iron, Items.FURNACE, iron, brick, iron, brick}
                 : new Item[]{iron, iron, iron, null, iron, null, brick, iron, brick};
-        grid(g, cells, 56, 98);
-        item(g, blockRecipe == 0 ? ExampleMod.FORGING_BLOCK_ITEM.get() : ExampleMod.FORGING_ANVIL_ITEM.get(), 242, 123);
-        label(g, 155, 123, "→", GOLD);
-        wrap(g, blockRecipe == 0 ? "เตาหลอม: ใช้ตีหัว Core และด้าม" : "ทั่ง: ใช้ประกอบเครื่องมือที่ตีแล้ว", 34, 194, 310, INK);
+        grid(g, cells, 47, 92);
+        item(g, blockRecipe == 0 ? ExampleMod.FORGING_BLOCK_ITEM.get() : ExampleMod.FORGING_ANVIL_ITEM.get(), 259, 126);
+        label(g, 177, 125, "->", GOLD);
+        wrap(g, blockRecipe == 0 ? "Forge: make a Head, Core, or Rod." : "Anvil: assemble your forged gear.", 29, 213, 320, INK);
     }
     private Item blueprintItem() {
         return switch (blueprint) {
@@ -153,69 +175,69 @@ public final class ForgingGuideScreen extends Screen {
         };
     }
     private void blueprintRecipes(GuiGraphics g) {
-        title(g, "Blueprint ทั้ง 7 แบบ");
-        label(g, 30, 62, "กระดาษ + ถุงหมึก + ของตัวอย่าง", INK);
-        label(g, 30, 81, "ผสมแบบไร้รูปร่างในโต๊ะคราฟต์", MUTED);
+        title(g, "Seven Blueprints");
+        label(g, 24, 61, "Paper + Ink Sac + example item", INK);
+        label(g, 24, 79, "Shapeless crafting recipe", MUTED);
         grid(g, new Item[]{Items.PAPER, Items.INK_SAC, BLUEPRINT_BASES[blueprint],
-                null, null, null, null, null, null}, 53, 109);
-        label(g, 144, 133, "→", GOLD);
-        item(g, blueprintItem(), 206, 129);
-        button(g, 26, 195, 25, 18, "<", blueprint > 0);
-        label(g, 65, 200, BLUEPRINT_NAMES[blueprint] + " Blueprint", GREEN);
-        button(g, 320, 195, 25, 18, ">", blueprint < 6);
-        label(g, 32, 222, "Core ใช้เพียงกระดาษกับถุงหมึก", MUTED);
+                null, null, null, null, null, null}, 40, 103);
+        label(g, 165, 137, "->", GOLD);
+        item(g, blueprintItem(), 230, 129);
+        button(g, 26, 205, 27, 21, "<", blueprint > 0);
+        label(g, 69, 210, BLUEPRINT_NAMES[blueprint] + " Blueprint", GREEN);
+        button(g, 320, 205, 27, 21, ">", blueprint < 6);
+        label(g, 26, 230, "Core needs only Paper and Ink Sac.", MUTED);
     }
     private void materials(GuiGraphics g) {
-        title(g, "ของมอนสเตอร์ที่ใช้ตี");
+        title(g, "Monster Materials");
         for (int i = 0; i < MATERIALS.length; i++) {
-            int x = 22 + (i % 4) * 89, y = 62 + (i / 4) * 40;
+            int x = 18 + (i % 3) * 117, y = 59 + (i / 3) * 34;
             item(g, MATERIALS[i], x, y);
-            label(g, x + 19, y + 5, MATERIAL_NAMES[i], INK);
+            drawScaled(g, MATERIAL_NAMES[i], x + 29, y + 7, INK, 1.05F);
         }
-        wrap(g, "วัตถุดิบแต่ละชนิดกำหนดกลุ่มสกิลที่อาจได้ ทดลองเปลี่ยนวัสดุเพื่อค้นพบผลใหม่", 23, 226, 332, MUTED);
+        wrap(g, "Each material has its own pool of possible skills.", 19, 232, 340, MUTED);
     }
     private void forge(GuiGraphics g) {
-        title(g, "ใช้เตาหลอม");
-        item(g, ExampleMod.CORE_BLUEPRINT.get(), 27, 72);
-        item(g, Items.BLAZE_ROD, 84, 72);
-        item(g, Items.IRON_INGOT, 141, 72);
-        item(g, Items.COAL, 200, 72);
-        label(g, 26, 97, "Blueprint  +  ของมอน  +  โลหะ ×5  +  เชื้อเพลิง", INK);
-        wrap(g, "ตัวอย่าง: Blueprint ของ Core + แท่งเบลซ + เหล็ก 5 แท่ง + ถ่าน เพื่อเริ่มตี Core", 28, 123, 320, INK);
-        wrap(g, "ถ่านให้พลังงาน 8 หน่วย ลาวาหนึ่งถังให้ 100 หน่วย เตาเก็บได้สูงสุด 150 หน่วย", 28, 174, 320, MUTED);
+        title(g, "Using the Forge");
+        item(g, ExampleMod.CORE_BLUEPRINT.get(), 31, 76);
+        item(g, Items.BLAZE_ROD, 113, 76);
+        item(g, Items.IRON_INGOT, 196, 76);
+        item(g, Items.COAL, 279, 76);
+        label(g, 25, 112, "Blueprint + Drop + Metal x5 + Fuel", INK);
+        wrap(g, "Example: Core Blueprint, Blaze Rod, five Iron Ingots, and Coal to forge a Core.", 26, 138, 325, INK);
+        wrap(g, "Coal gives 8 energy. A Lava Bucket gives 100. The Forge stores up to 150.", 26, 194, 325, MUTED);
     }
     private void timing(GuiGraphics g) {
-        title(g, "มินิเกมตีชิ้นส่วน");
-        label(g, 32, 68, "กดให้ตรงจังหวะเพื่อรับชิ้นส่วน", INK);
+        title(g, "Forging Minigame");
+        label(g, 30, 70, "Hit the timing mark to earn a part.", INK);
         g.fill(left + 39, top + 108, left + 336, top + 123, 0xFF8C7656);
         g.fill(left + 190, top + 105, left + 206, top + 126, GOLD);
-        label(g, 42, 146, "ผลที่ได้มี Tier I / II / III", GREEN);
-        wrap(g, "หัวแสดงสกิลที่ค้นพบทันที ส่วน Core และด้ามจะเผยสกิลเมื่อประกอบที่ทั่ง", 42, 171, 295, INK);
+        label(g, 36, 147, "Results have Tier I, II, or III.", GREEN);
+        wrap(g, "A Head reveals its skill right away. Core and Rod skills appear after assembly at the Anvil.", 36, 174, 310, INK);
     }
     private void anvil(GuiGraphics g) {
-        title(g, "ประกอบที่ทั่ง");
-        item(g, ExampleMod.FORGED_HEAD_ITEM.get(), 54, 79);
-        item(g, ExampleMod.FORGED_CORE_ITEM.get(), 126, 79);
-        item(g, ExampleMod.FORGED_ROD_ITEM.get(), 198, 79);
-        label(g, 70, 110, "หัว     +     Core     +     ด้าม", INK);
-        item(g, ExampleMod.FORGED_EQUIPMENT_ITEM.get(), 157, 144);
-        wrap(g, "สกิลที่ซ้ำกันจะรวม Tier ได้สูงสุด III จากนั้นเล่นมินิเกมจังหวะเพื่อรับพรหรือคำสาป", 31, 181, 316, INK);
+        title(g, "Assembling Gear");
+        item(g, ExampleMod.FORGED_HEAD_ITEM.get(), 61, 73);
+        item(g, ExampleMod.FORGED_CORE_ITEM.get(), 155, 73);
+        item(g, ExampleMod.FORGED_ROD_ITEM.get(), 250, 73);
+        label(g, 75, 111, "Head   +   Core   +   Rod", INK);
+        item(g, ExampleMod.FORGED_EQUIPMENT_ITEM.get(), 174, 144);
+        wrap(g, "Matching skills combine, up to Tier III. Finish the rhythm game for a Blessing or Curse.", 29, 187, 320, INK);
     }
     private void journal(GuiGraphics g) {
-        title(g, "บันทึกการค้นพบ");
-        journalRow(g, 65, "สกิลที่พบ", ForgingGuideClientState.foundSkills() + " / " + ForgingEffect.values().length, GREEN);
-        journalRow(g, 111, "พรที่พบ", ForgingGuideClientState.foundBlessings() + " / " + ForgedBlessing.values().length, GOLD);
-        journalRow(g, 157, "คำสาปที่พบ", ForgingGuideClientState.foundCurses() + " / " + ForgedCurse.values().length, RED);
-        label(g, 27, 215, "คลิกหมวดเพื่ออ่านรายการที่ปลดล็อก", MUTED);
+        title(g, "Discovery Journal");
+        journalRow(g, 65, "Skills", ForgingGuideClientState.foundSkills() + " / " + ForgingEffect.values().length, GREEN);
+        journalRow(g, 111, "Blessings", ForgingGuideClientState.foundBlessings() + " / " + ForgedBlessing.values().length, GOLD);
+        journalRow(g, 157, "Curses", ForgingGuideClientState.foundCurses() + " / " + ForgedCurse.values().length, RED);
+        label(g, 27, 218, "Click a category to read discovered entries.", MUTED);
     }
     private void journalRow(GuiGraphics g, int y, String name, String count, int accent) {
         g.fill(left + 24, top + y, left + 352, top + y + 39, 0xFFCAB592);
         g.fill(left + 31, top + y + 7, left + 51, top + y + 32, accent);
-        label(g, 65, y + 8, name, INK);
-        label(g, 257, y + 8, count, MUTED);
+        label(g, 65, y + 10, name, INK);
+        label(g, 265, y + 10, count, MUTED);
     }
     private void discoveries(GuiGraphics g, int kind) {
-        title(g, kind == 10 ? "สกิลที่ปลดล็อก" : kind == 11 ? "พรที่ปลดล็อก" : "คำสาปที่ปลดล็อก");
+        title(g, kind == 10 ? "Discovered Skills" : kind == 11 ? "Discovered Blessings" : "Discovered Curses");
         int total = kind == 10 ? ForgingEffect.values().length : kind == 11 ? ForgedBlessing.values().length : ForgedCurse.values().length;
         int rows = 7;
         for (int row = 0; row < rows && listOffset + row < total; row++) {
@@ -224,8 +246,8 @@ public final class ForgingGuideScreen extends Screen {
             g.fill(left + 19, top + y, left + 169, top + y + 22,
                     selected == i && known ? 0xFFC0A176 : 0xFFD6C4A3);
             String name = known ? entryName(kind, i) : "???";
-            String fitted = font.plainSubstrByWidth(name, 138);
-            label(g, 25, y + 7, fitted, known ? INK : MUTED);
+            String fitted = font.plainSubstrByWidth(name, (int)(138 / TEXT_SCALE));
+            label(g, 25, y + 5, fitted, known ? INK : MUTED);
         }
         line(g, 176, 55, 178, 226, 0xFF9A805A);
         if (selected >= 0 && selected < total && known(kind, selected)) {
@@ -236,17 +258,17 @@ public final class ForgingGuideScreen extends Screen {
                 label(g, 190, y, "Tier " + roman(ForgingGuideClientState.tier(effect)), INK);
                 y += 17;
                 label(g, 190, y, effect.material().name().replace('_', ' '), MUTED);
-                y += 16;
-                label(g, 190, y, "I " + (ForgingGuideClientState.hasTier(effect, 1) ? "✓" : "?")
-                        + "   II " + (ForgingGuideClientState.hasTier(effect, 2) ? "✓" : "?")
-                        + "   III " + (ForgingGuideClientState.hasTier(effect, 3) ? "✓" : "?"), MUTED);
-                y += 20;
+                y += 18;
+                drawScaled(g, "I " + (ForgingGuideClientState.hasTier(effect, 1) ? "+" : "?")
+                        + "  II " + (ForgingGuideClientState.hasTier(effect, 2) ? "+" : "?")
+                        + "  III " + (ForgingGuideClientState.hasTier(effect, 3) ? "+" : "?"), 190, y, MUTED, 1.1F);
+                y += 18;
                 wrap(g, ForgingGuideDescriptions.effect(effect, ForgingGuideClientState.tier(effect)), 190, y, 167, INK);
             } else {
                 wrap(g, kind == 11 ? ForgingGuideDescriptions.blessing(ForgedBlessing.values()[selected])
                         : ForgingGuideDescriptions.curse(ForgedCurse.values()[selected]), 190, y, 167, INK);
             }
-        } else wrap(g, "เลือกสิ่งที่ค้นพบเพื่ออ่านรายละเอียด รายการที่ยังไม่พบจะแสดง ???", 190, 70, 165, MUTED);
+        } else wrap(g, "Choose an entry to read its effect. Undiscovered entries stay hidden as ???.", 190, 70, 165, MUTED);
         if (listOffset > 0) button(g, 23, 228, 29, 17, "↑", true);
         if (listOffset + rows < total) button(g, 130, 228, 29, 17, "↓", true);
         label(g, 65, 230, (listOffset + 1) + "-" + Math.min(total, listOffset + rows), MUTED);
@@ -273,10 +295,10 @@ public final class ForgingGuideScreen extends Screen {
                 if (x >= W - 62 && x < W - 17 && page < 12) changePage(page + 1);
                 return true;
             }
-            if (page == 3 && y >= 57 && y < 77) { if (x >= 23 && x < 139) blockRecipe = 0; if (x >= 145 && x < 261) blockRecipe = 1; return true; }
-            if (page == 4 && y >= 195 && y < 214) {
-                if (x >= 26 && x < 51) blueprint = Math.max(0, blueprint - 1);
-                if (x >= 320 && x < 345) blueprint = Math.min(6, blueprint + 1);
+            if (page == 3 && y >= 57 && y < 79) { if (x >= 23 && x < 139) blockRecipe = 0; if (x >= 145 && x < 261) blockRecipe = 1; return true; }
+            if (page == 4 && y >= 205 && y < 226) {
+                if (x >= 26 && x < 53) blueprint = Math.max(0, blueprint - 1);
+                if (x >= 320 && x < 347) blueprint = Math.min(6, blueprint + 1);
                 return true;
             }
             if (page == 9 && x >= 24 && x < 352) {
