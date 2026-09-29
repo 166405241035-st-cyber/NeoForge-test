@@ -38,6 +38,7 @@ public class ForgedBoomerangEntity extends Entity {
     private ItemStack weapon = ItemStack.EMPTY;
     private double damage;
     private boolean returning;
+    private boolean returnsWeapon = true;
     private int age;
 
     public ForgedBoomerangEntity(EntityType<?> type, Level level) {
@@ -46,12 +47,17 @@ public class ForgedBoomerangEntity extends Entity {
     }
 
     public ForgedBoomerangEntity(Level level, Player owner, ItemStack weapon, double damage) {
+        this(level, owner, weapon, damage, true);
+    }
+
+    public ForgedBoomerangEntity(Level level, Player owner, ItemStack weapon, double damage, boolean returnsWeapon) {
         this(ExampleMod.FORGED_BOOMERANG.get(), level);
         this.owner = owner;
         this.weapon = weapon.copy();
         this.weapon.setCount(1);
         this.entityData.set(DISPLAY_STACK, this.weapon.copy());
         this.damage = damage;
+        this.returnsWeapon = returnsWeapon;
         setPos(owner.getX(), owner.getEyeY() - 0.15D, owner.getZ());
     }
 
@@ -117,7 +123,10 @@ public class ForgedBoomerangEntity extends Entity {
     }
 
     private void giveBack() {
-        if (!owner.getAbilities().instabuild && !owner.getInventory().add(weapon.copy()))
+        // Only the primary projectile owns the real thrown equipment.
+        // Double Trigger bonus projectiles are visual/damage copies and must never
+        // return another ItemStack, otherwise one throw would duplicate the weapon.
+        if (returnsWeapon && !owner.getAbilities().instabuild && !owner.getInventory().add(weapon.copy()))
             owner.drop(weapon.copy(), false);
         discard();
     }
