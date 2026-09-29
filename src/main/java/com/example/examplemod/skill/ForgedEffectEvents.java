@@ -425,7 +425,9 @@ public final class ForgedEffectEvents {
                 && player.getPersistentData().getBoolean("ForgedEarthyWasFalling");
         if (shockwave != null && landedFromFall
                 && canUseTimedTrigger(player, "EarthyShockwave", 60L)) {
+            boolean doubled = DoubleTriggerRuntime.rollResult(player, tool);
             float damage = tierValue(shockwave, EARTHY_SHOCKWAVE_DAMAGE);
+            if (doubled) damage *= 2.0F;
             double radius = 3.0D; // Fixed AoE; Tier changes damage only.
             AABB area = player.getBoundingBox().inflate(radius, 1.5D, radius);
 
@@ -441,7 +443,10 @@ public final class ForgedEffectEvents {
                 Vec3 away = mob.position().subtract(player.position());
                 if (away.lengthSqr() > 0.01D) {
                     away = away.normalize();
-                    mob.setDeltaMovement(mob.getDeltaMovement().add(away.x * 0.85D, 0.42D, away.z * 0.85D));
+                    double horizontal = doubled ? 1.70D : 0.85D;
+                    double vertical = doubled ? 0.84D : 0.42D;
+                    mob.setDeltaMovement(mob.getDeltaMovement().add(
+                            away.x * horizontal, vertical, away.z * horizontal));
                     mob.hurtMarked = true;
                 }
             }
