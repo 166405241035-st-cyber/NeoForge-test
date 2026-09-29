@@ -48,20 +48,20 @@ public class ForgeMenu extends AbstractContainerMenu {
             @Override public int get() { return fuel; }
             @Override public void set(int value) { fuel = Math.max(0, Math.min(ForgeIngredientResolver.MAX_FUEL, value)); }
         });
-        addSlot(new Slot(forgeInventory, BLUEPRINT_SLOT, 26, 58) {
+        addSlot(new Slot(forgeInventory, BLUEPRINT_SLOT, 42, 65) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgeIngredientResolver.blueprint(stack) != null; }
             @Override public int getMaxStackSize() { return 1; }
         });
-        addSlot(new Slot(forgeInventory, MONSTER_SLOT, 72, 58) {
+        addSlot(new Slot(forgeInventory, MONSTER_SLOT, 103, 65) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgeIngredientResolver.monsterMaterial(stack) != null; }
             @Override public int getMaxStackSize() { return 1; }
         });
-        addMetalSlot(2, 132, 40); addMetalSlot(3, 112, 64); addMetalSlot(4, 152, 64); addMetalSlot(5, 120, 88); addMetalSlot(6, 144, 88);
-        addSlot(new Slot(forgeInventory, FUEL_SLOT, 198, 58) {
+        addMetalSlot(2, 157, 57); addMetalSlot(3, 181, 57); addMetalSlot(4, 205, 57); addMetalSlot(5, 169, 81); addMetalSlot(6, 193, 81);
+        addSlot(new Slot(forgeInventory, FUEL_SLOT, 256, 65) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgeIngredientResolver.isFuel(stack); }
         });
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(playerInventory, col + row * 9 + 9, 37 + col * 18, 151 + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(playerInventory, col, 37 + col * 18, 211));
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(playerInventory, col + row * 9 + 9, 75 + col * 18, 179 + row * 18));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(playerInventory, col, 75 + col * 18, 237));
     }
 
     private void addMetalSlot(int index, int x, int y) {
