@@ -44,6 +44,7 @@ public class TimingBarScreen extends Screen {
     private int greenStart;
     private int greenWidth;
     private float cursorPosition;
+    private float previousCursorPosition;
     private float cursorSpeed;
     private boolean movingRight = true;
     private String resultText = "Press SPACE on the best colored zone";
@@ -58,6 +59,9 @@ public class TimingBarScreen extends Screen {
     private int missCount;
     private int weightedAccuracyPoints;
     private boolean finished;
+    private int feedbackTicks;
+    private float hitPosition;
+    private boolean lastHit;
 
     public TimingBarScreen() { this(ForgingMetal.IRON, HeadBlueprintType.SWORD, MonsterMaterial.ROTTEN_FLESH); }
     public TimingBarScreen(ForgingMetal metal) { this(metal, HeadBlueprintType.SWORD, MonsterMaterial.ROTTEN_FLESH); }
@@ -85,14 +89,23 @@ public class TimingBarScreen extends Screen {
     @Override
     public void tick() {
         if (finished) return;
+        if (feedbackTicks > 0) {
+            if (--feedbackTicks == 0) {
+                if (round >= TOTAL_ROUNDS) { finished = true; MinigameFeedback.complete(); openResultScreen(); }
+                else randomizeRound();
+            }
+            return;
+        }
+        previousCursorPosition = cursorPosition;
         cursorPosition += movingRight ? cursorSpeed : -cursorSpeed;
-        if (cursorPosition >= BAR_WIDTH - CURSOR_WIDTH) { cursorPosition = BAR_WIDTH - CURSOR_WIDTH; movingRight = false; }
-        else if (cursorPosition <= 0) { cursorPosition = 0; movingRight = true; }
+        if (cursorPosition >= BAR_WIDTH - CURSOR_WIDTH) { cursorPosition = 2 * (BAR_WIDTH - CURSOR_WIDTH) - cursorPosition; movingRight = false; }
+        else if (cursorPosition <= 0) { cursorPosition = -cursorPosition; movingRight = true; }
     }
 
     private void attemptHit() {
-        if (finished) return;
+        if (finished || feedbackTicks > 0) return;
         float cursorCenter = cursorPosition + CURSOR_WIDTH / 2.0F;
+        hitPosition = cursorPosition;
         float greenEnd = greenStart + greenWidth;
         int baseScore;
         int accuracyPoints;
@@ -108,14 +121,17 @@ public class TimingBarScreen extends Screen {
                 resultText = "GOOD! +" + GOOD_SCORE; resultColor = GOOD_ZONE_COLOR; goodCount++; baseScore = GOOD_SCORE; accuracyPoints = 50;
             }
             currentCombo++; maxCombo = Math.max(maxCombo, currentCombo);
+            MinigameFeedback.hit(baseScore == PERFECT_SCORE ? 0 : baseScore == GREAT_SCORE ? 1 : 2);
         } else {
             resultText = "MISS! +" + MISS_SCORE; resultColor = 0xFF5555; missCount++; baseScore = MISS_SCORE; accuracyPoints = 0; currentCombo = 0;
+            MinigameFeedback.miss();
         }
+        lastHit = baseScore > 0;
         int comboBonus = baseScore > 0 ? Math.max(0, currentCombo - 1) * COMBO_BONUS_PER_STEP : 0;
         score += baseScore + comboBonus;
         weightedAccuracyPoints += accuracyPoints;
         round++;
-        if (round >= TOTAL_ROUNDS) { finished = true; openResultScreen(); } else randomizeRound();
+        feedbackTicks = 10;
     }
 
     private void openResultScreen() {
@@ -168,8 +184,16 @@ public class TimingBarScreen extends Screen {
         int perfectLeft = barX + Math.round(center - halfWidth * PERFECT_RATIO);
         int perfectRight = barX + Math.round(center + halfWidth * PERFECT_RATIO);
         guiGraphics.fill(perfectLeft, barY, perfectRight, barY + BAR_HEIGHT, PERFECT_ZONE_COLOR);
-        int cursorX = barX + Math.round(cursorPosition);
+        float displayedCursor = feedbackTicks > 0 ? cursorPosition : previousCursorPosition + (cursorPosition - previousCursorPosition) * partialTick;
+        int cursorX = barX + Math.round(displayedCursor);
         guiGraphics.fill(cursorX, barY - 5, cursorX + CURSOR_WIDTH, barY + BAR_HEIGHT + 5, 0xFFFFFFFF);
+        if (feedbackTicks > 0) {
+            int flash = (feedbackTicks * 9 / 10) + 2;
+            int impactX = barX + Math.round(hitPosition);
+            int color = lastHit ? resultColor : 0xFFFF5555;
+            guiGraphics.fill(impactX - flash, barY - 7, impactX + flash, barY - 5, color);
+            guiGraphics.fill(impactX - flash, barY + BAR_HEIGHT + 5, impactX + flash, barY + BAR_HEIGHT + 7, color);
+        }
         guiGraphics.drawString(font, "Score: " + score, barX, barY + 38, 0xFFFFFF);
         guiGraphics.drawString(font, "Combo: x" + currentCombo, barX + 115, barY + 38, 0xFFFFFF);
         guiGraphics.drawString(font, "Max: x" + maxCombo, barX + 225, barY + 38, 0xFFFFFF);

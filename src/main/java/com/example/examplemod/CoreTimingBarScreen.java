@@ -38,6 +38,7 @@ public class CoreTimingBarScreen extends Screen {
     private final MonsterMaterial monsterMaterial;
     private int greenStart;
     private int greenWidth;
+    private float previousCursorPosition;
     private float cursorPosition;
     private float cursorSpeed;
     private boolean movingRight = true;
@@ -51,6 +52,9 @@ public class CoreTimingBarScreen extends Screen {
     private int missCount;
     private int weightedAccuracyPoints;
     private boolean finished;
+    private int feedbackTicks;
+    private float hitPosition;
+    private boolean lastHit;
     private String resultText = "Press SPACE on the best colored zone";
     private int resultColor = 0xFFFFFF;
 
@@ -76,18 +80,27 @@ public class CoreTimingBarScreen extends Screen {
     @Override
     public void tick() {
         if (finished) return;
+        if (feedbackTicks > 0) {
+            if (--feedbackTicks == 0) {
+                if (round >= TOTAL_ROUNDS) { finished = true; MinigameFeedback.complete(); finishCore(); }
+                else randomizeRound();
+            }
+            return;
+        }
+        previousCursorPosition = cursorPosition;
         cursorPosition += movingRight ? cursorSpeed : -cursorSpeed;
         if (cursorPosition >= BAR_WIDTH - CURSOR_WIDTH) {
-            cursorPosition = BAR_WIDTH - CURSOR_WIDTH;
+            cursorPosition = 2 * (BAR_WIDTH - CURSOR_WIDTH) - cursorPosition;
             movingRight = false;
         } else if (cursorPosition <= 0) {
-            cursorPosition = 0;
+            cursorPosition = -cursorPosition;
             movingRight = true;
         }
     }
 
     private void attemptHit() {
-        if (finished) return;
+        if (finished || feedbackTicks > 0) return;
+        hitPosition = cursorPosition;
         float cursorCenter = cursorPosition + CURSOR_WIDTH / 2.0F;
         float greenEnd = greenStart + greenWidth;
         int baseScore;
@@ -117,6 +130,7 @@ public class CoreTimingBarScreen extends Screen {
             }
             currentCombo++;
             maxCombo = Math.max(maxCombo, currentCombo);
+            MinigameFeedback.hit(baseScore == 100 ? 0 : baseScore == 75 ? 1 : 2);
         } else {
             resultText = "MISS! +0";
             resultColor = 0xFF5555;
@@ -124,17 +138,14 @@ public class CoreTimingBarScreen extends Screen {
             baseScore = 0;
             accuracyPoints = 0;
             currentCombo = 0;
+            MinigameFeedback.miss();
         }
 
+        lastHit = baseScore > 0;
         score += baseScore + (baseScore > 0 ? Math.max(0, currentCombo - 1) * 5 : 0);
         weightedAccuracyPoints += accuracyPoints;
         round++;
-        if (round >= TOTAL_ROUNDS) {
-            finished = true;
-            finishCore();
-        } else {
-            randomizeRound();
-        }
+        feedbackTicks = 10;
     }
 
     private void finishCore() {
@@ -186,8 +197,16 @@ public class CoreTimingBarScreen extends Screen {
         float center = greenStart + halfWidth;
         guiGraphics.fill(barX + Math.round(center - halfWidth * GREAT_RATIO), barY, barX + Math.round(center + halfWidth * GREAT_RATIO), barY + BAR_HEIGHT, GREAT_ZONE_COLOR);
         guiGraphics.fill(barX + Math.round(center - halfWidth * PERFECT_RATIO), barY, barX + Math.round(center + halfWidth * PERFECT_RATIO), barY + BAR_HEIGHT, PERFECT_ZONE_COLOR);
-        int cursorX = barX + Math.round(cursorPosition);
+        float displayedCursor = feedbackTicks > 0 ? cursorPosition : previousCursorPosition + (cursorPosition - previousCursorPosition) * partialTick;
+        int cursorX = barX + Math.round(displayedCursor);
         guiGraphics.fill(cursorX, barY - 5, cursorX + CURSOR_WIDTH, barY + BAR_HEIGHT + 5, 0xFFFFFFFF);
+        if (feedbackTicks > 0) {
+            int flash = feedbackTicks * 9 / 10 + 2;
+            int impactX = barX + Math.round(hitPosition);
+            int color = lastHit ? resultColor : 0xFFFF5555;
+            guiGraphics.fill(impactX - flash, barY - 7, impactX + flash, barY - 5, color);
+            guiGraphics.fill(impactX - flash, barY + BAR_HEIGHT + 5, impactX + flash, barY + BAR_HEIGHT + 7, color);
+        }
         guiGraphics.drawString(font, "Score: " + score, barX, barY + 38, 0xFFFFFF);
         guiGraphics.drawString(font, "Combo: x" + currentCombo, barX + 115, barY + 38, 0xFFFFFF);
         guiGraphics.drawCenteredString(font, "SPACE = HIT   |   ESC = BACK", width / 2, barY + 68, 0xDDDDDD);
