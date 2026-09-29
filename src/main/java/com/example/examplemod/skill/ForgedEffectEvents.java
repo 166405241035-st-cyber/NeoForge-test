@@ -973,18 +973,15 @@ public final class ForgedEffectEvents {
         if (explosiveTilling != null) {
             long cd = switch (explosiveTilling) { case I -> 120L; case II -> 80L; case III -> 40L; };
             if (canUseTimedTrigger(player, "ExplosiveTilling", cd)) {
-                int changed = 0;
-                // Fixed 3x3 area centered on the soil that was tilled.
-                for (BlockPos pos : BlockPos.betweenClosed(clicked.offset(-1, 0, -1), clicked.offset(1, 0, 1))) {
-                    net.minecraft.world.level.block.state.BlockState state = player.level().getBlockState(pos);
-                    if ((state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH)
-                            || state.is(Blocks.FARMLAND))
-                            && player.level().getBlockState(pos.above()).isAir()) {
-                        if (!state.is(Blocks.FARMLAND)) changed++;
-                        player.level().setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
-                    }
+                // Normal cast tills one 3x3 patch. Double Trigger adds a second
+                // non-overlapping 3x3 patch in front, using the same cooldown.
+                int changed = tillThreeByThree(player, clicked);
+                if (DoubleTriggerRuntime.rollResult(player, tool)) {
+                    BlockPos bonusCenter = clicked.relative(player.getDirection(), 3);
+                    tillThreeByThree(player, bonusCenter);
                 }
-                // Durability is charged only for blocks actually tilled.
+
+                // Only the normal patch contributes durability cost.
                 if (changed > 0 && tool.isDamageableItem())
                     ForgedBlessingRuntime.damage(tool, changed);
             }
@@ -1232,6 +1229,20 @@ public final class ForgedEffectEvents {
         int extraCost = (extraBroken + 1) / 2;
         if (extraCost > 0 && tool.isDamageableItem())
             ForgedBlessingRuntime.damage(tool, extraCost);
+    }
+
+    private static int tillThreeByThree(Player player, BlockPos center) {
+        int changed = 0;
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
+            BlockState state = player.level().getBlockState(pos);
+            if ((state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH)
+                    || state.is(Blocks.FARMLAND))
+                    && player.level().getBlockState(pos.above()).isAir()) {
+                if (!state.is(Blocks.FARMLAND)) changed++;
+                player.level().setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
+            }
+        }
+        return changed;
     }
 
     private static boolean isCrop(net.minecraft.world.level.block.state.BlockState state) {
