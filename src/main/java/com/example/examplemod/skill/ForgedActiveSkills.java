@@ -101,6 +101,7 @@ public final class ForgedActiveSkills {
         fireball.setPos(spawn.x, spawn.y - 0.10D, spawn.z);
         fireball.setDeltaMovement(look.scale(1.35D));
         fireball.hurtMarked = true;
+        fireball.getPersistentData().putBoolean("ForgedSkillProjectile", true);
         player.level().addFreshEntity(fireball);
 
         // Double Trigger: a second projectile is a free bonus cast.
@@ -113,6 +114,7 @@ public final class ForgedActiveSkills {
             second.setPos(secondSpawn.x, secondSpawn.y - 0.10D, secondSpawn.z);
             second.setDeltaMovement(look.scale(1.35D));
             second.hurtMarked = true;
+            second.getPersistentData().putBoolean("ForgedSkillProjectile", true);
             player.level().addFreshEntity(second);
         }
 
