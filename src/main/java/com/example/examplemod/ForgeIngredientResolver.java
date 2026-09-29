@@ -9,10 +9,12 @@ import com.example.examplemod.skill.client.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
 public final class ForgeIngredientResolver {
-    public static final int FUEL_PER_COAL = 8;
-    public static final int MAX_FUEL = 100;
+    public static final int MAX_FUEL = 150;
+    private static final int BURN_TICKS_PER_ENERGY = 80;
 
     private ForgeIngredientResolver() {
     }
@@ -54,13 +56,32 @@ public final class ForgeIngredientResolver {
         return null;
     }
 
-    public static boolean isFuel(ItemStack stack) {
-        return fuelValue(stack) > 0;
+    public static boolean isFuel(ItemStack stack, Level level) {
+        return fuelValue(stack, level) > 0;
     }
 
-    /** Coal and charcoal both add 8 units to the forge fuel tank. */
-    public static int fuelValue(ItemStack stack) {
-        return stack.is(Items.COAL) || stack.is(Items.CHARCOAL) ? FUEL_PER_COAL : 0;
+    /**
+     * Converts normal furnace burn time into Forge Energy.
+     * Coal = 1600 ticks -> 20 energy. Coal blocks and lava buckets cap at 150.
+     * Any vanilla/modded item accepted by the furnace fuel system is supported.
+     */
+    public static int fuelValue(ItemStack stack, Level level) {
+        if (stack == null || stack.isEmpty() || level == null) return 0;
+        int burnTicks = stack.getBurnTime(RecipeType.SMELTING, level.fuelValues());
+        if (burnTicks <= 0) return 0;
+        int energy = (burnTicks + BURN_TICKS_PER_ENERGY - 1) / BURN_TICKS_PER_ENERGY;
+        return Math.max(1, Math.min(MAX_FUEL, energy));
+    }
+
+    public static int forgeCost(ForgingMetal metal) {
+        if (metal == null) return 0;
+        return switch (metal.difficulty()) {
+            case 1 -> 15;
+            case 2 -> 30;
+            case 3 -> 45;
+            case 4 -> 65;
+            default -> 90;
+        };
     }
 
     public static boolean sameItem(ItemStack first, ItemStack second) {
