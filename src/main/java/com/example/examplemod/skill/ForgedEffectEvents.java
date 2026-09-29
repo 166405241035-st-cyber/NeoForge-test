@@ -282,13 +282,16 @@ public final class ForgedEffectEvents {
                 // Double Trigger replays the actual Combo Detonation result instead of
                 // merely multiplying one number: each activation deals its bonus hit
                 // and creates its own non-block-breaking explosion.
+                // Apply the bonus hit as one combined damage packet. Two immediate
+                // hurt() calls can be swallowed by Minecraft's hurt-resistance window,
+                // which would make Double Trigger look like it failed.
+                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                try {
+                    target.hurt(player.damageSources().playerAttack(player), comboDamage * activations);
+                } finally {
+                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                }
                 for (int i = 0; i < activations; i++) {
-                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
-                    try {
-                        target.hurt(player.damageSources().playerAttack(player), comboDamage);
-                    } finally {
-                        player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
-                    }
                     safeForgedExplosion(player, target.getX(), target.getY(), target.getZ(), 1.25F);
                 }
             }
