@@ -422,7 +422,7 @@ public final class ForgedActiveSkills {
         player.getPersistentData().remove("ForgedGravitationalSlamOldInvulnerable");
         player.getPersistentData().remove("ForgedGravitationalSlamUntil");
         if (!tool.isEmpty()) {
-            tool.hurtAndBreak(12, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+            ForgedBlessingRuntime.damage(tool, 12);
         }
         syncHeldEquipmentHud(player);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Gravitational Slam!"), true);
@@ -610,7 +610,7 @@ public final class ForgedActiveSkills {
             // Bonus blocks from Double Trigger are free; durability is based on the normal cast only.
             int extraCost = (baseBroken + 1) / 2;
             if (tool.isDamageableItem())
-                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + extraCost));
+                ForgedBlessingRuntime.damage(tool, extraCost);
         }
     }
 
@@ -1270,7 +1270,7 @@ public final class ForgedActiveSkills {
 
     private static void damageEquipment(Player player, int amount) {
         ItemStack tool = player.getMainHandItem();
-        tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + amount));
+        ForgedBlessingRuntime.damage(tool, amount);
     }
 
     private static LivingEntity findLookTarget(Player player, double range) {
