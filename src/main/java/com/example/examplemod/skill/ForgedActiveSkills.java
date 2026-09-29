@@ -430,15 +430,18 @@ public final class ForgedActiveSkills {
         long cooldown = ForgedSkillConfig.fortress(tier);
         if (!ready(tool, player, "IronFortressGuard", cooldown)) return;
 
-        long duration = switch (tier) {
+        long baseDuration = switch (tier) {
             case I -> 40L;
             case II -> 80L;
             case III -> 120L;
         };
-        if (DoubleTriggerRuntime.rollActive(player, tool)) duration *= 2L;
+        long duration = DoubleTriggerRuntime.rollActive(player, tool) ? baseDuration * 2L : baseDuration;
         player.getPersistentData().putLong("ForgedIronFortressUntil", player.level().getGameTime() + duration);
         player.displayClientMessage(net.minecraft.network.chat.Component.literal("Iron Fortress Guard: ON"), true);
-        startCooldown(tool, player, "IronFortressGuard", cooldown + duration);
+
+        // Double Trigger extends only the effect. Cooldown remains exactly the same
+        // as a normal activation, per the blessing rule.
+        startCooldown(tool, player, "IronFortressGuard", cooldown + baseDuration);
         damageEquipment(player, 8);
     }
 
