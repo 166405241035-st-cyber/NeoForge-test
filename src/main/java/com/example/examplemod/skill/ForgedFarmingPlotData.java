@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import java.util.Map;
 public final class ForgedFarmingPlotData extends SavedData {
     private static final String NAME = "forged_farming_plots";
     private final Map<Long, EnumMap<ForgingEffect, EffectTier>> plots = new HashMap<>();
+    private final Map<Long, EnumSet<ForgingEffect>> doubleTriggerPlots = new HashMap<>();
 
     public static ForgedFarmingPlotData get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(
@@ -27,9 +29,24 @@ public final class ForgedFarmingPlotData extends SavedData {
     }
 
     public void set(BlockPos pos, ForgingEffect effect, EffectTier tier) {
-        plots.computeIfAbsent(pos.asLong(), key -> new EnumMap<>(ForgingEffect.class))
+        set(pos, effect, tier, false);
+    }
+
+    public void set(BlockPos pos, ForgingEffect effect, EffectTier tier, boolean doubleTrigger) {
+        long key = pos.asLong();
+        plots.computeIfAbsent(key, ignored -> new EnumMap<>(ForgingEffect.class))
                 .put(effect, tier);
+        EnumSet<ForgingEffect> doubled = doubleTriggerPlots.computeIfAbsent(
+                key, ignored -> EnumSet.noneOf(ForgingEffect.class));
+        if (doubleTrigger) doubled.add(effect);
+        else doubled.remove(effect);
+        if (doubled.isEmpty()) doubleTriggerPlots.remove(key);
         setDirty();
+    }
+
+    public boolean hasDoubleTrigger(BlockPos pos, ForgingEffect effect) {
+        EnumSet<ForgingEffect> doubled = doubleTriggerPlots.get(pos.asLong());
+        return doubled != null && doubled.contains(effect);
     }
 
     public EffectTier tier(BlockPos pos, ForgingEffect effect) {
@@ -38,7 +55,10 @@ public final class ForgedFarmingPlotData extends SavedData {
     }
 
     public void remove(BlockPos pos) {
-        if (plots.remove(pos.asLong()) != null) setDirty();
+        long key = pos.asLong();
+        boolean changed = plots.remove(key) != null;
+        changed |= doubleTriggerPlots.remove(key) != null;
+        if (changed) setDirty();
     }
 
     public java.util.List<BlockPos> positionsWith(ForgingEffect effect) {
@@ -60,6 +80,9 @@ public final class ForgedFarmingPlotData extends SavedData {
                 plot.putLong("Pos", entry.getKey());
                 plot.putString("Effect", effect.getKey().name());
                 plot.putString("Tier", effect.getValue().name());
+                plot.putBoolean("DoubleTrigger",
+                        doubleTriggerPlots.getOrDefault(entry.getKey(), EnumSet.noneOf(ForgingEffect.class))
+                                .contains(effect.getKey()));
                 list.add(plot);
             }
         }
@@ -75,8 +98,13 @@ public final class ForgedFarmingPlotData extends SavedData {
             try {
                 ForgingEffect effect = ForgingEffect.valueOf(plot.getString("Effect"));
                 EffectTier tier = EffectTier.valueOf(plot.getString("Tier"));
-                data.plots.computeIfAbsent(plot.getLong("Pos"), key -> new EnumMap<>(ForgingEffect.class))
+                long pos = plot.getLong("Pos");
+                data.plots.computeIfAbsent(pos, key -> new EnumMap<>(ForgingEffect.class))
                         .put(effect, tier);
+                if (plot.getBoolean("DoubleTrigger")) {
+                    data.doubleTriggerPlots.computeIfAbsent(pos, key -> EnumSet.noneOf(ForgingEffect.class))
+                            .add(effect);
+                }
             } catch (IllegalArgumentException ignored) {
                 // Ignore data from effects/tier names that no longer exist.
             }
