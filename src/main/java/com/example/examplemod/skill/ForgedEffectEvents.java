@@ -7,6 +7,7 @@ import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
 import com.example.examplemod.skill.blessing.ForgedBlessingRuntime;
+import com.example.examplemod.skill.blessing.DoubleTriggerRuntime;
 
 import net.minecraft.server.level.ServerLevel;
 import com.example.examplemod.skill.curse.ForgedCurse;
@@ -129,6 +130,7 @@ public final class ForgedEffectEvents {
                 case II -> 9.0D;
                 case III -> 12.0D;
             };
+            if (DoubleTriggerRuntime.rollAttack(player, weapon)) slamDamage *= 2.0D;
             double radius = 5.0D; // Fixed AoE; Tier only changes power.
             Vec3 center = target.position();
             AABB slamArea = new AABB(center.x - radius, center.y - radius, center.z - radius,
@@ -156,8 +158,10 @@ public final class ForgedEffectEvents {
         }
 
         EffectTier crippling = ForgedEffectRuntime.tier(weapon, ForgingEffect.CRIPPLING_STRIKE);
-        if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE))
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
+        if (crippling != null && player.getRandom().nextDouble() < tierValue(crippling, CRIPPLING_CHANCE)) {
+            int duration = DoubleTriggerRuntime.rollAttack(player, weapon) ? 120 : 60;
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 0));
+        }
 
         EffectTier vampiric = ForgedEffectRuntime.tier(weapon, ForgingEffect.VAMPIRIC_VITALITY);
         if (vampiric != null && player.getRandom().nextDouble() < tierValue(vampiric, VAMPIRIC_CHANCE)) {
@@ -170,19 +174,24 @@ public final class ForgedEffectEvents {
         }
 
         EffectTier levitation = ForgedEffectRuntime.tier(weapon, ForgingEffect.LEVITATION_BLOW);
-        if (levitation != null && canUseTimedTrigger(player, "LevitationBlow", 40L))
-            target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, tierValue(levitation, LEVITATION_DURATION), 0));
+        if (levitation != null && canUseTimedTrigger(player, "LevitationBlow", 40L)) {
+            int duration = tierValue(levitation, LEVITATION_DURATION);
+            if (DoubleTriggerRuntime.rollAttack(player, weapon)) duration *= 2;
+            target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, duration, 0));
+        }
 
         EffectTier spineSpike = ForgedEffectRuntime.tier(weapon, ForgingEffect.SPINE_SPIKE);
         if (spineSpike != null && player.getRandom().nextDouble() < tierValue(spineSpike, SPINE_SPIKE_CHANCE)) {
             // Bleeding uses poison-like non-lethal damage-over-time, but is a separate red status.
             // Tier changes proc chance only.
-            target.addEffect(new MobEffectInstance(ExampleMod.BLEEDING, 100, 0));
+            int duration = DoubleTriggerRuntime.rollAttack(player, weapon) ? 200 : 100;
+            target.addEffect(new MobEffectInstance(ExampleMod.BLEEDING, duration, 0));
         }
 
         EffectTier graveGrasp = ForgedEffectRuntime.tier(weapon, ForgingEffect.GRAVE_GRASP);
         if (graveGrasp != null && isCriticalHit(player)) {
             int duration = tierValue(graveGrasp, GRAVE_GRASP_DURATION);
+            if (DoubleTriggerRuntime.rollAttack(player, weapon)) duration *= 2;
             // Stun: stop movement and suppress movement/jump during the short stun window.
             target.setDeltaMovement(Vec3.ZERO);
             target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 255));
@@ -191,7 +200,9 @@ public final class ForgedEffectEvents {
 
         EffectTier riftTeleport = ForgedEffectRuntime.tier(weapon, ForgingEffect.RIFT_TELEPORT_ATTACK);
         if (riftTeleport != null && player.getRandom().nextDouble() < tierValue(riftTeleport, RIFT_TELEPORT_CHANCE)) {
-            teleportTargetAway(player, target, switch (riftTeleport) { case I -> 4.0D; case II -> 8.0D; case III -> 15.0D; });
+            double distance = switch (riftTeleport) { case I -> 4.0D; case II -> 8.0D; case III -> 15.0D; };
+            if (DoubleTriggerRuntime.rollAttack(player, weapon)) distance *= 2.0D;
+            teleportTargetAway(player, target, distance);
         }
 
         EffectTier webTrap = ForgedEffectRuntime.tier(weapon, ForgingEffect.WEB_TRAP);
@@ -201,8 +212,10 @@ public final class ForgedEffectEvents {
             BlockPos webPos = target.blockPosition();
             if (player.level().getBlockState(webPos).canBeReplaced()) {
                 player.level().setBlockAndUpdate(webPos, Blocks.COBWEB.defaultBlockState());
+                int webDuration = tierValue(webTrap, WEB_TRAP_DURATION);
+                if (DoubleTriggerRuntime.rollAttack(player, weapon)) webDuration *= 2;
                 target.getPersistentData().putLong("ForgedWebTrapUntil",
-                        player.level().getGameTime() + tierValue(webTrap, WEB_TRAP_DURATION));
+                        player.level().getGameTime() + webDuration);
                 target.getPersistentData().putInt("ForgedWebTrapX", webPos.getX());
                 target.getPersistentData().putInt("ForgedWebTrapY", webPos.getY());
                 target.getPersistentData().putInt("ForgedWebTrapZ", webPos.getZ());
@@ -214,7 +227,9 @@ public final class ForgedEffectEvents {
             // Direct velocity is used so the forged effect is not reduced by vanilla knockback resistance.
             Vec3 away = target.position().subtract(player.position());
             if (away.lengthSqr() < 0.001D) away = player.getLookAngle();
-            away = away.normalize().scale(tierValue(knockback, UNSTOPPABLE_KNOCKBACK_POWER));
+            double knockbackPower = tierValue(knockback, UNSTOPPABLE_KNOCKBACK_POWER);
+            if (DoubleTriggerRuntime.rollAttack(player, weapon)) knockbackPower *= 2.0D;
+            away = away.normalize().scale(knockbackPower);
             target.setDeltaMovement(target.getDeltaMovement().add(away.x, 0.25D, away.z));
             target.hurtMarked = true;
         }
@@ -240,8 +255,10 @@ public final class ForgedEffectEvents {
         EffectTier witherDrain = ForgedEffectRuntime.tier(weapon, ForgingEffect.WITHER_DRAIN);
         if (witherDrain != null && canUseTimedTrigger(player, "WitherDrain", 20L)) {
             // Fixed Wither; Tier changes only the amount of health stolen.
-            target.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 0));
-            player.heal(tierValue(witherDrain, WITHER_DRAIN_HEAL));
+            boolean doubled = DoubleTriggerRuntime.rollAttack(player, weapon);
+            target.addEffect(new MobEffectInstance(MobEffects.WITHER, doubled ? 160 : 80, 0));
+            float heal = tierValue(witherDrain, WITHER_DRAIN_HEAL);
+            player.heal(doubled ? heal * 2.0F : heal);
         }
 
         EffectTier comboDetonation = ForgedEffectRuntime.tier(weapon, ForgingEffect.COMBO_DETONATION);
@@ -258,6 +275,7 @@ public final class ForgedEffectEvents {
             if (combo >= 3) {
                 player.getPersistentData().putInt(countKey, 0);
                 float comboDamage = tierValue(comboDetonation, COMBO_DETONATION_DAMAGE);
+                if (DoubleTriggerRuntime.rollAttack(player, weapon)) comboDamage *= 2.0F;
                 player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
                 try {
                     target.hurt(player.damageSources().playerAttack(player), comboDamage);
@@ -273,13 +291,17 @@ public final class ForgedEffectEvents {
         if (criticalBlast != null && isCriticalHit(player)
                 && player.getRandom().nextDouble() < tierValue(criticalBlast, CRITICAL_BLAST_CHANCE)) {
             // Small non-block-breaking blast so the proc does not destroy terrain.
-            player.level().explode(player, target.getX(), target.getY(), target.getZ(),
-                    1.5F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+            int blasts = DoubleTriggerRuntime.rollAttack(player, weapon) ? 2 : 1;
+            for (int i = 0; i < blasts; i++) {
+                player.level().explode(player, target.getX(), target.getY(), target.getZ(),
+                        1.5F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+            }
         }
 
         EffectTier poisonGas = ForgedEffectRuntime.tier(weapon, ForgingEffect.POISON_GAS_CLOUD);
         if (poisonGas != null && canUseTimedTrigger(player, "PoisonGasCloud", 100L)) {
             int duration = tierValue(poisonGas, POISON_GAS_DURATION);
+            if (DoubleTriggerRuntime.rollAttack(player, weapon)) duration *= 2;
 
             // Real lingering-style cloud. Radius is fixed at 5 blocks for every Tier;
             // Tier changes only how long the cloud remains.
@@ -502,6 +524,7 @@ public final class ForgedEffectEvents {
         EffectTier selfRepair = ForgedEffectRuntime.tier(tool, ForgingEffect.SELF_REPAIRING);
         if (selfRepair != null && tool.isDamaged() && now % 600L == 0L) {
             int repair = tierValue(selfRepair, SELF_REPAIR_AMOUNT);
+            if (DoubleTriggerRuntime.rollResult(player, tool)) repair *= 2;
             tool.setDamageValue(Math.max(0, tool.getDamageValue() - repair));
         }
 
@@ -611,6 +634,7 @@ public final class ForgedEffectEvents {
                     case II -> 1 + (player.getRandom().nextBoolean() ? 1 : 0);
                     case III -> 2;
                 };
+                if (DoubleTriggerRuntime.rollResult(player, tool)) output *= 2;
 
                 event.getDrops().clear();
                 BlockPos pos = event.getPos();
@@ -692,6 +716,10 @@ public final class ForgedEffectEvents {
                 // Fortune III style: random bonus 0..3 additional copies of each
                 // normal crop drop stack, rather than a fixed multiplier.
                 int bonusCopies = player.getRandom().nextInt(4);
+                if (player.getPersistentData().getLong("ForgedNatureGodBlessDoubleUntil")
+                        > natureFortuneLevel.getGameTime()) {
+                    bonusCopies += player.getRandom().nextInt(4);
+                }
                 if (bonusCopies > 0) {
                     int bonus = stack.getCount() * bonusCopies;
                     stack.grow(bonus);
@@ -705,6 +733,7 @@ public final class ForgedEffectEvents {
         EffectTier staticHover = ForgedEffectRuntime.tier(tool, ForgingEffect.STATIC_HOVER_DROP);
         if (staticHover != null && !event.getDrops().isEmpty()) {
             int duration = switch (staticHover) { case I -> 100; case II -> 200; case III -> 400; };
+            if (DoubleTriggerRuntime.rollResult(player, tool)) duration *= 2;
             long hoverUntil = player.level().getGameTime() + duration;
             for (ItemEntity drop : event.getDrops()) {
                 drop.setNoGravity(true);
@@ -851,13 +880,15 @@ public final class ForgedEffectEvents {
         // Bone Dust Extract: each successfully mined block can create one bonus Bone Meal.
         EffectTier boneDust = ForgedEffectRuntime.tier(tool, ForgingEffect.BONE_DUST_EXTRACT);
         if (boneDust != null && player.getRandom().nextDouble() < tierValue(boneDust, BONE_DUST_CHANCE)) {
-            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL));
+            int count = DoubleTriggerRuntime.rollResult(player, tool) ? 2 : 1;
+            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.BONE_MEAL, count));
         }
 
         // Soul Sand Extraction: each successfully mined block can create one bonus Soul Sand.
         EffectTier soulSand = ForgedEffectRuntime.tier(tool, ForgingEffect.SOUL_SAND_EXTRACTION);
         if (soulSand != null && player.getRandom().nextDouble() < tierValue(soulSand, SOUL_SAND_CHANCE)) {
-            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.SOUL_SAND));
+            int count = DoubleTriggerRuntime.rollResult(player, tool) ? 2 : 1;
+            Block.popResource(player.level(), event.getPos(), new ItemStack(Items.SOUL_SAND, count));
         }
 
         EffectTier scavenger = ForgedEffectRuntime.tier(tool, ForgingEffect.SCAVENGER_DIG);
@@ -868,14 +899,16 @@ public final class ForgedEffectEvents {
                 case 2 -> Items.IRON_NUGGET;
                 default -> Items.GOLD_NUGGET;
             };
-            Block.popResource(player.level(), event.getPos(), new ItemStack(bonus));
+            int count = DoubleTriggerRuntime.rollResult(player, tool) ? 2 : 1;
+            Block.popResource(player.level(), event.getPos(), new ItemStack(bonus, count));
         }
 
         // Unrefined Ore Discovery: bonus ore comes out as nuggets, not raw ore.
         EffectTier unrefined = ForgedEffectRuntime.tier(tool, ForgingEffect.UNREFINED_ORE_DISCOVERY);
         if (unrefined != null && player.getRandom().nextDouble() < tierValue(unrefined, UNREFINED_ORE_CHANCE)) {
             Item nugget = player.getRandom().nextBoolean() ? Items.IRON_NUGGET : Items.GOLD_NUGGET;
-            Block.popResource(player.level(), event.getPos(), new ItemStack(nugget));
+            int count = DoubleTriggerRuntime.rollResult(player, tool) ? 2 : 1;
+            Block.popResource(player.level(), event.getPos(), new ItemStack(nugget, count));
         }
 
         // Nature God Bless reward belongs to the plot and only rolls on a mature harvest.
@@ -963,6 +996,7 @@ public final class ForgedEffectEvents {
                 case 6 -> new ItemStack(Blocks.DIRT);
                 default -> new ItemStack(Blocks.FARMLAND);
             };
+            if (DoubleTriggerRuntime.rollResult(player, tool)) soilDrop.setCount(2);
             Block.popResource(player.level(), clicked, soilDrop);
         }
 
@@ -974,9 +1008,13 @@ public final class ForgedEffectEvents {
         EffectTier organic = ForgedEffectRuntime.tier(tool, ForgingEffect.ORGANIC_CATALYST);
         if (organic != null && canUseTimedTrigger(player, "OrganicCatalyst", Math.round(tierValue(organic, ORGANIC_CATALYST_COOLDOWN)))) {
             BlockPos center = clicked.above();
+            boolean doubled = DoubleTriggerRuntime.rollResult(player, tool);
             for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
                 if (isCrop(player.level().getBlockState(pos))) {
                     BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player.level(), pos, player);
+                    if (doubled) {
+                        BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), player.level(), pos, player);
+                    }
                 }
             }
         }
