@@ -50,7 +50,7 @@
       "predicate": {
         "examplemod:variant": 8
       },
-      "model": "examplemod:item/forged_head_sword_default"
+      "model": "examplemod:item/forged_head_sword_ghast"
     },
     {
       "predicate": {
@@ -62,25 +62,25 @@
       "predicate": {
         "examplemod:variant": 10
       },
-      "model": "examplemod:item/forged_head_sword_default"
+      "model": "examplemod:item/forged_head_sword_phantom"
     },
     {
       "predicate": {
         "examplemod:variant": 11
       },
-      "model": "examplemod:item/forged_head_sword_default"
+      "model": "examplemod:item/forged_head_sword_dragon_breath"
     },
     {
       "predicate": {
         "examplemod:variant": 12
       },
-      "model": "examplemod:item/forged_head_sword_default"
+      "model": "examplemod:item/forged_head_sword_shulker"
     },
     {
       "predicate": {
         "examplemod:variant": 13
       },
-      "model": "examplemod:item/forged_head_sword_default"
+      "model": "examplemod:item/forged_head_sword_nether_star"
     },
     {
       "predicate": {
@@ -146,19 +146,19 @@
       "predicate": {
         "examplemod:variant": 24
       },
-      "model": "examplemod:item/forged_head_axe_default"
+      "model": "examplemod:item/forged_head_axe_dragon_breath"
     },
     {
       "predicate": {
         "examplemod:variant": 25
       },
-      "model": "examplemod:item/forged_head_axe_default"
+      "model": "examplemod:item/forged_head_axe_shulker"
     },
     {
       "predicate": {
         "examplemod:variant": 26
       },
-      "model": "examplemod:item/forged_head_axe_default"
+      "model": "examplemod:item/forged_head_axe_nether_star"
     },
     {
       "predicate": {
@@ -218,25 +218,25 @@
       "predicate": {
         "examplemod:variant": 36
       },
-      "model": "examplemod:item/forged_head_pickaxe_default"
+      "model": "examplemod:item/forged_head_pickaxe_phantom"
     },
     {
       "predicate": {
         "examplemod:variant": 37
       },
-      "model": "examplemod:item/forged_head_pickaxe_default"
+      "model": "examplemod:item/forged_head_pickaxe_dragon_breath"
     },
     {
       "predicate": {
         "examplemod:variant": 38
       },
-      "model": "examplemod:item/forged_head_pickaxe_default"
+      "model": "examplemod:item/forged_head_pickaxe_shulker"
     },
     {
       "predicate": {
         "examplemod:variant": 39
       },
-      "model": "examplemod:item/forged_head_pickaxe_default"
+      "model": "examplemod:item/forged_head_pickaxe_nether_star"
     },
     {
       "predicate": {
@@ -296,25 +296,25 @@
       "predicate": {
         "examplemod:variant": 49
       },
-      "model": "examplemod:item/forged_head_shovel_default"
+      "model": "examplemod:item/forged_head_shovel_phantom"
     },
     {
       "predicate": {
         "examplemod:variant": 50
       },
-      "model": "examplemod:item/forged_head_shovel_default"
+      "model": "examplemod:item/forged_head_shovel_dragon_breath"
     },
     {
       "predicate": {
         "examplemod:variant": 51
       },
-      "model": "examplemod:item/forged_head_shovel_default"
+      "model": "examplemod:item/forged_head_shovel_shulker"
     },
     {
       "predicate": {
         "examplemod:variant": 52
       },
-      "model": "examplemod:item/forged_head_shovel_default"
+      "model": "examplemod:item/forged_head_shovel_nether_star"
     },
     {
       "predicate": {
@@ -380,19 +380,19 @@
       "predicate": {
         "examplemod:variant": 63
       },
-      "model": "examplemod:item/forged_head_hoe_default"
+      "model": "examplemod:item/forged_head_hoe_dragon_breath"
     },
     {
       "predicate": {
         "examplemod:variant": 64
       },
-      "model": "examplemod:item/forged_head_hoe_default"
+      "model": "examplemod:item/forged_head_hoe_shulker"
     },
     {
       "predicate": {
         "examplemod:variant": 65
       },
-      "model": "examplemod:item/forged_head_hoe_default"
+      "model": "examplemod:item/forged_head_hoe_nether_star"
     }
   ]
 }

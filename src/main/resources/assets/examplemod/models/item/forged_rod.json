@@ -62,25 +62,25 @@
       "predicate": {
         "examplemod:variant": 10
       },
-      "model": "examplemod:item/forged_rod_rode_default"
+      "model": "examplemod:item/forged_rod_rode_phantom"
     },
     {
       "predicate": {
         "examplemod:variant": 11
       },
-      "model": "examplemod:item/forged_rod_rode_default"
+      "model": "examplemod:item/forged_rod_rode_dragon_breath"
     },
     {
       "predicate": {
         "examplemod:variant": 12
       },
-      "model": "examplemod:item/forged_rod_rode_default"
+      "model": "examplemod:item/forged_rod_rode_shulker"
     },
     {
       "predicate": {
         "examplemod:variant": 13
       },
-      "model": "examplemod:item/forged_rod_rode_default"
+      "model": "examplemod:item/forged_rod_rode_nether_star"
     }
   ]
 }

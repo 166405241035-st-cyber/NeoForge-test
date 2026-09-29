@@ -68,19 +68,19 @@
       "predicate": {
         "examplemod:variant": 11
       },
-      "model": "examplemod:item/forged_core_core_default"
+      "model": "examplemod:item/forged_core_core_dragon_breath"
     },
     {
       "predicate": {
         "examplemod:variant": 12
       },
-      "model": "examplemod:item/forged_core_core_default"
+      "model": "examplemod:item/forged_core_core_shulker"
     },
     {
       "predicate": {
         "examplemod:variant": 13
       },
-      "model": "examplemod:item/forged_core_core_default"
+      "model": "examplemod:item/forged_core_core_nether_star"
     }
   ]
 }
