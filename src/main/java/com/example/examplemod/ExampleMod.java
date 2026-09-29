@@ -142,7 +142,7 @@ public class ExampleMod {
         @net.neoforged.bus.api.SubscribeEvent
         public static void registerForgedEquipmentColor(RegisterColorHandlersEvent.Item event) {
             event.register((stack, tintIndex) -> {
-                if (tintIndex != 0) return 0xFFFFFFFF;
+                if (tintIndex != 1) return 0xFFFFFFFF;
                 MonsterMaterial material = ForgedEquipmentItem.readHeadMaterial(stack);
                 if (material == null) return 0xFFFFFFFF;
                 return switch (material) {

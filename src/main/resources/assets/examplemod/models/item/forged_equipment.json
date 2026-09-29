@@ -1,7 +1,8 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "minecraft:item/iron_sword"
+    "layer0": "minecraft:item/iron_sword",
+    "layer1": "examplemod:item/finished_head_sword"
   },
   "overrides": [
     {
