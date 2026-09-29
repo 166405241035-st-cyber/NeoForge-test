@@ -48,13 +48,13 @@ public final class DoubleTriggerRuntime {
             // Timed/status/damage effects where replay is represented by doubled
             // duration, damage, healing, force, or another equivalent result.
             case CRIPPLING_STRIKE, SPINE_SPIKE, GRAVE_GRASP, WEB_TRAP,
-                 UNSTOPPABLE_KNOCKBACK, AEGIS_SHIELD, VAMPIRIC_VITALITY,
+                 UNSTOPPABLE_KNOCKBACK, VAMPIRIC_VITALITY,
                  WITHER_DRAIN, STUN_TIME_STOP, IRON_FORTRESS_GUARD,
                  LEVITATION_BLOW, STATIC_HOVER_DROP, MAGNETIC_CLUMPING,
                  EARTHY_SHOCKWAVE, ORGANIC_CATALYST -> DoubleTriggerType.DOUBLE_EFFECT;
 
             // Main effect is passive/continuous/toggle/storage or already permanent.
-            case WITHER_CURSE_POWER, VELOCITY_STRIKE, FRENZY_DIGGING,
+            case WITHER_CURSE_POWER, VELOCITY_STRIKE, AEGIS_SHIELD, FRENZY_DIGGING,
                  AIRBORNE_MINING, OBSIDIAN_BREAKER, VOID_VACUUM_PICK,
                  BLOCK_LEVITATION, INTERNAL_STORAGE, POCKET_DIMENSION,
                  SKY_BRIDGE_WALK, MOISTURE_RETAIN, FLORA_AEGIS,
