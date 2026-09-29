@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 /** Concept-layout pre-Miniganme 1 screen. */
 public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
-    private String status = "Insert the required components";
+    private String status = "";
 
     private static final int BG = 0xFF20252B, PANEL = 0xFF171B20, PANEL2 = 0xFF292F36;
     private static final int STEEL_DARK = 0xFF0B0E12, STEEL = 0xFF3A424B, STEEL_LIGHT = 0xFF59636E;
@@ -60,11 +60,11 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         forgedFrame(g,x,y,320,262);
 
         // Separate metal nameplate instead of a flat full-width header.
-        metalPlate(g,x+65,y+8,190,37);
-        g.fill(x+18,y+28,x+65,y+30,STEEL);
-        g.fill(x+255,y+28,x+302,y+30,STEEL);
-        g.fill(x+18,y+31,x+65,y+32,COPPER);
-        g.fill(x+255,y+31,x+302,y+32,COPPER);
+        metalPlate(g,x+65,y+4,190,25);
+        g.fill(x+18,y+16,x+65,y+18,STEEL);
+        g.fill(x+255,y+16,x+302,y+18,STEEL);
+        g.fill(x+18,y+19,x+65,y+20,COPPER);
+        g.fill(x+255,y+19,x+302,y+20,COPPER);
 
         // Open work surface: no bulky component cards.
         g.fill(x+16,y+51,x+304,y+119,PANEL);
@@ -120,8 +120,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
     }
 
     @Override protected void renderLabels(GuiGraphics g,int mx,int my){
-        g.drawCenteredString(font,"MONSTER FORGE",160,14,TEXT);
-        g.drawCenteredString(font,"Prepare components for forging",160,27,MUTED);
+        g.drawCenteredString(font,"MONSTER FORGE",160,11,TEXT);
 
         g.drawCenteredString(font,"BLUEPRINT",51,47,0xFF9CCFFF);
         g.drawCenteredString(font,"MATERIAL",112,47,0xFFE2B6FF);
@@ -130,7 +129,8 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         g.drawCenteredString(font,"RESERVED",264,93,0xFF70777E);
 
         boolean ready=menu.hasValidRecipe();
-        g.drawCenteredString(font,ready ? "RECIPE READY" : status,160,125,ready?READY:WARN);
+        if (ready) g.drawCenteredString(font,"RECIPE READY",160,125,READY);
+        else if (!status.isEmpty()) g.drawCenteredString(font,status,160,125,WARN);
         g.drawCenteredString(font,"INVENTORY",160,166,MUTED);
     }
 
