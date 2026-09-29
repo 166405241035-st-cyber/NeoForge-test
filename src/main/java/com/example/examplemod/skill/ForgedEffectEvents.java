@@ -942,13 +942,11 @@ public final class ForgedEffectEvents {
                     case III -> 0.20D;
                 };
                 if (player.getRandom().nextDouble() < rewardChance) {
+                    // Passive Golden-Apple reward is intentionally NOT doubled.
+                    // Nature God Bless is HYBRID: only its explicit R activation
+                    // participates in Double Trigger.
                     ItemStack reward = new ItemStack(player.getRandom().nextDouble() < 0.01D
                             ? Items.ENCHANTED_GOLDEN_APPLE : Items.GOLDEN_APPLE);
-                    if (ForgedFarmingPlotData.get(natureLevel)
-                            .hasDoubleTrigger(event.getPos().below(), ForgingEffect.NATURE_GOD_BLESS)
-                            && player.getRandom().nextDouble() < DoubleTriggerRuntime.CHANCE) {
-                        reward.setCount(2);
-                    }
                     Block.popResource(player.level(), event.getPos(), reward);
                 }
             }
