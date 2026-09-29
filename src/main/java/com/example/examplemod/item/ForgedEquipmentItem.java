@@ -189,7 +189,7 @@ public class ForgedEquipmentItem extends Item {
         // Double Trigger creates one extra boomerang projectile from the same activation.
         // The real item is consumed/removed only once, so there is no extra durability/item cost.
         if (DoubleTriggerRuntime.rollActive(player, stack)) {
-            ForgedBoomerangEntity second = new ForgedBoomerangEntity(level, player, thrownStack, throwDamage);
+            ForgedBoomerangEntity second = new ForgedBoomerangEntity(level, player, thrownStack, throwDamage, false);
             Vec3 side = direction.cross(new Vec3(0.0D, 1.0D, 0.0D));
             if (side.lengthSqr() > 0.0001D) side = side.normalize().scale(0.22D);
             second.setPos(second.getX() + side.x, second.getY(), second.getZ() + side.z);
