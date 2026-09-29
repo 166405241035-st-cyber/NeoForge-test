@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "examplemod:item/finished_sword"
+    "layer0": "minecraft:item/iron_sword"
   },
   "overrides": [
     {
@@ -33,12 +33,6 @@
         "examplemod:equipment_variant": 5
       },
       "model": "examplemod:item/finished_hoe"
-    },
-    {
-      "predicate": {
-        "examplemod:equipment_variant": 6
-      },
-      "model": "examplemod:item/finished_axe_slime"
     }
   ]
 }

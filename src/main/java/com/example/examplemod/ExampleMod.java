@@ -36,6 +36,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -134,10 +135,32 @@ public class ExampleMod {
                 ItemProperties.register(FORGED_EQUIPMENT_ITEM.get(), equipmentVariant, (stack, level, entity, seed) -> {
                     HeadBlueprintType blueprint = ForgedEquipmentItem.readBlueprint(stack);
                     if (blueprint == null) return 0;
-                    if (blueprint == HeadBlueprintType.AXE && ForgedEquipmentItem.readHeadMaterial(stack) == MonsterMaterial.SLIME) return 6;
                     return blueprint.ordinal() + 1;
                 });
             });
+        }
+        @net.neoforged.bus.api.SubscribeEvent
+        public static void registerForgedEquipmentColor(RegisterColorHandlersEvent.Item event) {
+            event.register((stack, tintIndex) -> {
+                if (tintIndex != 0) return 0xFFFFFFFF;
+                MonsterMaterial material = ForgedEquipmentItem.readHeadMaterial(stack);
+                if (material == null) return 0xFFFFFFFF;
+                return switch (material) {
+                    case ROTTEN_FLESH -> 0xFFB18B75;
+                    case BONE -> 0xFFF0E5C6;
+                    case STRING -> 0xFFD6DAE2;
+                    case GUNPOWDER -> 0xFF777D7B;
+                    case SLIME -> 0xFF76D266;
+                    case ENDER -> 0xFFA077D9;
+                    case BLAZE_ROD -> 0xFFFFA84E;
+                    case GHAST_TEAR -> 0xFFB4E9E6;
+                    case WITHER -> 0xFF67666C;
+                    case PHANTOM -> 0xFF7C8ECB;
+                    case DRAGON_BREATH -> 0xFFB76FE9;
+                    case SHULKER -> 0xFFA17BA6;
+                    case NETHER_STAR -> 0xFFC0F3F4;
+                };
+            }, FORGED_EQUIPMENT_ITEM.get());
         }
         @net.neoforged.bus.api.SubscribeEvent
         public static void registerScreens(RegisterMenuScreensEvent event) {
