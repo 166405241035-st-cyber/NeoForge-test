@@ -137,7 +137,8 @@ public final class ForgedEffectEvents {
                 case II -> 9.0D;
                 case III -> 12.0D;
             };
-            if (DoubleTriggerRuntime.rollAttack(player, weapon)) slamDamage *= 2.0D;
+            boolean doubled = DoubleTriggerRuntime.rollAttack(player, weapon);
+            if (doubled) slamDamage *= 2.0D;
             double radius = 5.0D; // Fixed AoE; Tier only changes power.
             Vec3 center = target.position();
             AABB slamArea = new AABB(center.x - radius, center.y - radius, center.z - radius,
@@ -146,8 +147,9 @@ public final class ForgedEffectEvents {
                     e -> e.isAlive() && e.distanceToSqr(target) <= radius * radius)) {
                 Vec3 pull = center.subtract(mob.position());
                 if (pull.lengthSqr() > 0.01D) {
-                    Vec3 velocity = pull.normalize().scale(1.1D);
-                    mob.setDeltaMovement(velocity.x, Math.max(0.20D, velocity.y), velocity.z);
+                    double pullPower = doubled ? 2.2D : 1.1D;
+                    Vec3 velocity = pull.normalize().scale(pullPower);
+                    mob.setDeltaMovement(velocity.x, Math.max(doubled ? 0.40D : 0.20D, velocity.y), velocity.z);
                     mob.hurtMarked = true;
                 }
                 if (mob != target) {
@@ -159,7 +161,11 @@ public final class ForgedEffectEvents {
                     }
                 }
             }
-            safeForgedExplosion(player, target.getX(), target.getY(), target.getZ(), 2.0F);
+            int explosions = doubled ? 2 : 1;
+            for (int i = 0; i < explosions; i++) {
+                safeForgedExplosion(player, target.getX(), target.getY(), target.getZ(), 2.0F);
+            }
+            // Double Trigger is a free replay: durability is paid once.
             ForgedBlessingRuntime.damage(weapon, 3);
         }
 
