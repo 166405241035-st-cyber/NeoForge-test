@@ -64,7 +64,12 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
         g.fill(x+160,y+91,x+161,y+101,COPPER);
         g.fill(x+235,y+91,x+236,y+101,COPPER);
         g.fill(x+85,y+100,x+236,y+101,COPPER);
-        g.fill(x+160,y+100,x+161,y+106,COPPER);
+        g.fill(x+160,y+100,x+161,y+113,COPPER);
+        // Visible downward arrow from the three component lines.
+        g.fill(x+157,y+109,x+164,y+111,COPPER);
+        g.fill(x+158,y+111,x+163,y+113,COPPER);
+        g.fill(x+159,y+113,x+162,y+115,COPPER);
+        g.fill(x+160,y+115,x+161,y+117,COPPER);
         metalPlate(g,x+181,y+103,94,17);
 
         g.fill(x+34,y+126,x+270,y+127,STEEL_LIGHT);
