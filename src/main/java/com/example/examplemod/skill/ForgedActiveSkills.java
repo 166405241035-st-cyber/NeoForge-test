@@ -515,16 +515,12 @@ public final class ForgedActiveSkills {
         }
 
         int broken = 0;
-        int baseBroken = 0;
         player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
         try {
             for (BlockPos pos : targets) {
                 var state = level.getBlockState(pos);
                 if (state.isAir() || state.is(Blocks.BEDROCK)) continue;
-                if (level.destroyBlock(pos, true, player)) {
-                    broken++;
-                    if (baseTargets.contains(pos)) baseBroken++;
-                }
+                if (level.destroyBlock(pos, true, player)) broken++;
             }
         } finally {
             player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
@@ -589,12 +585,16 @@ public final class ForgedActiveSkills {
         }
 
         int broken = 0;
+        int baseBroken = 0;
         player.getPersistentData().putBoolean("ForgedMultiBreakGuard", true);
         try {
             for (BlockPos pos : targets) {
                 var state = level.getBlockState(pos);
                 if (state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) continue;
-                if (level.destroyBlock(pos, true, player)) broken++;
+                if (level.destroyBlock(pos, true, player)) {
+                    broken++;
+                    if (baseTargets.contains(pos)) baseBroken++;
+                }
             }
         } finally {
             player.getPersistentData().putBoolean("ForgedMultiBreakGuard", false);
