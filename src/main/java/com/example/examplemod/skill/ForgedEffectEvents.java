@@ -277,15 +277,22 @@ public final class ForgedEffectEvents {
             if (combo >= 3) {
                 player.getPersistentData().putInt(countKey, 0);
                 float comboDamage = tierValue(comboDetonation, COMBO_DETONATION_DAMAGE);
-                if (DoubleTriggerRuntime.rollAttack(player, weapon)) comboDamage *= 2.0F;
-                player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
-                try {
-                    target.hurt(player.damageSources().playerAttack(player), comboDamage);
-                } finally {
-                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                boolean doubled = DoubleTriggerRuntime.rollAttack(player, weapon);
+                int activations = doubled ? 2 : 1;
+
+                // Double Trigger replays the actual Combo Detonation result instead of
+                // merely multiplying one number: each activation deals its bonus hit
+                // and creates its own non-block-breaking explosion.
+                for (int i = 0; i < activations; i++) {
+                    player.getPersistentData().putBoolean("ForgedEffectDamageGuard", true);
+                    try {
+                        target.hurt(player.damageSources().playerAttack(player), comboDamage);
+                    } finally {
+                        player.getPersistentData().putBoolean("ForgedEffectDamageGuard", false);
+                    }
+                    player.level().explode(player, target.getX(), target.getY(), target.getZ(),
+                            1.25F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
                 }
-                player.level().explode(player, target.getX(), target.getY(), target.getZ(),
-                        1.25F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
             }
         }
 
