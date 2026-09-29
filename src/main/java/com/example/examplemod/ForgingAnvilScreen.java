@@ -57,20 +57,15 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
         // Open anvil assembly surface.
         g.fill(x+22,y+51,x+282,y+116,PANEL);
         g.fill(x+24,y+53,x+280,y+114,0xFF1D2228);
-        slot(g,x+75,y+66,0xFFE08A42); slot(g,x+150,y+66,0xFF64B5E8); slot(g,x+225,y+66,0xFFA56BCB);
+        slot(g,x+67,y+66,0xFFE08A42); slot(g,x+142,y+66,0xFF64B5E8); slot(g,x+217,y+66,0xFFA56BCB);
 
         // Connector lines converge above a small anvil-style output plate.
-        g.fill(x+85,y+91,x+86,y+101,COPPER);
-        g.fill(x+160,y+91,x+161,y+101,COPPER);
-        g.fill(x+235,y+91,x+236,y+101,COPPER);
-        g.fill(x+85,y+100,x+236,y+101,COPPER);
-        g.fill(x+160,y+100,x+161,y+113,COPPER);
-        // Visible downward arrow from the three component lines.
-        g.fill(x+157,y+109,x+164,y+111,COPPER);
-        g.fill(x+158,y+111,x+163,y+113,COPPER);
-        g.fill(x+159,y+113,x+162,y+115,COPPER);
-        g.fill(x+160,y+115,x+161,y+117,COPPER);
-        metalPlate(g,x+181,y+103,94,17);
+        g.fill(x+77,y+91,x+78,y+101,COPPER);
+        g.fill(x+152,y+91,x+153,y+101,COPPER);
+        g.fill(x+227,y+91,x+228,y+101,COPPER);
+        g.fill(x+77,y+100,x+228,y+101,COPPER);
+        g.fill(x+152,y+100,x+153,y+104,COPPER);
+        metalPlate(g,x+105,y+104,94,17);
 
         g.fill(x+34,y+126,x+270,y+127,STEEL_LIGHT);
         g.fill(x+48,y+127,x+256,y+128,COPPER);
@@ -111,11 +106,11 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
 
     @Override protected void renderLabels(GuiGraphics g,int mx,int my){
         g.drawCenteredString(font,"FINAL ASSEMBLY",152,11,TEXT);
-        g.drawCenteredString(font,"HEAD",85,47,0xFFFFB56B);
-        g.drawCenteredString(font,"CORE",160,47,0xFF8CCBFF);
-        g.drawCenteredString(font,"ROD",235,47,0xFFD0A4FF);
-        g.drawCenteredString(font,"+",122,69,0xFFFFC27A); g.drawCenteredString(font,"+",197,69,0xFFFFC27A);
-        g.drawCenteredString(font,"FINAL EQUIPMENT",228,107,TEXT);
+        g.drawCenteredString(font,"HEAD",77,47,0xFFFFB56B);
+        g.drawCenteredString(font,"CORE",152,47,0xFF8CCBFF);
+        g.drawCenteredString(font,"ROD",227,47,0xFFD0A4FF);
+        g.drawCenteredString(font,"+",114,69,0xFFFFC27A); g.drawCenteredString(font,"+",189,69,0xFFFFC27A);
+        g.drawCenteredString(font,"FINAL EQUIPMENT",152,108,TEXT);
         boolean ready=menu.hasValidAssembly();
         if (ready) g.drawCenteredString(font,"READY TO FORGE",152,125,READY);
         else if (!status.isEmpty()) g.drawCenteredString(font,status,152,125,WARN);

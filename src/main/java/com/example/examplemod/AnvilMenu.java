@@ -33,15 +33,15 @@ public class AnvilMenu extends AbstractContainerMenu {
         checkContainerSize(anvilInventory, ANVIL_SLOT_COUNT);
         anvilInventory.startOpen(playerInventory.player);
 
-        addSlot(new Slot(anvilInventory, HEAD_SLOT, 76, 67) {
+        addSlot(new Slot(anvilInventory, HEAD_SLOT, 68, 67) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgedHeadItem.readResult(stack) != null; }
             @Override public int getMaxStackSize() { return 1; }
         });
-        addSlot(new Slot(anvilInventory, CORE_SLOT, 151, 67) {
+        addSlot(new Slot(anvilInventory, CORE_SLOT, 143, 67) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgedCoreItem.readResult(stack) != null; }
             @Override public int getMaxStackSize() { return 1; }
         });
-        addSlot(new Slot(anvilInventory, ROD_SLOT, 226, 67) {
+        addSlot(new Slot(anvilInventory, ROD_SLOT, 218, 67) {
             @Override public boolean mayPlace(ItemStack stack) { return ForgedRodItem.readResult(stack) != null; }
             @Override public int getMaxStackSize() { return 1; }
         });
