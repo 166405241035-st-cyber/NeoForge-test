@@ -1,6 +1,44 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "smeltingandforging:item/sword_header_bone"
-  }
+    "layer0": "examplemod:item/finished_sword"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 1
+      },
+      "model": "examplemod:item/finished_sword"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 2
+      },
+      "model": "examplemod:item/finished_axe"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 3
+      },
+      "model": "examplemod:item/finished_pickaxe"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 4
+      },
+      "model": "examplemod:item/finished_shovel"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 5
+      },
+      "model": "examplemod:item/finished_hoe"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 6
+      },
+      "model": "examplemod:item/finished_axe_slime"
+    }
+  ]
 }

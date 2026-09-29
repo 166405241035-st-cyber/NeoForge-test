@@ -130,6 +130,13 @@ public class ExampleMod {
                     ForgedRodResult result = ForgedRodItem.readResult(stack);
                     return result == null ? 0 : result.monsterMaterial().ordinal() + 1;
                 });
+                ResourceLocation equipmentVariant = ResourceLocation.fromNamespaceAndPath(MODID, "equipment_variant");
+                ItemProperties.register(FORGED_EQUIPMENT_ITEM.get(), equipmentVariant, (stack, level, entity, seed) -> {
+                    HeadBlueprintType blueprint = ForgedEquipmentItem.readBlueprint(stack);
+                    if (blueprint == null) return 0;
+                    if (blueprint == HeadBlueprintType.AXE && ForgedEquipmentItem.readHeadMaterial(stack) == MonsterMaterial.SLIME) return 6;
+                    return blueprint.ordinal() + 1;
+                });
             });
         }
         @net.neoforged.bus.api.SubscribeEvent
