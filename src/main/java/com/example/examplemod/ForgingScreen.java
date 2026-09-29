@@ -87,8 +87,8 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         g.fill(x+63,y+171,x+257,y+252,PANEL);
         for(int r=0;r<3;r++) for(int c=0;c<9;c++) invSlot(g,x+74+c*18,y+178+r*18);
         for(int c=0;c<9;c++) invSlot(g,x+74+c*18,y+236);
-        energyBar(g,x+43,y+180,Math.min(menu.fuel(),75));
-        energyBar(g,x+269,y+180,Math.max(0,menu.fuel()-75));
+        energyBar(g,x+39,y+176,Math.min(menu.fuel(),75));
+        energyBar(g,x+269,y+176,Math.max(0,menu.fuel()-75));
     }
 
     private void forgedFrame(GuiGraphics g,int x,int y,int w,int h){
@@ -122,10 +122,20 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         g.fill(x+3,y+3,x+17,y+17,0xFF272D34);
     }
     private void energyBar(GuiGraphics g,int x,int y,int amount) {
-        g.fill(x,y,x+8,y+69,STEEL_DARK);
-        g.fill(x+1,y+1,x+7,y+68,STEEL);
-        int height = amount * 65 / 75;
-        g.fill(x+2,y+67-height,x+6,y+67,0xFFFF9A39);
+        // Twelve inset furnace-glass segments, each representing part of this 75-point bank.
+        g.fill(x,y,x+12,y+76,STEEL_DARK);
+        g.fill(x+1,y+1,x+11,y+75,STEEL_LIGHT);
+        g.fill(x+2,y+2,x+10,y+74,FRAME);
+        g.fill(x+3,y+3,x+9,y+73,0xFF101820);
+        for (int i=0;i<12;i++) {
+            int top=y+69-i*6;
+            boolean lit=amount*12>i*75;
+            int color=i<4?0xFFE0662B:i<8?0xFFF59631:0xFFFFC450;
+            g.fill(x+4,top,x+8,top+5,lit?color:0xFF29333B);
+            if (lit) g.fill(x+4,top,x+5,top+4,0xFFFFDD87);
+        }
+        g.fill(x+1,y+1,x+3,y+3,COPPER);
+        g.fill(x+9,y+73,x+11,y+75,COPPER);
     }
 
     @Override protected void renderLabels(GuiGraphics g,int mx,int my){
