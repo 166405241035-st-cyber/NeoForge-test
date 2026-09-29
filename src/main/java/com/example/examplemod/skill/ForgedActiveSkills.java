@@ -7,6 +7,7 @@ import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
 import com.example.examplemod.skill.blessing.DoubleTriggerRuntime;
+import com.example.examplemod.skill.blessing.ForgedBlessingRuntime;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
