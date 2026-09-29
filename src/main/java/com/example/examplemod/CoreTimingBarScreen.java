@@ -145,7 +145,7 @@ public class CoreTimingBarScreen extends Screen {
 
         if (minecraft.player != null) {
             ItemStack stack = ForgedCoreItem.create(coreResult);
-            if (!minecraft.player.getInventory().add(stack)) minecraft.player.drop(stack, false);
+            ForgedEffectNetwork.sendForgingReward(stack);
         }
 
         ForgingResult result = new ForgingResult(score, accuracy, maxCombo, perfectCount, greatCount, goodCount, missCount);
