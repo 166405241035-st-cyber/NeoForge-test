@@ -684,7 +684,7 @@ public final class ForgedActiveSkills {
             startCooldown(tool, player, "LinearPenetration3x15", cooldown);
             int extraCost = (baseBroken + 1) / 2;
             if (tool.isDamageableItem())
-                tool.setDamageValue(Math.min(tool.getMaxDamage(), tool.getDamageValue() + extraCost));
+                ForgedBlessingRuntime.damage(tool, extraCost);
         }
     }
 
