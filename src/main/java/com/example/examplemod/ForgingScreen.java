@@ -12,31 +12,27 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-/**
- * Pre-Miniganme 1 forging screen.
- *
- * Slot positions intentionally match ForgeMenu exactly. This class only changes
- * presentation so the recipe flow is easier to read.
- */
+/** Larger, cleaner pre-Miniganme 1 forging screen. */
 public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
     private Button forgeButton;
     private String status = "Place the required components";
 
-    private static final int IRON_DARK = 0xFF17191D;
-    private static final int IRON = 0xFF252A30;
-    private static final int IRON_LIGHT = 0xFF353B43;
-    private static final int COPPER = 0xFFC97832;
-    private static final int COPPER_DARK = 0xFF74401E;
-    private static final int TEXT = 0xFFF2E9DC;
-    private static final int MUTED = 0xFFAEB5BD;
-    private static final int READY = 0xFF7ED957;
+    private static final int IRON_DARK = 0xFF15181C;
+    private static final int IRON = 0xFF242A31;
+    private static final int IRON_LIGHT = 0xFF353C45;
+    private static final int COPPER = 0xFFD07A35;
+    private static final int COPPER_DARK = 0xFF6E3A1C;
+    private static final int TEXT = 0xFFF1E9DC;
+    private static final int MUTED = 0xFFADB4BC;
+    private static final int READY = 0xFF76D95B;
     private static final int WARN = 0xFFFFB454;
 
     public ForgingScreen(ForgeMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
-        this.imageWidth = 176;
-        this.imageHeight = 208;
-        this.inventoryLabelY = 115;
+        this.imageWidth = 250;
+        this.imageHeight = 236;
+        this.inventoryLabelX = 37;
+        this.inventoryLabelY = 140;
     }
 
     @Override
@@ -44,7 +40,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         super.init();
         forgeButton = addRenderableWidget(Button.builder(
                 Component.literal("START FORGING"), button -> startForge())
-                .bounds(leftPos + 48, topPos + 99, 80, 20).build());
+                .bounds(leftPos + 74, topPos + 116, 102, 20).build());
     }
 
     private void startForge() {
@@ -59,13 +55,9 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         menu.consumeRecipe();
 
         if (minecraft == null) return;
-        if (blueprint == ForgingBlueprintType.CORE) {
-            minecraft.setScreen(new CoreTimingBarScreen(metal, monster));
-        } else if (blueprint == ForgingBlueprintType.ROD) {
-            minecraft.setScreen(new RodTimingBarScreen(metal, monster));
-        } else if (blueprint != null && blueprint.headType() != null) {
-            minecraft.setScreen(new TimingBarScreen(metal, blueprint.headType(), monster));
-        }
+        if (blueprint == ForgingBlueprintType.CORE) minecraft.setScreen(new CoreTimingBarScreen(metal, monster));
+        else if (blueprint == ForgingBlueprintType.ROD) minecraft.setScreen(new RodTimingBarScreen(metal, monster));
+        else if (blueprint != null && blueprint.headType() != null) minecraft.setScreen(new TimingBarScreen(metal, blueprint.headType(), monster));
     }
 
     private String missingRecipeMessage() {
@@ -79,84 +71,85 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        int x = leftPos;
-        int y = topPos;
+        int x = leftPos, y = topPos;
 
-        // Outer forged-iron frame.
         g.fill(x, y, x + imageWidth, y + imageHeight, IRON_DARK);
         g.fill(x + 2, y + 2, x + imageWidth - 2, y + imageHeight - 2, COPPER_DARK);
-        g.fill(x + 4, y + 4, x + imageWidth - 4, y + imageHeight - 4, IRON);
+        g.fill(x + 5, y + 5, x + imageWidth - 5, y + imageHeight - 5, IRON);
 
-        // Header and molten accent.
-        g.fill(x + 6, y + 6, x + imageWidth - 6, y + 25, 0xFF111317);
-        g.fill(x + 6, y + 25, x + imageWidth - 6, y + 27, COPPER);
+        // Header
+        g.fill(x + 9, y + 9, x + imageWidth - 9, y + 31, 0xFF101317);
+        g.fill(x + 9, y + 31, x + imageWidth - 9, y + 34, COPPER);
 
-        // Recipe workbench panel.
-        g.fill(x + 7, y + 29, x + imageWidth - 7, y + 95, 0xFF1D2126);
-        g.fill(x + 9, y + 31, x + imageWidth - 9, y + 93, 0xFF292E35);
+        // Main recipe panel
+        g.fill(x + 12, y + 39, x + imageWidth - 12, y + 109, 0xFF1B2026);
+        g.fill(x + 15, y + 42, x + imageWidth - 15, y + 106, 0xFF2A3038);
 
-        // Visual flow: Blueprint + Monster + five Metals -> forge.
-        g.fill(x + 47, y + 54, x + 57, y + 56, COPPER_DARK);
-        g.fill(x + 107, y + 65, x + 120, y + 67, COPPER_DARK);
-        g.fill(x + 88, y + 81, x + 90, y + 90, COPPER_DARK);
+        // Group cards
+        drawGroup(g, x + 19, y + 49, 36, 50, 0xFF386FA8);
+        drawGroup(g, x + 65, y + 49, 36, 50, 0xFF7F4BAA);
+        drawGroup(g, x + 105, y + 42, 72, 64, COPPER_DARK);
 
-        drawSlotFrame(g, x + 26, y + 44, 0xFF4B8FD8); // blueprint
-        drawSlotFrame(g, x + 85, y + 56, 0xFFA45AD6); // monster
-        drawSlotFrame(g, x + 85, y + 29, COPPER);
-        drawSlotFrame(g, x + 58, y + 45, COPPER);
-        drawSlotFrame(g, x + 112, y + 45, COPPER);
-        drawSlotFrame(g, x + 68, y + 75, COPPER);
-        drawSlotFrame(g, x + 102, y + 75, COPPER);
+        // Actual slot frames line up with ForgeMenu.
+        drawSlotFrame(g, x + 25, y + 57, 0xFF4B8FD8);  // Blueprint slot at 26,58
+        drawSlotFrame(g, x + 71, y + 57, 0xFFA45AD6);  // Monster slot at 72,58
+        drawSlotFrame(g, x + 131, y + 39, COPPER);
+        drawSlotFrame(g, x + 111, y + 63, COPPER);
+        drawSlotFrame(g, x + 151, y + 63, COPPER);
+        drawSlotFrame(g, x + 119, y + 87, COPPER);
+        drawSlotFrame(g, x + 143, y + 87, COPPER);
 
-        // Fuel slot is kept for compatibility, but visually de-emphasized because
-        // fuel cost is not yet part of the actual forging recipe.
-        drawSlotFrame(g, x + 144, y + 85, 0xFF666A70);
+        // Reserved fuel panel, visually separated from recipe.
+        g.fill(x + 186, y + 43, x + 225, y + 99, 0xFF181C21);
+        g.fill(x + 188, y + 45, x + 223, y + 97, 0xFF252B32);
+        drawSlotFrame(g, x + 197, y + 57, 0xFF656A70);
 
-        // Button cradle / status strip.
-        g.fill(x + 7, y + 97, x + imageWidth - 7, y + 121, 0xFF171A1E);
-        g.fill(x + 7, y + 121, x + imageWidth - 7, y + 123, COPPER_DARK);
+        // Start/status panel
+        g.fill(x + 12, y + 112, x + imageWidth - 12, y + 140, 0xFF15191E);
+        g.fill(x + 12, y + 139, x + imageWidth - 12, y + 142, COPPER_DARK);
 
-        // Inventory panel.
-        g.fill(x + 5, y + 123, x + imageWidth - 5, y + imageHeight - 5, 0xFF20242A);
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                drawInventorySlot(g, x + 7 + col * 18, y + 125 + row * 18);
-            }
-        }
-        for (int col = 0; col < 9; col++) {
-            drawInventorySlot(g, x + 7 + col * 18, y + 183);
-        }
+        // Inventory region
+        g.fill(x + 25, y + 145, x + imageWidth - 25, y + imageHeight - 8, 0xFF1D2228);
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++)
+            drawInventorySlot(g, x + 36 + col * 18, y + 150 + row * 18);
+        for (int col = 0; col < 9; col++)
+            drawInventorySlot(g, x + 36 + col * 18, y + 210);
+    }
+
+    private void drawGroup(GuiGraphics g, int x, int y, int w, int h, int accent) {
+        g.fill(x, y, x + w, y + h, 0xFF111419);
+        g.fill(x + 1, y + 1, x + w - 1, y + h - 1, accent);
+        g.fill(x + 3, y + 3, x + w - 3, y + h - 3, 0xFF252B32);
     }
 
     private void drawSlotFrame(GuiGraphics g, int x, int y, int accent) {
-        g.fill(x, y, x + 20, y + 20, 0xFF0E1013);
+        g.fill(x, y, x + 20, y + 20, 0xFF0C0E11);
         g.fill(x + 1, y + 1, x + 19, y + 19, accent);
-        g.fill(x + 3, y + 3, x + 17, y + 17, 0xFF3A4048);
-        g.fill(x + 4, y + 4, x + 16, y + 16, 0xFF252A30);
+        g.fill(x + 3, y + 3, x + 17, y + 17, IRON_LIGHT);
+        g.fill(x + 4, y + 4, x + 16, y + 16, 0xFF242A30);
     }
 
     private void drawInventorySlot(GuiGraphics g, int x, int y) {
-        g.fill(x, y, x + 20, y + 20, 0xFF101216);
+        g.fill(x, y, x + 20, y + 20, 0xFF0E1115);
         g.fill(x + 1, y + 1, x + 19, y + 19, IRON_LIGHT);
-        g.fill(x + 3, y + 3, x + 17, y + 17, 0xFF272C32);
+        g.fill(x + 3, y + 3, x + 17, y + 17, 0xFF272D34);
     }
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawCenteredString(font, "MONSTER FORGE", imageWidth / 2, 9, TEXT);
-        g.drawString(font, "Blueprint", 8, 34, 0xFF8EC5FF, false);
-        g.drawString(font, "Monster", 72, 47, 0xFFD9A3FF, false);
-        g.drawString(font, "Metal x5", 73, 18, 0xFFFFC27A, false);
+        g.drawCenteredString(font, "MONSTER FORGE", imageWidth / 2, 13, TEXT);
+        g.drawCenteredString(font, "Prepare components for Minigame 1", imageWidth / 2, 24, MUTED);
 
-        // Fuel is intentionally marked optional/reserved until its gameplay cost is finalized.
-        g.drawString(font, "Fuel*", 140, 74, 0xFF8D939A, false);
+        g.drawCenteredString(font, "BLUEPRINT", 37, 44, 0xFF9BCFFF);
+        g.drawCenteredString(font, "MONSTER", 83, 44, 0xFFE1B5FF);
+        g.drawCenteredString(font, "METAL x5", 141, 36, 0xFFFFC27A);
+        g.drawCenteredString(font, "FUEL", 205, 48, 0xFF8C929A);
+        g.drawCenteredString(font, "reserved", 205, 84, 0xFF686E75);
 
         boolean ready = menu.hasValidRecipe();
-        String liveStatus = ready ? "READY - press START FORGING" : status;
-        g.drawCenteredString(font, liveStatus, imageWidth / 2, 90, ready ? READY : WARN);
-
+        String liveStatus = ready ? "READY TO FORGE" : status;
+        g.drawCenteredString(font, liveStatus, imageWidth / 2, 105, ready ? READY : WARN);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, MUTED, false);
-        g.drawString(font, "*reserved", 132, 113, 0xFF70767E, false);
     }
 
     @Override
