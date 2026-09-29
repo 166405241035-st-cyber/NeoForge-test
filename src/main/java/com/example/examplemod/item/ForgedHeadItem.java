@@ -78,6 +78,7 @@ public class ForgedHeadItem extends Item {
     }
 
     public static ForgedHeadResult readResult(ItemStack stack) {
+        if (!stack.is(ExampleMod.FORGED_HEAD_ITEM.get())) return null;
         CompoundTag tag = getTag(stack);
         if (tag == null) return null;
 

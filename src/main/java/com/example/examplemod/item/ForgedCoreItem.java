@@ -65,6 +65,7 @@ public class ForgedCoreItem extends Item {
     }
 
     public static ForgedCoreResult readResult(ItemStack stack) {
+        if (!stack.is(ExampleMod.FORGED_CORE_ITEM.get())) return null;
         CompoundTag tag = getTag(stack);
         if (tag == null) return null;
 

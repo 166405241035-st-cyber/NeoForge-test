@@ -55,6 +55,7 @@ public class ForgedRodItem extends Item {
     }
 
     public static ForgedRodResult readResult(ItemStack stack) {
+        if (!stack.is(ExampleMod.FORGED_ROD_ITEM.get())) return null;
         CompoundTag tag = getTag(stack);
         if (tag == null) return null;
         try {
