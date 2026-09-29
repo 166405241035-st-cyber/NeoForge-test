@@ -64,8 +64,15 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
         g.fill(x+152,y+91,x+153,y+101,COPPER);
         g.fill(x+227,y+91,x+228,y+101,COPPER);
         g.fill(x+77,y+100,x+228,y+101,COPPER);
-        g.fill(x+152,y+100,x+153,y+104,COPPER);
-        metalPlate(g,x+105,y+104,94,17);
+        // Centered result plate with the original downward assembly arrow.
+        g.fill(x+105,y+108,x+199,y+124,STEEL_DARK);
+        g.fill(x+107,y+110,x+197,y+122,STEEL_LIGHT);
+        g.fill(x+109,y+112,x+195,y+121,PANEL);
+        g.fill(x+152,y+100,x+153,y+103,COPPER);
+        g.fill(x+149,y+103,x+156,y+105,COPPER);
+        g.fill(x+150,y+105,x+155,y+107,COPPER);
+        g.fill(x+151,y+107,x+154,y+109,COPPER);
+        g.fill(x+152,y+109,x+153,y+111,COPPER);
 
         g.fill(x+34,y+126,x+270,y+127,STEEL_LIGHT);
         g.fill(x+48,y+127,x+256,y+128,COPPER);
@@ -110,7 +117,7 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
         g.drawCenteredString(font,"CORE",152,47,0xFF8CCBFF);
         g.drawCenteredString(font,"ROD",227,47,0xFFD0A4FF);
         g.drawCenteredString(font,"+",114,69,0xFFFFC27A); g.drawCenteredString(font,"+",189,69,0xFFFFC27A);
-        g.drawCenteredString(font,"FINAL EQUIPMENT",152,108,TEXT);
+        g.drawCenteredString(font,"FINAL EQUIPMENT",152,113,TEXT);
         boolean ready=menu.hasValidAssembly();
         if (ready) g.drawCenteredString(font,"READY TO FORGE",152,125,READY);
         else if (!status.isEmpty()) g.drawCenteredString(font,status,152,125,WARN);
