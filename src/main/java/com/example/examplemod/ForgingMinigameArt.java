@@ -66,4 +66,13 @@ public final class ForgingMinigameArt {
         g.fill(x - reach / 2, y + 5, x - reach / 2 + 2, y + 8, color);
         g.fill(x + reach / 2, y + 2, x + reach / 2 + 2, y + 5, color);
     }
+
+    public static void ring(GuiGraphics g, int x, int y, int radius, int thickness, int color) {
+        for (int step = 0; step < 96; step++) {
+            double angle = step * Math.PI * 2 / 96;
+            int px = x + (int) Math.round(Math.cos(angle) * radius);
+            int py = y + (int) Math.round(Math.sin(angle) * radius);
+            g.fill(px, py, px + thickness, py + thickness, color);
+        }
+    }
 }
