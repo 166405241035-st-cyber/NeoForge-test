@@ -109,10 +109,19 @@ public class ForgeMenu extends AbstractContainerMenu {
     public ForgingMetal selectedMetal() { return ForgeIngredientResolver.metal(stackAt(METAL_START)); }
 
     /** Fuel cost is intentionally not deducted yet; per-metal costs are not locked. */
-    public void consumeRecipe() {
+    private void consumeRecipe() {
         stackAt(BLUEPRINT_SLOT).shrink(1); stackAt(MONSTER_SLOT).shrink(1);
         for (int slot = METAL_START; slot < METAL_END; slot++) stackAt(slot).shrink(1);
         forgeInventory.setChanged(); broadcastChanges();
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (id == 0 && hasValidRecipe()) {
+            consumeRecipe();
+            return true;
+        }
+        return false;
     }
 
     @Override public boolean stillValid(Player player) { return true; }
