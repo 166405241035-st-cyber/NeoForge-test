@@ -112,7 +112,7 @@ public class AnvilRhythmForgingScreen extends Screen {
                 ForgedCurseRuntime.set(equipment, rolledCurse);
             }
 
-            if(!minecraft.player.getInventory().add(equipment)) minecraft.player.drop(equipment,false);
+            ForgedEffectNetwork.sendForgingReward(equipment);
         }
         minecraft.setScreen(new AnvilForgingResultScreen(result,assembly,rolledBlessing,rolledCurse,performanceRank,finalBlessingChance));
     }
