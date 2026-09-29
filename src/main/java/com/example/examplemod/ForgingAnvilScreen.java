@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
     private String status="Insert forged components";
     private static final int BG=0xFF20252B,PANEL=0xFF171B20,PANEL2=0xFF292F36;
+    private static final int STEEL_DARK=0xFF0B0E12,STEEL=0xFF3A424B,STEEL_LIGHT=0xFF59636E;
     private static final int FRAME=0xFF6F3D20,COPPER=0xFFD27A34,TEXT=0xFFF4E9D8;
     private static final int MUTED=0xFFA8B0B8,READY=0xFF77DC5B,WARN=0xFFFFB24D;
 
@@ -48,25 +49,50 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
 
     @Override protected void renderBg(GuiGraphics g,float pt,int mx,int my){
         int x=leftPos,y=topPos;
-        g.fill(x,y,x+304,y+264,0xFF101317); g.fill(x+2,y+2,x+302,y+262,FRAME); g.fill(x+6,y+6,x+298,y+258,BG);
-        g.fill(x+12,y+10,x+292,y+42,PANEL); g.fill(x+12,y+42,x+292,y+45,COPPER);
+        forgedFrame(g,x,y,304,264);
+        metalPlate(g,x+57,y+8,190,37);
+        g.fill(x+18,y+28,x+57,y+30,STEEL); g.fill(x+247,y+28,x+286,y+30,STEEL);
+        g.fill(x+18,y+31,x+57,y+32,COPPER); g.fill(x+247,y+31,x+286,y+32,COPPER);
 
-        // component assembly chamber
-        g.fill(x+22,y+51,x+282,y+119,PANEL);
+        // Open anvil assembly surface.
+        g.fill(x+22,y+51,x+282,y+116,PANEL);
+        g.fill(x+24,y+53,x+280,y+114,0xFF1D2228);
         slot(g,x+75,y+66,0xFFE08A42); slot(g,x+150,y+66,0xFF64B5E8); slot(g,x+225,y+66,0xFFA56BCB);
 
-        // connector lines toward final equipment
-        g.fill(x+85,y+104,x+85+1,y+112,COPPER);
-        g.fill(x+160,y+104,x+160+1,y+112,COPPER);
-        g.fill(x+235,y+104,x+235+1,y+112,COPPER);
-        g.fill(x+85,y+111,x+236,y+112,COPPER);
-        g.fill(x+160,y+111,x+161,y+119,COPPER);
+        // Connector lines converge above a small anvil-style output plate.
+        g.fill(x+85,y+91,x+86,y+101,COPPER);
+        g.fill(x+160,y+91,x+161,y+101,COPPER);
+        g.fill(x+235,y+91,x+236,y+101,COPPER);
+        g.fill(x+85,y+100,x+236,y+101,COPPER);
+        g.fill(x+160,y+100,x+161,y+106,COPPER);
+        metalPlate(g,x+116,y+105,88,17);
 
-        g.fill(x+22,y+124,x+282,y+163,PANEL); g.fill(x+22,y+162,x+282,y+165,FRAME);
+        g.fill(x+34,y+126,x+270,y+127,STEEL_LIGHT);
+        g.fill(x+48,y+127,x+256,y+128,COPPER);
+        g.fill(x+28,y+130,x+276,y+161,PANEL);
 
-        g.fill(x+59,y+170,x+245,y+257,PANEL);
+        g.fill(x+55,y+167,x+249,y+258,STEEL_DARK);
+        g.fill(x+57,y+169,x+247,y+256,STEEL);
+        g.fill(x+60,y+172,x+244,y+253,PANEL);
         for(int r=0;r<3;r++)for(int c=0;c<9;c++)invSlot(g,x+71+c*18,y+179+r*18);
         for(int c=0;c<9;c++)invSlot(g,x+71+c*18,y+237);
+    }
+    private void forgedFrame(GuiGraphics g,int x,int y,int w,int h){
+        g.fill(x,y,x+w,y+h,STEEL_DARK);
+        g.fill(x+3,y+3,x+w-3,y+h-3,STEEL_LIGHT);
+        g.fill(x+6,y+6,x+w-6,y+h-6,STEEL);
+        g.fill(x+8,y+8,x+w-8,y+h-8,COPPER);
+        g.fill(x+10,y+10,x+w-10,y+h-10,BG);
+        corner(g,x+3,y+3); corner(g,x+w-15,y+3);
+        corner(g,x+3,y+h-15); corner(g,x+w-15,y+h-15);
+    }
+    private void corner(GuiGraphics g,int x,int y){
+        g.fill(x,y,x+12,y+4,STEEL_LIGHT); g.fill(x,y,x+4,y+12,STEEL_LIGHT);
+        g.fill(x+2,y+2,x+10,y+3,COPPER); g.fill(x+2,y+2,x+3,y+10,COPPER);
+    }
+    private void metalPlate(GuiGraphics g,int x,int y,int w,int h){
+        g.fill(x,y,x+w,y+h,STEEL_DARK); g.fill(x+2,y+2,x+w-2,y+h-2,STEEL_LIGHT);
+        g.fill(x+4,y+4,x+w-4,y+h-4,PANEL); g.fill(x+5,y+h-6,x+w-5,y+h-4,COPPER);
     }
     private void card(GuiGraphics g,int x,int y,int w,int h,int accent){
         g.fill(x,y,x+w,y+h,0xFF0F1216);g.fill(x+1,y+1,x+w-1,y+h-1,accent);g.fill(x+3,y+3,x+w-3,y+h-3,PANEL2);
@@ -85,7 +111,7 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
         g.drawCenteredString(font,"CORE",160,47,0xFF8CCBFF);
         g.drawCenteredString(font,"ROD",235,47,0xFFD0A4FF);
         g.drawCenteredString(font,"+",122,69,0xFFFFC27A); g.drawCenteredString(font,"+",197,69,0xFFFFC27A);
-        g.drawCenteredString(font,"FINAL EQUIPMENT",160,111,TEXT);
+        g.drawCenteredString(font,"FINAL EQUIPMENT",160,109,TEXT);
         boolean ready=menu.hasValidAssembly();
         g.drawCenteredString(font,ready?"READY TO FORGE":status,152,125,ready?READY:WARN);
         g.drawCenteredString(font,"INVENTORY",152,167,MUTED);
