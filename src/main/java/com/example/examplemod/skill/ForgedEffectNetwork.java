@@ -10,6 +10,8 @@ import com.example.examplemod.skill.client.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -63,6 +65,14 @@ public final class ForgedEffectNetwork {
         }
     }
 
+    public record ForgingRewardPayload(ItemStack stack) implements CustomPacketPayload {
+        public static final Type<ForgingRewardPayload> TYPE =
+                new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "forging_reward"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, ForgingRewardPayload> STREAM_CODEC =
+                ItemStack.STREAM_CODEC.map(ForgingRewardPayload::new, ForgingRewardPayload::stack);
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
@@ -77,6 +87,24 @@ public final class ForgedEffectNetwork {
                 (payload, context) -> context.enqueueWork(() -> ForgedSkillHud.updateServerState(
                         payload.selectedIndex(), payload.cooldownStates(), payload.readyAt(),
                         payload.slamUntil(), payload.aegisActive()))
+        );
+        registrar.playToServer(
+                ForgingRewardPayload.TYPE,
+                ForgingRewardPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() == null) return;
+                    ItemStack stack = payload.stack();
+                    if (stack.isEmpty() || stack.getCount() != 1) return;
+                    // Only this mod's four forging outputs are accepted from the minigame.
+                    if (!(stack.getItem() instanceof ForgedHeadItem)
+                            && !(stack.getItem() instanceof ForgedCoreItem)
+                            && !(stack.getItem() instanceof ForgedRodItem)
+                            && !(stack.getItem() instanceof ForgedEquipmentItem)) return;
+                    ItemStack reward = stack.copy();
+                    if (!context.player().getInventory().add(reward)) {
+                        context.player().drop(reward, false);
+                    }
+                })
         );
         registrar.playToServer(
                 ActiveSkillPayload.TYPE,
@@ -99,6 +127,12 @@ public final class ForgedEffectNetwork {
         PacketDistributor.sendToPlayer(player,
                 new SkillHudStatePayload(selectedIndex, cooldownStates == null ? "" : cooldownStates,
                         Math.max(0L, readyAt), Math.max(0L, slamUntil), aegisActive));
+    }
+
+    public static void sendForgingReward(ItemStack stack) {
+        if (stack != null && !stack.isEmpty()) {
+            PacketDistributor.sendToServer(new ForgingRewardPayload(stack.copy()));
+        }
     }
 
     public static void sendAction(int action) {
