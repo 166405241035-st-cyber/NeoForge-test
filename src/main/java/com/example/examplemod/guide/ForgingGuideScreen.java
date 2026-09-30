@@ -203,7 +203,7 @@ public final class ForgingGuideScreen extends Screen {
         item(g, Items.IRON_INGOT, 196, 76);
         item(g, Items.COAL, 279, 76);
         label(g, 25, 112, "Blueprint + Drop + Metal x5 + Fuel", INK);
-        wrap(g, "Example: Core Blueprint, Blaze Rod, five Iron Ingots, and Coal to forge a Core.", 26, 138, 325, INK);
+        wrap(g, "Example: Core Blueprint, Blaze Rod, five Iron Ingots, and two Coal to forge a Core.", 26, 138, 325, INK);
         wrap(g, "Coal gives 8 energy. A Lava Bucket gives 100. The Forge stores up to 150.", 26, 194, 325, MUTED);
     }
     private void timing(GuiGraphics g) {

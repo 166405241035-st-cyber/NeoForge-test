@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import net.minecraft.world.item.ItemStack;
 
 /** Final effect roll from Head + Core + Rod. Duplicate effects add tiers, capped at III. */
 public record AnvilAssemblyResult(
@@ -23,6 +24,30 @@ public record AnvilAssemblyResult(
         MonsterMaterial rodMaterial,
         List<FinalEffect> effects) {
     public record FinalEffect(ForgingEffect effect, EffectTier tier) {}
+
+    /** Reconstructs the server's rolled assembly for the client's rhythm/result screens. */
+    public static AnvilAssemblyResult fromStack(ItemStack stack) {
+        if (!stack.is(ExampleMod.FORGED_EQUIPMENT_ITEM.get())) return null;
+        HeadBlueprintType blueprint = ForgedEquipmentItem.readBlueprint(stack);
+        ForgingMetal head = ForgedEquipmentItem.readHeadMetal(stack);
+        ForgingMetal core = ForgedEquipmentItem.readCoreMetal(stack);
+        ForgingMetal rod = ForgedEquipmentItem.readRodMetal(stack);
+        MonsterMaterial headMaterial = ForgedEquipmentItem.readHeadMaterial(stack);
+        MonsterMaterial coreMaterial = ForgedEquipmentItem.readCoreMaterial(stack);
+        MonsterMaterial rodMaterial = ForgedEquipmentItem.readRodMaterial(stack);
+        int count = ForgedEquipmentItem.effectCount(stack);
+        if (blueprint == null || head == null || core == null || rod == null
+                || headMaterial == null || coreMaterial == null || rodMaterial == null
+                || count < 1 || count > 3) return null;
+        List<FinalEffect> effects = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            FinalEffect effect = ForgedEquipmentItem.readEffect(stack, i);
+            if (effect == null) return null;
+            effects.add(effect);
+        }
+        return new AnvilAssemblyResult(blueprint, head, core, rod,
+                headMaterial, coreMaterial, rodMaterial, List.copyOf(effects));
+    }
 
     public static AnvilAssemblyResult roll(ForgedHeadResult head, ForgedCoreResult core, ForgedRodResult rod, Random random) {
         Map<ForgingEffect, Integer> combined = new LinkedHashMap<>();

@@ -11,6 +11,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,14 +23,20 @@ public class AnvilMenu extends AbstractContainerMenu {
     public static final int ANVIL_SLOT_COUNT = 3;
 
     private final Container anvilInventory;
+    private final ContainerLevelAccess access;
 
     public AnvilMenu(int containerId, Inventory playerInventory) {
-        this(containerId, playerInventory, new SimpleContainer(ANVIL_SLOT_COUNT));
+        this(containerId, playerInventory, new SimpleContainer(ANVIL_SLOT_COUNT), ContainerLevelAccess.NULL);
     }
 
     public AnvilMenu(int containerId, Inventory playerInventory, Container anvilInventory) {
+        this(containerId, playerInventory, anvilInventory, ContainerLevelAccess.NULL);
+    }
+
+    public AnvilMenu(int containerId, Inventory playerInventory, Container anvilInventory, ContainerLevelAccess access) {
         super(ExampleMod.ANVIL_MENU.get(), containerId);
         this.anvilInventory = anvilInventory;
+        this.access = access;
         checkContainerSize(anvilInventory, ANVIL_SLOT_COUNT);
         anvilInventory.startOpen(playerInventory.player);
 
@@ -75,14 +82,22 @@ public class AnvilMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id == 0 && hasValidAssembly()) {
+        if (id == 0 && stillValid(player) && hasValidAssembly()) {
+            ForgedHeadResult head = headResult();
+            ForgedCoreResult core = coreResult();
+            ForgedRodResult rod = rodResult();
             consumeAssembly();
+            if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                AnvilRewardSession.begin(serverPlayer, head, core, rod);
+            }
             return true;
         }
         return false;
     }
 
-    @Override public boolean stillValid(Player player) { return true; }
+    @Override public boolean stillValid(Player player) {
+        return stillValid(access, player, ExampleMod.FORGING_ANVIL.get());
+    }
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {

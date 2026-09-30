@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -73,7 +74,8 @@ public class ForgingBlock extends Block implements EntityBlock {
                             playerInventory,
                             inventory,
                             forge.energy(),
-                            forge::setEnergy),
+                            forge::setEnergy,
+                            ContainerLevelAccess.create(level, pos)),
                     Component.literal("Forge")));
         }
         return InteractionResult.sidedSuccess(level.isClientSide());

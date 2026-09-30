@@ -34,10 +34,7 @@ public class AnvilRhythmForgingScreen extends Screen {
     private boolean lastHit;
     private final int[] roundGrades = new int[TOTAL_ROUNDS];
     private boolean finished;
-    private ForgedBlessing rolledBlessing;
-    private ForgedCurse rolledCurse;
-    private double finalBlessingChance;
-    private String performanceRank = "D";
+    private ForgingResult finalResult;
     private String resultText = "Press the shown W/A/S/D key at the right time";
     private int resultColor = 0xFFFFFF;
 
@@ -66,65 +63,18 @@ public class AnvilRhythmForgingScreen extends Screen {
     private void miss(String why){resultText=why+" MISS!";resultColor=0xFFFF5555;missCount++;currentCombo=0;roundGrades[round]=0;lastHit=false;MinigameFeedback.miss();next();}
     private void next(){round++;feedbackTicks=10;}
 
-    private void finish(){
-        if(minecraft==null)return;
-        double accuracy=weightedAccuracyPoints/(double)TOTAL_ROUNDS;
-        ForgingResult result=new ForgingResult(score,accuracy,maxCombo,perfectCount,greatCount,goodCount,missCount);
-        if(minecraft.player!=null){
-            ItemStack equipment=ExampleMod.FORGED_EQUIPMENT_ITEM.get().createStack(assembly);
+    private void finish() {
+        if (minecraft == null) return;
+        double accuracy = weightedAccuracyPoints / (double) TOTAL_ROUNDS;
+        finalResult = new ForgingResult(score, accuracy, maxCombo, perfectCount, greatCount, goodCount, missCount);
+        resultText = "Finishing on server...";
+        ForgedEffectNetwork.finishAnvil(finalResult);
+    }
 
-            // Minigame 2 reward uses a visible performance rank as the base chance.
-            // Misses penalize the chance, while strong Perfect play and a full combo
-            // give small bonuses. Curse always keeps at least a 5% chance.
-            double blessingChance;
-            if (accuracy >= 90.0D && maxCombo >= 8) {
-                performanceRank = "S";
-                blessingChance = 0.90D;
-            } else if (accuracy >= 80.0D) {
-                performanceRank = "A";
-                blessingChance = 0.75D;
-            } else if (accuracy >= 65.0D) {
-                performanceRank = "B";
-                blessingChance = 0.60D;
-            } else if (accuracy >= 50.0D) {
-                performanceRank = "C";
-                blessingChance = 0.45D;
-            } else {
-                performanceRank = "D";
-                blessingChance = 0.10D;
-            }
-
-            blessingChance -= missCount * 0.05D;
-            if (perfectCount >= 7) blessingChance += 0.05D;
-            if (maxCombo >= TOTAL_ROUNDS) blessingChance += 0.10D;
-            finalBlessingChance = Math.max(0.05D, Math.min(0.95D, blessingChance));
-
-            if (random.nextDouble() < finalBlessingChance) {
-                // Double Trigger is only useful when at least one main effect on this
-                // forged item has a meaningful replay/result/effect rule. Do not award
-                // a dead blessing to an item made entirely from passive, storage,
-                // toggle-only, or Mob Swap effects.
-                boolean supportsDoubleTrigger = assembly.effects().stream()
-                        .anyMatch(effect -> DoubleTriggerRuntime.supports(effect.effect()));
-
-                java.util.List<ForgedBlessing> pool = new java.util.ArrayList<>();
-                for (ForgedBlessing blessing : ForgedBlessing.values()) {
-                    if (blessing != ForgedBlessing.DOUBLE_TRIGGER || supportsDoubleTrigger) {
-                        pool.add(blessing);
-                    }
-                }
-
-                rolledBlessing = pool.get(random.nextInt(pool.size()));
-                ForgedBlessingRuntime.set(equipment, rolledBlessing);
-            } else {
-                ForgedCurse[] pool = ForgedCurse.values();
-                rolledCurse = pool[random.nextInt(pool.length)];
-                ForgedCurseRuntime.set(equipment, rolledCurse);
-            }
-
-            ForgedEffectNetwork.sendForgingReward(equipment);
-        }
-        minecraft.setScreen(new AnvilForgingResultScreen(result,assembly,rolledBlessing,rolledCurse,performanceRank,finalBlessingChance));
+    public void showResult(ItemStack equipment, String rank, double chance) {
+        if (minecraft == null || finalResult == null) return;
+        minecraft.setScreen(new AnvilForgingResultScreen(finalResult, assembly,
+                ForgedBlessingRuntime.get(equipment), ForgedCurseRuntime.get(equipment), rank, chance));
     }
 
     @Override public boolean keyPressed(int keyCode,int scanCode,int modifiers){if(Direction.fromKey(keyCode)!=null){attempt(keyCode);return true;}return super.keyPressed(keyCode,scanCode,modifiers);}

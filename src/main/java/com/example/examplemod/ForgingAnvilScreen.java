@@ -6,7 +6,6 @@ import com.example.examplemod.item.*;
 import com.example.examplemod.skill.*;
 import com.example.examplemod.skill.client.*;
 
-import java.util.Random;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -33,12 +32,9 @@ public class ForgingAnvilScreen extends AbstractContainerScreen<AnvilMenu> {
 
     private void startForge(){
         if(!menu.hasValidAssembly()){status=missing();return;}
-        ForgedHeadResult head=menu.headResult(); ForgedCoreResult core=menu.coreResult(); ForgedRodResult rod=menu.rodResult();
-        if(head==null||core==null||rod==null)return;
-        AnvilAssemblyResult assembly=AnvilAssemblyResult.roll(head,core,rod,new Random());
         if(minecraft==null||minecraft.gameMode==null)return;
         minecraft.gameMode.handleInventoryButtonClick(menu.containerId,0);
-        minecraft.setScreen(new AnvilRhythmForgingScreen(head.metal(),assembly));
+        status="Preparing your forge result...";
     }
     private String missing(){
         if(menu.stackAt(AnvilMenu.HEAD_SLOT).isEmpty())return "Insert Head";

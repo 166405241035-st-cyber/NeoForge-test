@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,22 +30,28 @@ public class ForgeMenu extends AbstractContainerMenu {
     private final Container forgeInventory;
     private final Player owner;
     private final IntConsumer fuelSaver;
+    private final ContainerLevelAccess access;
     private int fuel;
 
     public ForgeMenu(int containerId, Inventory playerInventory) {
-        this(containerId, playerInventory, new SimpleContainer(FORGE_SLOT_COUNT), 0, value -> {});
+        this(containerId, playerInventory, new SimpleContainer(FORGE_SLOT_COUNT), 0, value -> {}, ContainerLevelAccess.NULL);
     }
 
     public ForgeMenu(int containerId, Inventory playerInventory, Container forgeInventory) {
-        this(containerId, playerInventory, forgeInventory, 0, value -> {});
+        this(containerId, playerInventory, forgeInventory, 0, value -> {}, ContainerLevelAccess.NULL);
     }
 
     public ForgeMenu(int containerId, Inventory playerInventory, Container forgeInventory, int initialFuel, IntConsumer fuelSaver) {
+        this(containerId, playerInventory, forgeInventory, initialFuel, fuelSaver, ContainerLevelAccess.NULL);
+    }
+
+    public ForgeMenu(int containerId, Inventory playerInventory, Container forgeInventory, int initialFuel, IntConsumer fuelSaver, ContainerLevelAccess access) {
         super(ExampleMod.FORGE_MENU.get(), containerId);
         this.forgeInventory = forgeInventory;
         this.owner = playerInventory.player;
         this.fuel = Math.max(0, Math.min(ForgeIngredientResolver.MAX_FUEL, initialFuel));
         this.fuelSaver = fuelSaver;
+        this.access = access;
         checkContainerSize(forgeInventory, FORGE_SLOT_COUNT);
         forgeInventory.startOpen(playerInventory.player);
         addDataSlot(new DataSlot() {
@@ -125,7 +132,7 @@ public class ForgeMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id == 0 && hasValidRecipe() && fuel >= ForgeIngredientResolver.forgeCost(selectedMetal())) {
+        if (id == 0 && stillValid(player) && hasValidRecipe() && fuel >= ForgeIngredientResolver.forgeCost(selectedMetal())) {
             ForgingBlueprintType blueprint = selectedBlueprint();
             ForgingMetal metal = selectedMetal();
             MonsterMaterial material = selectedMonster();
@@ -136,7 +143,9 @@ public class ForgeMenu extends AbstractContainerMenu {
         return false;
     }
 
-    @Override public boolean stillValid(Player player) { return true; }
+    @Override public boolean stillValid(Player player) {
+        return stillValid(access, player, ExampleMod.FORGING_BLOCK.get());
+    }
 
     @Override public ItemStack quickMoveStack(Player player, int index) {
         if (index < 0 || index >= slots.size()) return ItemStack.EMPTY;

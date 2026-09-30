@@ -405,6 +405,7 @@ public class ForgedEquipmentItem extends Item {
     public static double readAttackDamage(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?0.0D:data.copyTag().getDouble("forgedAttackDamage"); }
     public static HeadBlueprintType readBlueprint(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readBlueprint(data.copyTag().getString("blueprint")); }
     public static MonsterMaterial readHeadMaterial(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readMaterial(data.copyTag().getString("headMaterial")); }
+    public static MonsterMaterial readCoreMaterial(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readMaterial(data.copyTag().getString("coreMaterial")); }
     public static MonsterMaterial readRodMaterial(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readMaterial(data.copyTag().getString("rodMaterial")); }
     public static ForgingMetal readHeadMetal(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readMetal(data.copyTag().getString("headMetal")); }
     public static ForgingMetal readCoreMetal(ItemStack stack) { CustomData data=stack.get(DataComponents.CUSTOM_DATA);return data==null?null:readMetal(data.copyTag().getString("coreMetal")); }
