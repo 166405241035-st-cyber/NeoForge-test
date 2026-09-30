@@ -35,4 +35,14 @@ public enum ForgingBlueprintType {
     public HeadBlueprintType headType() {
         return headType;
     }
+
+    /** Base material cost follows the corresponding vanilla tool recipe. */
+    public int requiredMetalCount() {
+        return switch (this) {
+            case SWORD_HEAD, HOE_HEAD, ROD -> 2;
+            case AXE_HEAD, PICKAXE_HEAD -> 3;
+            case SHOVEL_HEAD -> 1;
+            case CORE -> 5;
+        };
+    }
 }

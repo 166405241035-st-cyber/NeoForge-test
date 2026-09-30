@@ -51,8 +51,9 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
     private String missingRecipeMessage() {
         if (menu.stackAt(ForgeMenu.BLUEPRINT_SLOT).isEmpty()) return "Insert Blueprint";
         if (menu.stackAt(ForgeMenu.MONSTER_SLOT).isEmpty()) return "Insert Material";
-        for (int i=ForgeMenu.METAL_START;i<ForgeMenu.METAL_END;i++) if(menu.stackAt(i).isEmpty()) return "Insert 5 Metal Ingots";
-        return "Metal Ingots Must Match";
+        for (int i=ForgeMenu.METAL_START;i<ForgeMenu.METAL_START+menu.requiredMetalCount();i++)
+            if(menu.stackAt(i).isEmpty()) return "Insert " + menu.requiredMetalCount() + " Matching Materials";
+        return "Base Materials Must Match";
     }
 
     @Override protected void renderBg(GuiGraphics g,float pt,int mx,int my) {
@@ -72,8 +73,12 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         g.fill(x+18,y+53,x+302,y+117,0xFF1D2228);
         slot(g,x+41,y+64,0xFF58A4EA);
         slot(g,x+102,y+64,0xFFB565DB);
-        slot(g,x+156,y+56,COPPER); slot(g,x+180,y+56,COPPER); slot(g,x+204,y+56,COPPER);
-        slot(g,x+168,y+80,COPPER); slot(g,x+192,y+80,COPPER);
+        int required = menu.requiredMetalCount();
+        slot(g,x+156,y+56,COPPER);
+        slot(g,x+180,y+56,required>1?COPPER:MUTED);
+        slot(g,x+204,y+56,required>2?COPPER:MUTED);
+        slot(g,x+168,y+80,required>3?COPPER:MUTED);
+        slot(g,x+192,y+80,required>4?COPPER:MUTED);
         slot(g,x+255,y+64,0xFF777E86);
 
         // Thin forged divider and status/button bay.
@@ -143,7 +148,7 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
 
         g.drawCenteredString(font,"BLUEPRINT",51,47,0xFF9CCFFF);
         g.drawCenteredString(font,"MATERIAL",112,47,0xFFE2B6FF);
-        g.drawCenteredString(font,"METAL INGOTS",187,43,0xFFFFC27A);
+        g.drawCenteredString(font,"MATERIAL x"+menu.requiredMetalCount(),187,43,0xFFFFC27A);
         g.drawCenteredString(font,"FUEL",264,47,0xFFB5BAC0);
         g.drawCenteredString(font,menu.fuel()+"/"+menu.maxFuel(),264,95,TEXT);
 

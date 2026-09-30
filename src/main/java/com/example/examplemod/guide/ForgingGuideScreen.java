@@ -137,7 +137,7 @@ public final class ForgingGuideScreen extends Screen {
     private void overview(GuiGraphics g) {
         title(g, "Getting Started");
         item(g, ExampleMod.FORGING_BLOCK_ITEM.get(), 25, 67);
-        wrap(g, "1. Add a Blueprint, monster drop, 5 matching metal items, and fuel to the Forge.", 66, 65, 284, INK);
+        wrap(g, "1. Add a Blueprint, monster drop, matching base materials, and fuel to the Forge.", 66, 65, 284, INK);
         item(g, ExampleMod.FORGED_HEAD_ITEM.get(), 25, 125);
         wrap(g, "2. Play the timing game to make a Head, Core, and Rod. Blueprints are reusable.", 66, 123, 284, INK);
         item(g, ExampleMod.FORGING_ANVIL_ITEM.get(), 25, 183);
@@ -202,9 +202,10 @@ public final class ForgingGuideScreen extends Screen {
         item(g, Items.BLAZE_ROD, 113, 76);
         item(g, Items.IRON_INGOT, 196, 76);
         item(g, Items.COAL, 279, 76);
-        label(g, 25, 112, "Blueprint + Drop + Metal x5 + Fuel", INK);
+        label(g, 25, 112, "Blueprint + Drop + Base Materials + Fuel", INK);
         wrap(g, "Example: Core Blueprint, Blaze Rod, five Iron Ingots, and two Coal to forge a Core.", 26, 138, 325, INK);
-        wrap(g, "Coal gives 8 energy. A Lava Bucket gives 100. The Forge stores up to 150.", 26, 194, 325, MUTED);
+        wrap(g, "Heads: Sword 2, Axe 3, Pickaxe 3, Shovel 1, Hoe 2. Rod 2; Core 5.", 26, 171, 325, MUTED);
+        wrap(g, "Coal: 8 energy. Lava Bucket: 100. Forge capacity: 150.", 26, 213, 325, MUTED);
     }
     private void timing(GuiGraphics g) {
         title(g, "Forging Minigame");

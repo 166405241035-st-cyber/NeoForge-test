@@ -18,7 +18,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-/** Forge inventory: blueprint, monster material, five matching metals and a fuel input. */
+/** Forge inventory: blueprint, monster material, up to five matching base materials and fuel. */
 public class ForgeMenu extends AbstractContainerMenu {
     public static final int BLUEPRINT_SLOT = 0;
     public static final int MONSTER_SLOT = 1;
@@ -77,7 +77,9 @@ public class ForgeMenu extends AbstractContainerMenu {
 
     private void addMetalSlot(int index, int x, int y) {
         addSlot(new Slot(forgeInventory, index, x, y) {
-            @Override public boolean mayPlace(ItemStack stack) { return ForgeIngredientResolver.metal(stack) != null; }
+            @Override public boolean mayPlace(ItemStack stack) {
+                return index < METAL_START + requiredMetalCount() && ForgeIngredientResolver.metal(stack) != null;
+            }
             @Override public int getMaxStackSize() { return 1; }
         });
     }
@@ -85,6 +87,10 @@ public class ForgeMenu extends AbstractContainerMenu {
     public ItemStack stackAt(int slot) { return forgeInventory.getItem(slot); }
     public int fuel() { return fuel; }
     public int maxFuel() { return ForgeIngredientResolver.MAX_FUEL; }
+    public int requiredMetalCount() {
+        ForgingBlueprintType blueprint = selectedBlueprint();
+        return blueprint == null ? METAL_END - METAL_START : blueprint.requiredMetalCount();
+    }
 
     private void absorbFuel() {
         ItemStack stack = stackAt(FUEL_SLOT);
@@ -110,7 +116,7 @@ public class ForgeMenu extends AbstractContainerMenu {
         ForgingMetal metal = ForgeIngredientResolver.metal(stackAt(METAL_START));
         if (blueprint == null || monster == null || metal == null) return false;
         ItemStack firstMetal = stackAt(METAL_START);
-        for (int slot = METAL_START; slot < METAL_END; slot++) {
+        for (int slot = METAL_START; slot < METAL_START + blueprint.requiredMetalCount(); slot++) {
             ItemStack stack = stackAt(slot);
             if (stack.isEmpty() || ForgeIngredientResolver.metal(stack) != metal || !ForgeIngredientResolver.sameItem(firstMetal, stack)) return false;
         }
@@ -126,7 +132,7 @@ public class ForgeMenu extends AbstractContainerMenu {
         fuelSaver.accept(fuel);
         // The blueprint is a reusable pattern; only materials and energy are spent.
         stackAt(MONSTER_SLOT).shrink(1);
-        for (int slot = METAL_START; slot < METAL_END; slot++) stackAt(slot).shrink(1);
+        for (int slot = METAL_START; slot < METAL_START + requiredMetalCount(); slot++) stackAt(slot).shrink(1);
         forgeInventory.setChanged(); broadcastChanges();
     }
 
@@ -166,7 +172,9 @@ public class ForgeMenu extends AbstractContainerMenu {
         if (ForgeIngredientResolver.blueprint(stack) != null) return BLUEPRINT_SLOT;
         if (ForgeIngredientResolver.monsterMaterial(stack) != null) return MONSTER_SLOT;
         if (ForgeIngredientResolver.isFuel(stack, owner.level())) return FUEL_SLOT;
-        if (ForgeIngredientResolver.metal(stack) != null) for (int i = METAL_START; i < METAL_END; i++) if (!slots.get(i).hasItem()) return i;
+        if (ForgeIngredientResolver.metal(stack) != null)
+            for (int i = METAL_START; i < METAL_START + requiredMetalCount(); i++)
+                if (!slots.get(i).hasItem()) return i;
         return -1;
     }
 
