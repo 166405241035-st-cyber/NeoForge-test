@@ -26,7 +26,8 @@ public final class AnvilRewardSession {
     public static void begin(ServerPlayer player, ForgedHeadResult head, ForgedCoreResult core, ForgedRodResult rod) {
         long now = System.currentTimeMillis();
         PENDING.entrySet().removeIf(entry -> now - entry.getValue().createdAt() > TIMEOUT_MS);
-        AnvilAssemblyResult assembly = AnvilAssemblyResult.roll(head, core, rod, player.getRandom());
+        AnvilAssemblyResult assembly = AnvilAssemblyResult.roll(head, core, rod,
+                new java.util.Random(player.getRandom().nextLong()));
         PENDING.put(player.getUUID(), new Pending(assembly, now));
         PacketDistributor.sendToPlayer(player, new ForgedEffectNetwork.AnvilStartPayload(
                 ExampleMod.FORGED_EQUIPMENT_ITEM.get().createStack(assembly)));
