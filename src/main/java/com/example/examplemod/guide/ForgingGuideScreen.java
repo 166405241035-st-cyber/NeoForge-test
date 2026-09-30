@@ -328,6 +328,7 @@ public final class ForgingGuideScreen extends Screen {
     }
     private void changePage(int next) { page = next; selected = -1; listOffset = 0; }
     @Override public boolean keyPressed(int key, int scan, int modifiers) {
+        if (key == GLFW.GLFW_KEY_E) { onClose(); return true; }
         if (key == GLFW.GLFW_KEY_LEFT && page > 1) { changePage(page - 1); return true; }
         if (key == GLFW.GLFW_KEY_RIGHT && page < 12) { changePage(page + 1); return true; }
         return super.keyPressed(key, scan, modifiers);
