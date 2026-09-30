@@ -2,9 +2,12 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {"item": "minecraft:book"},
-    {"item": "minecraft:ink_sac"},
-    {"item": "minecraft:paper"}
+    {
+      "item": "minecraft:paper"
+    }
   ],
-  "result": {"id": "examplemod:forging_guide", "count": 1}
+  "result": {
+    "id": "examplemod:forging_guide",
+    "count": 1
+  }
 }
