@@ -29,7 +29,7 @@ public final class ForgingGuideScreen extends Screen {
     private static final String[] BLUEPRINT_NAMES = {"Sword", "Axe", "Pickaxe", "Shovel", "Hoe", "Core", "Rod"};
     private static final Item[] BLUEPRINT_BASES = {Items.WOODEN_SWORD, Items.WOODEN_AXE, Items.WOODEN_PICKAXE,
             Items.WOODEN_SHOVEL, Items.WOODEN_HOE, null, Items.STICK};
-    private int page = 1, selected = -1, listOffset, blueprint, blockRecipe;
+    private int page = 1, selected = -1, listOffset, blueprint, blockRecipe, detailScroll;
     private int left, top;
     private float scale = 1.0F;
 
@@ -256,15 +256,21 @@ public final class ForgingGuideScreen extends Screen {
             int y = wrap(g, name, 190, 62, 165, kind == 10 ? GREEN : kind == 11 ? GOLD : RED) + 8;
             if (kind == 10) {
                 ForgingEffect effect = ForgingEffect.values()[selected];
-                label(g, 190, y, "Tier " + roman(ForgingGuideClientState.tier(effect)), INK);
-                y += 17;
-                label(g, 190, y, effect.material().name().replace('_', ' '), MUTED);
-                y += 18;
-                drawScaled(g, "I " + (ForgingGuideClientState.hasTier(effect, 1) ? "+" : "?")
-                        + "  II " + (ForgingGuideClientState.hasTier(effect, 2) ? "+" : "?")
-                        + "  III " + (ForgingGuideClientState.hasTier(effect, 3) ? "+" : "?"), 190, y, MUTED, 1.1F);
-                y += 18;
-                wrap(g, ForgingGuideDescriptions.effect(effect, ForgingGuideClientState.tier(effect)), 190, y, 167, INK);
+                int tier = ForgingGuideClientState.tier(effect);
+                g.enableScissor(left + Math.round(185 * scale), top + Math.round(y * scale),
+                        left + Math.round(365 * scale), top + Math.round(226 * scale));
+                y -= detailScroll;
+                label(g, 190, y, "Unlocked: Tier " + roman(tier), GREEN);
+                y = wrap(g, ForgingGuideDescriptions.tierEffect(effect, tier), 190, y + 18, 167, INK) + 8;
+                if (tier < 3) {
+                    label(g, 190, y, "Next: Tier " + roman(tier + 1), GOLD);
+                    y = wrap(g, ForgingGuideDescriptions.tierEffect(effect, tier + 1), 190, y + 18, 167, INK) + 8;
+                } else {
+                    label(g, 190, y, "Maximum tier reached", GREEN);
+                    y += 22;
+                }
+                wrap(g, ForgingGuideDescriptions.effect(effect, tier), 190, y, 167, MUTED);
+                g.disableScissor();
             } else {
                 wrap(g, kind == 11 ? ForgingGuideDescriptions.blessing(ForgedBlessing.values()[selected])
                         : ForgingGuideDescriptions.curse(ForgedCurse.values()[selected]), 190, y, 167, INK);
@@ -312,7 +318,7 @@ public final class ForgingGuideScreen extends Screen {
                 if (y >= 58 && y < 226) {
                     int i = listOffset + (y - 58) / 24;
                     int total = page == 10 ? ForgingEffect.values().length : page == 11 ? ForgedBlessing.values().length : ForgedCurse.values().length;
-                    if (i < total && known(page, i)) selected = i;
+                    if (i < total && known(page, i)) { selected = i; detailScroll = 0; }
                 }
                 if (y >= 228 && y < 245) {
                     if (x < 54) listOffset = Math.max(0, listOffset - 7);
@@ -327,7 +333,15 @@ public final class ForgingGuideScreen extends Screen {
         int total = page == 10 ? ForgingEffect.values().length : page == 11 ? ForgedBlessing.values().length : ForgedCurse.values().length;
         return Math.max(0, ((total - 1) / 7) * 7);
     }
-    private void changePage(int next) { page = next; selected = -1; listOffset = 0; }
+    private void changePage(int next) { page = next; selected = -1; listOffset = 0; detailScroll = 0; }
+    @Override public boolean mouseScrolled(double mx, double my, double dx, double dy) {
+        int x = (int) ((mx - left) / scale), y = (int) ((my - top) / scale);
+        if (page == 10 && selected >= 0 && x >= 180 && x < 365 && y >= 55 && y < 228) {
+            detailScroll = Math.max(0, Math.min(176, detailScroll - (int) Math.signum(dy) * 32));
+            return true;
+        }
+        return super.mouseScrolled(mx, my, dx, dy);
+    }
     @Override public boolean keyPressed(int key, int scan, int modifiers) {
         if (key == GLFW.GLFW_KEY_E) { onClose(); return true; }
         if (key == GLFW.GLFW_KEY_LEFT && page > 1) { changePage(page - 1); return true; }
