@@ -197,16 +197,66 @@ public final class TalkativeBladeEvents {
 
         if (now < data.getLong(NEXT_CHAT)) return;
 
-        // 70% contextual chatter, 30% broad random chatter.
+        // Keep the 70/30 split until the current contextual pool is exhausted.
+        // During its ten-minute cooldown, ordinary chatter is 100% general.
         String line;
-        if (player.getRandom().nextDouble() < 0.70D) {
-            line = freshRandom(player, choosePool(player));
+        boolean contextualReady = resetContextualCycleIfReady(player, now);
+        if (contextualReady && player.getRandom().nextDouble() < 0.70D) {
+            line = nextContextualLine(player, choosePool(player), now);
         } else {
             line = freshGeneral(player);
         }
         say(player, line);
         // Ordinary chatter: random 7-20 seconds between lines.
         data.putLong(NEXT_CHAT, now + 20L * (7 + player.getRandom().nextInt(14)));
+    }
+
+    private static final String CONTEXT_COOLDOWN = "TalkativeBladeContextCooldown";
+    private static final String CONTEXT_CYCLE = "TalkativeBladeContextCycle";
+    private static final long CONTEXT_COOLDOWN_TICKS = 20L * 60L * 10L;
+
+    private static boolean resetContextualCycleIfReady(ServerPlayer player, long now) {
+        var data = player.getPersistentData();
+        long until = data.getLong(CONTEXT_COOLDOWN);
+        if (until == 0L) return true;
+        if (now < until) return false;
+        data.remove(CONTEXT_COOLDOWN);
+        data.remove(CONTEXT_CYCLE);
+        return true;
+    }
+
+    private static String nextContextualLine(ServerPlayer player, List<String> pool, long now) {
+        var data = player.getPersistentData();
+        var cycle = data.getCompound(CONTEXT_CYCLE);
+        // Separate progress for each situation, so changing dimension or weather
+        // does not discard the lines already spoken in another situation.
+        String poolKey;
+        if (pool == TalkativeBladeDialogue.HUNGRY) poolKey = "Hungry";
+        else if (pool == TalkativeBladeDialogue.NETHER) poolKey = "Nether";
+        else if (pool == TalkativeBladeDialogue.END) poolKey = "End";
+        else if (pool == TalkativeBladeDialogue.WATER) poolKey = "Water";
+        else if (pool == TalkativeBladeDialogue.RAIN) poolKey = "Rain";
+        else if (pool == TalkativeBladeDialogue.NIGHT) poolKey = "Night";
+        else poolKey = "Idle";
+
+        var progress = cycle.getCompound(poolKey);
+        java.util.ArrayList<Integer> remaining = new java.util.ArrayList<>();
+        for (int i = 0; i < pool.size(); i++) {
+            if (!progress.getBoolean("Line" + i)) remaining.add(i);
+        }
+        if (remaining.isEmpty()) {
+            data.putLong(CONTEXT_COOLDOWN, now + CONTEXT_COOLDOWN_TICKS);
+            return freshGeneral(player);
+        }
+        int chosen = remaining.get(player.getRandom().nextInt(remaining.size()));
+        progress.putBoolean("Line" + chosen, true);
+        cycle.put(poolKey, progress);
+        data.put(CONTEXT_CYCLE, cycle);
+        if (remaining.size() == 1) {
+            // Start the cooldown immediately after speaking the last unused line.
+            data.putLong(CONTEXT_COOLDOWN, now + CONTEXT_COOLDOWN_TICKS);
+        }
+        return pool.get(chosen);
     }
 
     private static List<String> choosePool(ServerPlayer player) {
