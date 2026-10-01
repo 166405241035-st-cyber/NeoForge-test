@@ -322,6 +322,17 @@ public class ForgedEquipmentItem extends Item {
         MonsterMaterial core = readMaterial(tag.getString("coreMaterial"));
         MonsterMaterial rod = readMaterial(tag.getString("rodMaterial"));
 
+        ForgingMetal headMetal = readMetal(tag.getString("headMetal"));
+        ForgingMetal coreMetal = readMetal(tag.getString("coreMetal"));
+        ForgingMetal rodMetal = readMetal(tag.getString("rodMetal"));
+        if (headMetal != null && coreMetal != null && rodMetal != null) {
+            tooltip.add(Component.literal("Base Materials (Head / Core / Rod):")
+                    .withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.literal("  " + headMetal.displayName() + " + "
+                    + coreMetal.displayName() + " + " + rodMetal.displayName())
+                    .withStyle(ChatFormatting.AQUA));
+        }
+
         int durability = tag.getInt("forgedDurability");
         if (durability > 0) {
             int remaining = Math.max(0, durability - stack.getDamageValue());
@@ -353,7 +364,7 @@ public class ForgedEquipmentItem extends Item {
         }
 
         if (head != null && core != null && rod != null) {
-            tooltip.add(Component.literal("Materials: " + displayName(head) + " + " + displayName(core) + " + " + displayName(rod)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.literal("Monster Materials: " + displayName(head) + " + " + displayName(core) + " + " + displayName(rod)).withStyle(ChatFormatting.GRAY));
         }
 
         int count = tag.getInt("effectCount");
