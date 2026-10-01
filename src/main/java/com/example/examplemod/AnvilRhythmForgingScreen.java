@@ -24,7 +24,7 @@ public class AnvilRhythmForgingScreen extends Screen {
     private static final float SPEED_PER_DIFFICULTY_STEP = 0.45F;
     private static final float PERFECT_WINDOW = 5.0F, GREAT_WINDOW = 12.0F, GOOD_WINDOW = 22.0F;
     private final Random random = new Random();
-    private final ForgingMetal metal;
+    private final float difficulty;
     private final AnvilAssemblyResult assembly;
     private int targetX, targetY, round, score, currentCombo, maxCombo, perfectCount, greatCount, goodCount, missCount, weightedAccuracyPoints;
     private Direction direction;
@@ -38,16 +38,16 @@ public class AnvilRhythmForgingScreen extends Screen {
     private String resultText = "Press the shown W/A/S/D key at the right time";
     private int resultColor = 0xFFFFFF;
 
-    public AnvilRhythmForgingScreen(ForgingMetal metal, AnvilAssemblyResult assembly) {
+    public AnvilRhythmForgingScreen(AnvilAssemblyResult assembly) {
         super(Component.literal("Final Rhythm Forging"));
-        this.metal = metal;
+        this.difficulty = assembly.rhythmDifficulty();
         this.assembly = assembly;
     }
 
-    private float speed() { return APPROACH_SPEED + (metal.difficulty() - 1) * SPEED_PER_DIFFICULTY_STEP; }
-    private float perfectWindow() { return Math.max(2F, PERFECT_WINDOW - (metal.difficulty() - 1) * .75F); }
-    private float greatWindow() { return Math.max(perfectWindow()+1F, GREAT_WINDOW - (metal.difficulty()-1)*2F); }
-    private float goodWindow() { return Math.max(greatWindow()+1F, GOOD_WINDOW - (metal.difficulty()-1)*2F); }
+    private float speed() { return APPROACH_SPEED + (difficulty - 1) * SPEED_PER_DIFFICULTY_STEP; }
+    private float perfectWindow() { return Math.max(2F, PERFECT_WINDOW - (difficulty - 1) * .75F); }
+    private float greatWindow() { return Math.max(perfectWindow()+1F, GREAT_WINDOW - (difficulty-1)*2F); }
+    private float goodWindow() { return Math.max(greatWindow()+1F, GOOD_WINDOW - (difficulty-1)*2F); }
 
     @Override protected void init() { spawnTarget(); }
     private void spawnTarget() {
@@ -85,7 +85,7 @@ public class AnvilRhythmForgingScreen extends Screen {
         int left=width/2-155,right=width/2+155;
         g.fill(left,8,right,78,0xDD171B20);
         g.fill(left,8,right,10,0xFFD27A34);
-        g.drawCenteredString(font,"FINAL FORGING - "+metal.displayName(),width/2,16,0xFFFFFF);
+        g.drawCenteredString(font,"FINAL FORGING - Difficulty "+String.format(java.util.Locale.ROOT,"%.2f",difficulty)+"/3",width/2,16,0xFFFFFF);
         g.drawCenteredString(font,"Round: "+Math.min(round+1,TOTAL_ROUNDS)+"/"+TOTAL_ROUNDS+"   Score: "+score+"   Combo: x"+currentCombo,width/2,35,0xDDDDDD);
         g.drawCenteredString(font,resultText,width/2,56,resultColor);
         ForgingMinigameArt.progress(g,width/2,85,roundGrades,round);

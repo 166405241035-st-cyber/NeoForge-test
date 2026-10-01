@@ -63,9 +63,9 @@ public record AnvilAssemblyResult(
                 List.copyOf(finalEffects));
     }
 
-    /** Rhythm difficulty currently follows the Head metal, preserving the existing minigame behavior. */
-    public ForgingMetal rhythmMetal() {
-        return headMetal;
+    /** All three parts contribute equally; keep fractional difficulty for mixed materials. */
+    public float rhythmDifficulty() {
+        return (headMetal.difficulty() + coreMetal.difficulty() + rodMetal.difficulty()) / 3.0F;
     }
 
     private static void add(Map<ForgingEffect, Integer> effects, ForgingEffect effect, int tier) {

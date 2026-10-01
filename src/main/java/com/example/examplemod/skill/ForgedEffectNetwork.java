@@ -145,7 +145,7 @@ public final class ForgedEffectNetwork {
                 (payload, context) -> context.enqueueWork(() -> {
                     AnvilAssemblyResult assembly = AnvilAssemblyResult.fromStack(payload.assembly());
                     if (assembly != null) net.minecraft.client.Minecraft.getInstance().setScreen(
-                            new AnvilRhythmForgingScreen(assembly.rhythmMetal(), assembly));
+                            new AnvilRhythmForgingScreen(assembly));
                 }));
         registrar.playToClient(AnvilResultPayload.TYPE, AnvilResultPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
