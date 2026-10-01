@@ -14,8 +14,6 @@ import net.minecraft.world.entity.player.Inventory;
 
 /** Concept-layout pre-Miniganme 1 screen. */
 public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
-    private String status = "";
-
     private static final int BG = 0xFF20252B, PANEL = 0xFF171B20, PANEL2 = 0xFF292F36;
     private static final int STEEL_DARK = 0xFF0B0E12, STEEL = 0xFF3A424B, STEEL_LIGHT = 0xFF59636E;
     private static final int FRAME = 0xFF6F3D20, COPPER = 0xFFD27A34, TEXT = 0xFFF4E9D8;
@@ -36,8 +34,8 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
     }
 
     private void startForge() {
-        if (!menu.hasValidRecipe()) { status = missingRecipeMessage(); return; }
-        if (menu.fuel() < ForgeIngredientResolver.forgeCost(menu.selectedMetal())) { status = "Need " + ForgeIngredientResolver.forgeCost(menu.selectedMetal()) + " energy"; return; }
+        if (!menu.hasValidRecipe()) return;
+        if (menu.fuel() < ForgeIngredientResolver.forgeCost(menu.selectedMetal())) return;
         ForgingBlueprintType blueprint = menu.selectedBlueprint();
         ForgingMetal metal = menu.selectedMetal();
         MonsterMaterial monster = menu.selectedMonster();
@@ -152,9 +150,18 @@ public class ForgingScreen extends AbstractContainerScreen<ForgeMenu> {
         g.drawCenteredString(font,"FUEL",264,47,0xFFB5BAC0);
         g.drawCenteredString(font,menu.fuel()+"/"+menu.maxFuel(),264,95,TEXT);
 
-        boolean ready=menu.hasValidRecipe();
-        if (ready) g.drawCenteredString(font,"RECIPE READY",160,125,READY);
-        else if (!status.isEmpty()) g.drawCenteredString(font,status,160,125,WARN);
+        int cost = ForgeIngredientResolver.forgeCost(menu.selectedMetal());
+        int missing = Math.max(0, cost - menu.fuel());
+        if (cost > 0) {
+            String energy = "Energy required: " + cost;
+            if (missing > 0) energy += " | Missing: " + missing;
+            g.drawCenteredString(font,energy,160,108,missing > 0 ? WARN : READY);
+        }
+        boolean recipeReady = menu.hasValidRecipe();
+        if (recipeReady && missing > 0)
+            g.drawCenteredString(font,"NOT ENOUGH ENERGY - ADD FUEL",160,125,WARN);
+        else if (recipeReady) g.drawCenteredString(font,"RECIPE READY",160,125,READY);
+        else g.drawCenteredString(font,missingRecipeMessage(),160,125,WARN);
         g.drawCenteredString(font,"INVENTORY",160,166,MUTED);
     }
 
