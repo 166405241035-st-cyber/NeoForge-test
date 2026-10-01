@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "examplemod:item/finished_rod_phantom",
+    "layer1": "examplemod:item/finished_hoe_head_dragon_breath"
+  }
+}

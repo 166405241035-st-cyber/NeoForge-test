@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "examplemod:block/forge_side",
+    "down": "examplemod:block/forge_bottom",
+    "up": "examplemod:block/forge_top",
+    "north": "examplemod:block/forge_front",
+    "south": "examplemod:block/forge_side",
+    "east": "examplemod:block/forge_side",
+    "west": "examplemod:block/forge_side"
+  }
+}

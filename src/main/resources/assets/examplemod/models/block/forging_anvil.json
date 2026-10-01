@@ -1,0 +1,203 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "examplemod:block/anvil_side",
+    "anvil_base": "examplemod:block/anvil_base",
+    "anvil_side": "examplemod:block/anvil_side",
+    "anvil_top": "examplemod:block/anvil_top"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        3,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#anvil_side"
+        },
+        "south": {
+          "texture": "#anvil_side"
+        },
+        "east": {
+          "texture": "#anvil_side"
+        },
+        "west": {
+          "texture": "#anvil_side"
+        },
+        "up": {
+          "texture": "#anvil_base"
+        },
+        "down": {
+          "texture": "#anvil_side"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        3
+      ],
+      "to": [
+        13,
+        5,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#anvil_side"
+        },
+        "south": {
+          "texture": "#anvil_side"
+        },
+        "east": {
+          "texture": "#anvil_side"
+        },
+        "west": {
+          "texture": "#anvil_side"
+        },
+        "up": {
+          "texture": "#anvil_base"
+        },
+        "down": {
+          "texture": "#anvil_side"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        5,
+        5
+      ],
+      "to": [
+        11,
+        10,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#anvil_side"
+        },
+        "south": {
+          "texture": "#anvil_side"
+        },
+        "east": {
+          "texture": "#anvil_side"
+        },
+        "west": {
+          "texture": "#anvil_side"
+        },
+        "up": {
+          "texture": "#anvil_base"
+        },
+        "down": {
+          "texture": "#anvil_side"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        10,
+        4
+      ],
+      "to": [
+        14,
+        13,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#anvil_side"
+        },
+        "south": {
+          "texture": "#anvil_side"
+        },
+        "east": {
+          "texture": "#anvil_side"
+        },
+        "west": {
+          "texture": "#anvil_side"
+        },
+        "up": {
+          "texture": "#anvil_top"
+        },
+        "down": {
+          "texture": "#anvil_side"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        11,
+        6
+      ],
+      "to": [
+        2,
+        13,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#anvil_side"
+        },
+        "south": {
+          "texture": "#anvil_side"
+        },
+        "east": {
+          "texture": "#anvil_side"
+        },
+        "west": {
+          "texture": "#anvil_side"
+        },
+        "up": {
+          "texture": "#anvil_base"
+        },
+        "down": {
+          "texture": "#anvil_side"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        10,
+        5
+      ],
+      "to": [
+        16,
+        13,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#anvil_side"
+        },
+        "south": {
+          "texture": "#anvil_side"
+        },
+        "east": {
+          "texture": "#anvil_side"
+        },
+        "west": {
+          "texture": "#anvil_side"
+        },
+        "up": {
+          "texture": "#anvil_base"
+        },
+        "down": {
+          "texture": "#anvil_side"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    }
+  ],
+  "result": {
+    "id": "examplemod:forging_guide",
+    "count": 1
+  }
+}
