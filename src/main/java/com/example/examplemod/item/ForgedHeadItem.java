@@ -1,14 +1,14 @@
 package com.example.examplemod.item;
 
-import com.example.examplemod.*;
-import com.example.examplemod.block.*;
-import com.example.examplemod.entity.*;
-import com.example.examplemod.item.*;
-import com.example.examplemod.skill.*;
-import com.example.examplemod.skill.client.*;
+import com.example.examplemod.ExampleMod;
+import com.example.examplemod.forging.blueprint.HeadBlueprintType;
+import com.example.examplemod.forging.material.ForgingMetal;
+import com.example.examplemod.forging.material.MonsterMaterial;
+import com.example.examplemod.forging.result.ForgedHeadResult;
+import com.example.examplemod.skill.EffectTier;
+import com.example.examplemod.skill.ForgingEffect;
 
 import java.util.List;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;

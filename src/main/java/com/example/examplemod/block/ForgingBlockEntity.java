@@ -1,7 +1,7 @@
 package com.example.examplemod.block;
 
 import com.example.examplemod.ExampleMod;
-import com.example.examplemod.ForgeIngredientResolver;
+import com.example.examplemod.forging.ingredient.ForgeIngredientResolver;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;

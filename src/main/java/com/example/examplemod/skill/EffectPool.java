@@ -1,11 +1,7 @@
 package com.example.examplemod.skill;
 
-import com.example.examplemod.*;
-import com.example.examplemod.block.*;
-import com.example.examplemod.entity.*;
-import com.example.examplemod.item.*;
-import com.example.examplemod.skill.*;
-import com.example.examplemod.skill.client.*;
+import com.example.examplemod.forging.blueprint.HeadBlueprintType;
+import com.example.examplemod.forging.material.MonsterMaterial;
 
 import java.util.Arrays;
 import java.util.List;

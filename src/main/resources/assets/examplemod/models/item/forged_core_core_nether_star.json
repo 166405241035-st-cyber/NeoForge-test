@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "examplemod:item/core_nether_star"
+    "layer0": "examplemod:item/parts/core/core_nether_star"
   }
 }

@@ -2,6 +2,6 @@
   "parent": "minecraft:item/handheld",
   "textures": {
     "layer0": "minecraft:item/iron_shovel",
-    "layer1": "examplemod:item/finished_head_shovel"
+    "layer1": "examplemod:item/equipment/default/finished_head_shovel"
   }
 }

@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "examplemod:item/finished_rod_gunpowder",
-    "layer1": "examplemod:item/finished_pickaxe_head_gunpowder"
+    "layer0": "examplemod:item/equipment/rod/finished_rod_gunpowder",
+    "layer1": "examplemod:item/equipment/head/finished_pickaxe_head_gunpowder"
   }
 }

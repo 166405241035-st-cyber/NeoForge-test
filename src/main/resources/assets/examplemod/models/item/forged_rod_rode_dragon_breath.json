@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "examplemod:item/rode_dragon_breath"
+    "layer0": "examplemod:item/parts/rod/rode_dragon_breath"
   }
 }

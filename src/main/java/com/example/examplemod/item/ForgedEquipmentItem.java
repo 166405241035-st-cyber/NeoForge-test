@@ -1,48 +1,53 @@
 package com.example.examplemod.item;
 
-import com.example.examplemod.*;
-import com.example.examplemod.block.*;
-import com.example.examplemod.entity.*;
-import com.example.examplemod.item.*;
-import com.example.examplemod.skill.*;
-import com.example.examplemod.skill.client.*;
+import com.example.examplemod.ExampleMod;
+import com.example.examplemod.entity.ForgedBoomerangEntity;
+import com.example.examplemod.forging.blueprint.HeadBlueprintType;
+import com.example.examplemod.forging.material.ForgingMetal;
+import com.example.examplemod.forging.material.MonsterMaterial;
+import com.example.examplemod.forging.result.AnvilAssemblyResult;
+import com.example.examplemod.skill.EffectTier;
+import com.example.examplemod.skill.ForgedEffectRuntime;
+import com.example.examplemod.skill.ForgedFarmingPlotData;
+import com.example.examplemod.skill.ForgedSkillSounds;
+import com.example.examplemod.skill.ForgingEffect;
+import com.example.examplemod.skill.blessing.DoubleTriggerRuntime;
 import com.example.examplemod.skill.blessing.ForgedBlessing;
 import com.example.examplemod.skill.blessing.ForgedBlessingRuntime;
-import com.example.examplemod.skill.blessing.DoubleTriggerRuntime;
 import com.example.examplemod.skill.curse.ForgedCurse;
 import com.example.examplemod.skill.curse.ForgedCurseRuntime;
 
 import java.util.List;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 
@@ -124,7 +129,6 @@ public class ForgedEquipmentItem extends Item {
         };
         if (mineableTag != null) stack.set(DataComponents.TOOL, vanillaTier(headMetal).createToolProperties(mineableTag));
     }
-
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {

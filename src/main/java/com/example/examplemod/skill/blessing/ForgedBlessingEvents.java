@@ -1,5 +1,8 @@
 package com.example.examplemod.skill.blessing;
 
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -10,15 +13,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Set;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
 /** Runtime behavior for Blessings awarded by the Rhythm Forging minigame. */
 @EventBusSubscriber(modid = "examplemod")

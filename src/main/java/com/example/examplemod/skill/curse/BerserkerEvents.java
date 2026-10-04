@@ -1,8 +1,9 @@
 package com.example.examplemod.skill.curse;
 
 import com.example.examplemod.ExampleMod;
-import net.minecraft.world.effect.MobEffectInstance;
+
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;

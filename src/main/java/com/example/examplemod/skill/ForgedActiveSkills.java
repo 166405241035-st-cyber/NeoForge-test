@@ -1,28 +1,24 @@
 package com.example.examplemod.skill;
 
-import com.example.examplemod.*;
-import com.example.examplemod.block.*;
-import com.example.examplemod.entity.*;
-import com.example.examplemod.item.*;
-import com.example.examplemod.skill.*;
-import com.example.examplemod.skill.client.*;
+import com.example.examplemod.ExampleMod;
+import com.example.examplemod.forging.result.AnvilAssemblyResult;
+import com.example.examplemod.item.ForgedEquipmentItem;
+import com.example.examplemod.menu.ForgedStorageMenu;
 import com.example.examplemod.skill.blessing.DoubleTriggerRuntime;
 import com.example.examplemod.skill.blessing.ForgedBlessingRuntime;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Blocks;
-
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class ForgedActiveSkills {
     private static final String SELECTED_INDEX = "forgedSelectedActiveSkill";

@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "examplemod:item/finished_rod_nether_star",
-    "layer1": "examplemod:item/finished_hoe_head_bone"
+    "layer0": "examplemod:item/equipment/rod/finished_rod_nether_star",
+    "layer1": "examplemod:item/equipment/head/finished_hoe_head_bone"
   }
 }

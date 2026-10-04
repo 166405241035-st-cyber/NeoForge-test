@@ -1,15 +1,11 @@
 package com.example.examplemod.skill;
 
-import com.example.examplemod.*;
-import com.example.examplemod.block.*;
-import com.example.examplemod.entity.*;
-import com.example.examplemod.item.*;
-import com.example.examplemod.skill.*;
-import com.example.examplemod.skill.client.*;
-
-import net.minecraft.world.item.ItemStack;
+import com.example.examplemod.forging.result.AnvilAssemblyResult;
+import com.example.examplemod.item.ForgedEquipmentItem;
 import com.example.examplemod.skill.curse.ForgedCurse;
 import com.example.examplemod.skill.curse.ForgedCurseRuntime;
+
+import net.minecraft.world.item.ItemStack;
 
 /** Shared helpers used by server-side forged-effect triggers. */
 public final class ForgedEffectRuntime {
