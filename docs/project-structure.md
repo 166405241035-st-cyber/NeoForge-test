@@ -43,7 +43,11 @@
 | `client/guide/` | หน้าจอหนังสือและข้อมูลการค้นพบที่ส่งมาให้ client |
 | `client/skill/` | ปุ่มสกิลและ HUD |
 | `guide/` | ไอเท็มหนังสือ ข้อความอธิบาย การแจกหนังสือ และสมุดบันทึกการค้นพบฝั่งเซิร์ฟเวอร์ |
-| `skill/` | รายการ effect, Tier, config, network และพฤติกรรมสกิล |
+| `skill/` | รายการ effect, Tier, config, network และจุดรับคำสั่ง/เหตุการณ์ |
+| `skill/active/` | สถานะ คูลดาวน์ HUD และการอัปเดตสกิลต่อเนื่อง |
+| `skill/combat/`, `skill/mining/`, `skill/farming/` | ตัวจัดการสกิลและเอฟเฟคต่อสู้ ขุดแร่ และปลูกพืช |
+| `skill/movement/`, `skill/building/`, `skill/storage/` | เคลื่อนที่ สร้างบล็อก และช่องเก็บของ |
+| `skill/passive/` | เอฟเฟคใน player tick และตัวช่วยจับเวลาของเอฟเฟค |
 | `skill/blessing/` | พรและเงื่อนไขการทำงาน |
 | `skill/curse/` | คำสาปและบทพูดของ Talkative Blade |
 | `debug/block/`, `debug/menu/`, `debug/client/` | บล็อก เมนู และหน้าจอสำหรับทดสอบอุปกรณ์ พร และคำสาป |
@@ -62,8 +66,8 @@
 | หน้าผลลัพธ์การตี | `client/screen/*ForgingResultScreen.java`, `ForgingResultScreen.java`, `client/ui/ForgingResultArt.java` |
 | Tooltip และข้อมูลเครื่องมือ | `item/ForgedEquipmentItem.java` และไฟล์ไอเท็มชิ้นส่วนใน `item/` |
 | เพิ่มหรือแก้รายการสกิล | `skill/ForgingEffect.java`, `skill/EffectPool.java` |
-| สกิลกด R | `client/skill/ForgedEffectKeybinds.java`, `skill/ForgedEffectNetwork.java`, `skill/ForgedActiveSkills.java` |
-| เอฟเฟคตามเหตุการณ์ | `skill/ForgedEffectEvents.java` |
+| สกิลกด R | `client/skill/ForgedEffectKeybinds.java`, `skill/ForgedEffectNetwork.java`, `skill/ForgedActiveSkills.java` แล้วเลือกคลาสย่อยตาม [คู่มือสกิล](skills-structure.md) |
+| เอฟเฟคตามเหตุการณ์ | `skill/ForgedEffectEvents.java` ลงทะเบียน event; เนื้อหาอยู่ในตัวจัดการ combat/mining/farming/passive |
 | คูลดาวน์และค่าปรับแต่ง | `skill/ForgedSkillConfig.java`; ตรวจข้อความใน `guide/ForgingGuideDescriptions.java` ให้ตรงกัน |
 | พร/คำสาป | `skill/blessing/`, `skill/curse/` |
 | ดาบพูดมาก | `skill/curse/TalkativeBladeEvents.java`, `TalkativeBladeDialogue.java` |
@@ -126,4 +130,4 @@
 
 รอบนี้ย้ายตำแหน่งคลาส จัดหมวด texture และแก้เส้นทางอ้างอิง โดยคง Mod ID, รหัสไอเท็ม/บล็อก/menu/entity, ลำดับ enum, NBT, payload และชื่อ model เดิม ข้อมูลเหล่านี้สัมพันธ์กับเซฟและการทำงานของมอด
 
-การแยกเนื้อหาภายใน `ForgedActiveSkills.java` และ `ForgedEffectEvents.java` เป็นหมวด mining/combat/farming/movement เป็นงานรอบถัดไป ต้องตรวจข้อมูลร่วมและเงื่อนไขแต่ละสกิลก่อนแยก
+รอบสองแยกเนื้อหาภายใน `ForgedActiveSkills.java` และ `ForgedEffectEvents.java` เป็นคลาสตามหมวด พร้อมตัวช่วยข้อมูลร่วมแล้ว ดู [โครงสร้างสกิล](skills-structure.md) สำหรับชื่อไฟล์และตำแหน่งเมธอดใหม่ จุดรับคำสั่งและการลงทะเบียน event ยังผ่านคลาสเดิม

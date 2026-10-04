@@ -5,6 +5,7 @@ Minecraft 1.21.1 / NeoForge 21.1.244 / Java 21
 คู่มือสำหรับแก้ไขมอด:
 
 - [โครงสร้างโปรเจกต์และตำแหน่งไฟล์แต่ละระบบ](docs/project-structure.md)
+- [หมวดสกิลและตำแหน่งตัวจัดการแต่ละระบบ](docs/skills-structure.md)
 - [ไฟล์ต้นฉบับ MCreator และทรัพยากรที่ยังใช้ในมอด](mcreator-reference/README.md)
 
 Build บน Windows PowerShell: `./gradlew.bat build`
