@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 
 /** Rod forging uses the same Timing Bar and hidden Effect I/II/III rules as Core. */
 public class RodTimingBarScreen extends Screen {
-    private static final int BAR_WIDTH = 300, BAR_HEIGHT = 24, CURSOR_WIDTH = 3, TOTAL_ROUNDS = 10;
+    private static final int BAR_WIDTH = 300, BAR_HEIGHT = 24, CURSOR_WIDTH = 3;
     private static final float CURSOR_MIN_SPEED = 6.0F, CURSOR_MAX_SPEED = 12.0F;
     private static final int GREEN_MIN_WIDTH = 45, GREEN_MAX_WIDTH = 100;
     private static final float SPEED_PER_DIFFICULTY_STEP = 1.5F;
@@ -30,7 +30,8 @@ public class RodTimingBarScreen extends Screen {
     private float cursorPosition, previousCursorPosition, cursorSpeed;
     private boolean movingRight = true, finished;
     private int feedbackTicks;
-    private final int[] roundGrades = new int[TOTAL_ROUNDS];
+    private final int totalRounds;
+    private final int[] roundGrades;
     private int visualTicks;
     private float hitPosition;
     private boolean lastHit;
@@ -40,6 +41,8 @@ public class RodTimingBarScreen extends Screen {
     public RodTimingBarScreen(ForgingMetal metal, MonsterMaterial monsterMaterial) {
         super(Component.literal("Rod Timing Bar"));
         this.metal = metal;
+        this.totalRounds = ForgingRounds.forDifficulty(metal.difficulty());
+        this.roundGrades = new int[totalRounds];
         this.monsterMaterial = monsterMaterial;
         randomizeRound();
     }
@@ -61,7 +64,7 @@ public class RodTimingBarScreen extends Screen {
         if (finished) return;
         if (feedbackTicks > 0) {
             if (--feedbackTicks == 0) {
-                if (round >= TOTAL_ROUNDS) { finished = true; MinigameFeedback.complete(); finishRod(); }
+                if (round >= totalRounds) { finished = true; MinigameFeedback.complete(); finishRod(); }
                 else randomizeRound();
             }
             return;
@@ -96,7 +99,7 @@ public class RodTimingBarScreen extends Screen {
 
     private void finishRod() {
         if (minecraft == null) return;
-        double accuracy = weightedAccuracyPoints / (double) TOTAL_ROUNDS;
+        double accuracy = weightedAccuracyPoints / (double) totalRounds;
         EffectTier tier = EffectTierRoller.roll(accuracy, random);
         ForgedRodResult rodResult = new ForgedRodResult(metal, monsterMaterial, tier);
         if (minecraft.player != null) {
@@ -120,7 +123,7 @@ public class RodTimingBarScreen extends Screen {
         ForgingMinigameArt.backdrop(guiGraphics, barX - 28, barY - 105, BAR_WIDTH + 56, 187, visualTicks);
         guiGraphics.drawCenteredString(font, "ROD FORGING - " + metal.displayName() + " [Difficulty " + metal.difficulty() + "/3]", width / 2, barY - 88, 0xFFFFFF);
         guiGraphics.drawCenteredString(font, "ROD BLUEPRINT + " + formatName(monsterMaterial.name()), width / 2, barY - 74, 0xCCCCCC);
-        guiGraphics.drawCenteredString(font, "ROUND " + Math.min(round + 1, TOTAL_ROUNDS) + " / " + TOTAL_ROUNDS, width / 2, barY - 56, 0xDDDDDD);
+        guiGraphics.drawCenteredString(font, "ROUND " + Math.min(round + 1, totalRounds) + " / " + totalRounds, width / 2, barY - 56, 0xDDDDDD);
         guiGraphics.drawCenteredString(font, resultText, width / 2, barY - 38, resultColor);
         ForgingMinigameArt.rail(guiGraphics, barX, barY, BAR_WIDTH, BAR_HEIGHT);
         guiGraphics.fill(barX - 2, barY - 2, barX + BAR_WIDTH + 2, barY + BAR_HEIGHT + 2, 0xFF111111);

@@ -38,19 +38,20 @@ public final class AnvilRewardSession {
         if (pending == null || System.currentTimeMillis() - pending.createdAt() > TIMEOUT_MS) return;
         // Scores come from the local minigame. Bound them to possible values; rewards and RNG stay on the server.
         double accuracy = Math.max(0, Math.min(10000, accuracyHundredths)) / 100.0D;
-        maxCombo = Math.max(0, Math.min(10, maxCombo));
-        perfectCount = Math.max(0, Math.min(10, perfectCount));
-        misses = Math.max(0, Math.min(10, misses));
+        int rounds = ForgingRounds.forDifficulty(pending.assembly().rhythmDifficulty());
+        maxCombo = Math.max(0, Math.min(rounds, maxCombo));
+        perfectCount = Math.max(0, Math.min(rounds, perfectCount));
+        misses = Math.max(0, Math.min(rounds, misses));
         String rank;
         double chance;
-        if (accuracy >= 90 && maxCombo >= 8) { rank = "S"; chance = .90; }
+        if (accuracy >= 90 && maxCombo >= (int) Math.ceil(rounds * .8)) { rank = "S"; chance = .90; }
         else if (accuracy >= 80) { rank = "A"; chance = .75; }
         else if (accuracy >= 65) { rank = "B"; chance = .60; }
         else if (accuracy >= 50) { rank = "C"; chance = .45; }
         else { rank = "D"; chance = .10; }
         chance -= misses * .05;
-        if (perfectCount >= 7) chance += .05;
-        if (maxCombo >= 10) chance += .10;
+        if (perfectCount >= (int) Math.ceil(rounds * .7)) chance += .05;
+        if (maxCombo >= rounds) chance += .10;
         chance = Math.max(.05, Math.min(.95, chance));
 
         ItemStack equipment = ExampleMod.FORGED_EQUIPMENT_ITEM.get().createStack(pending.assembly());

@@ -17,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 
 /** Rhythm assembly minigame for Head + Core + Rod. */
 public class AnvilRhythmForgingScreen extends Screen {
-    private static final int TOTAL_ROUNDS = 10;
     private static final int TARGET_RADIUS = 22;
     private static final int APPROACH_START_RADIUS = 70;
     private static final float APPROACH_SPEED = 2.2F;
@@ -32,7 +31,8 @@ public class AnvilRhythmForgingScreen extends Screen {
     private float previousApproachRadius;
     private int feedbackTicks;
     private boolean lastHit;
-    private final int[] roundGrades = new int[TOTAL_ROUNDS];
+    private final int totalRounds;
+    private final int[] roundGrades;
     private boolean finished;
     private int tutorialStep; // 0: explanation, 1: approach, 2: wait for the first correct key, 3: normal play
     private ForgingResult finalResult;
@@ -42,6 +42,8 @@ public class AnvilRhythmForgingScreen extends Screen {
     public AnvilRhythmForgingScreen(AnvilAssemblyResult assembly) {
         super(Component.literal("Final Rhythm Forging"));
         this.difficulty = assembly.rhythmDifficulty();
+        this.totalRounds = ForgingRounds.forDifficulty(difficulty);
+        this.roundGrades = new int[totalRounds];
         this.assembly = assembly;
     }
 
@@ -61,7 +63,7 @@ public class AnvilRhythmForgingScreen extends Screen {
         approachRadius=APPROACH_START_RADIUS;
         previousApproachRadius=approachRadius;
     }
-    @Override public void tick(){if(finished || tutorialStep == 0 || tutorialStep == 2)return;if(feedbackTicks>0){if(--feedbackTicks==0){if(round>=TOTAL_ROUNDS){finished=true;MinigameFeedback.complete();finish();}else spawnTarget();}return;}previousApproachRadius=approachRadius;approachRadius-=speed();if(tutorialStep == 1 && approachRadius <= TARGET_RADIUS){approachRadius=TARGET_RADIUS;previousApproachRadius=TARGET_RADIUS;tutorialStep=2;return;}if(approachRadius<TARGET_RADIUS-goodWindow())miss("TOO LATE!");}
+    @Override public void tick(){if(finished || tutorialStep == 0 || tutorialStep == 2)return;if(feedbackTicks>0){if(--feedbackTicks==0){if(round>=totalRounds){finished=true;MinigameFeedback.complete();finish();}else spawnTarget();}return;}previousApproachRadius=approachRadius;approachRadius-=speed();if(tutorialStep == 1 && approachRadius <= TARGET_RADIUS){approachRadius=TARGET_RADIUS;previousApproachRadius=TARGET_RADIUS;tutorialStep=2;return;}if(approachRadius<TARGET_RADIUS-goodWindow())miss("TOO LATE!");}
     private void attempt(int key){if(finished||feedbackTicks>0||tutorialStep<2)return;Direction pressed=Direction.fromKey(key);if(pressed==null)return;if(tutorialStep==2){if(pressed!=direction)return;tutorialStep=3;}if(pressed!=direction){miss("WRONG KEY!");return;}float d=Math.abs(approachRadius-TARGET_RADIUS);if(d<=perfectWindow())hit("PERFECT!",0xFF66FF66,100,100,0);else if(d<=greatWindow())hit("GREAT!",0xFF22CC55,75,75,1);else if(d<=goodWindow())hit("GOOD!",0xFFFFCC33,50,50,2);else miss("TOO EARLY!");}
     private void hit(String text,int color,int base,int accuracy,int grade){resultText=text+" +"+base;resultColor=color;if(grade==0)perfectCount++;else if(grade==1)greatCount++;else goodCount++;currentCombo++;maxCombo=Math.max(maxCombo,currentCombo);score+=base+Math.max(0,currentCombo-1)*5;weightedAccuracyPoints+=accuracy;roundGrades[round]=3-grade;lastHit=true;MinigameFeedback.hit(grade);next();}
     private void miss(String why){resultText=why+" MISS!";resultColor=0xFFFF5555;missCount++;currentCombo=0;roundGrades[round]=0;lastHit=false;MinigameFeedback.miss();next();}
@@ -69,7 +71,7 @@ public class AnvilRhythmForgingScreen extends Screen {
 
     private void finish() {
         if (minecraft == null) return;
-        double accuracy = weightedAccuracyPoints / (double) TOTAL_ROUNDS;
+        double accuracy = weightedAccuracyPoints / (double) totalRounds;
         finalResult = new ForgingResult(score, accuracy, maxCombo, perfectCount, greatCount, goodCount, missCount);
         resultText = "Finishing on server...";
         ForgedEffectNetwork.finishAnvil(finalResult);
@@ -90,7 +92,7 @@ public class AnvilRhythmForgingScreen extends Screen {
         g.fill(left,8,right,78,0xDD171B20);
         g.fill(left,8,right,10,0xFFD27A34);
         g.drawCenteredString(font,"FINAL FORGING - Difficulty "+String.format(java.util.Locale.ROOT,"%.2f",difficulty)+"/3",width/2,16,0xFFFFFF);
-        g.drawCenteredString(font,"Round: "+Math.min(round+1,TOTAL_ROUNDS)+"/"+TOTAL_ROUNDS+"   Score: "+score+"   Combo: x"+currentCombo,width/2,35,0xDDDDDD);
+        g.drawCenteredString(font,"Round: "+Math.min(round+1,totalRounds)+"/"+totalRounds+"   Score: "+score+"   Combo: x"+currentCombo,width/2,35,0xDDDDDD);
         g.drawCenteredString(font,resultText,width/2,56,resultColor);
         ForgingMinigameArt.progress(g,width/2,85,roundGrades,round);
         drawTarget(g,p);
