@@ -63,12 +63,18 @@ public final class AnvilRewardSession {
             }
             ForgedBlessingRuntime.set(equipment, pool.get(player.getRandom().nextInt(pool.size())));
         } else {
-            ForgedCurse[] pool = ForgedCurse.values();
-            ForgedCurseRuntime.set(equipment, pool[player.getRandom().nextInt(pool.length)]);
+            ArrayList<ForgedCurse> pool = new ArrayList<>();
+            for (ForgedCurse curse : ForgedCurse.values()) {
+                if (curse != ForgedCurse.POWER_ERASURE || ForgingGuideJournal.hasCompletedAnvil(player)) {
+                    pool.add(curse);
+                }
+            }
+            ForgedCurseRuntime.set(equipment, pool.get(player.getRandom().nextInt(pool.size())));
         }
         ItemStack reward = equipment.copy();
         if (!player.getInventory().add(reward)) player.drop(reward, false);
         ForgingGuideJournal.record(player, equipment);
+        ForgingGuideJournal.markAnvilCompleted(player);
         PacketDistributor.sendToPlayer(player, new ForgedEffectNetwork.AnvilResultPayload(
                 equipment, rank, (int) Math.round(chance * 1000)));
     }

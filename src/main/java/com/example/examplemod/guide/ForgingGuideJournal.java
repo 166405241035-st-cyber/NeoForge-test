@@ -24,6 +24,16 @@ public final class ForgingGuideJournal {
     private static final String KEY = "examplemod_forging_guide";
     private ForgingGuideJournal() {}
 
+    public static boolean hasCompletedAnvil(Player player) {
+        return player.getPersistentData().getCompound(KEY).getBoolean("completedAnvil");
+    }
+
+    public static void markAnvilCompleted(Player player) {
+        CompoundTag data = player.getPersistentData().getCompound(KEY);
+        data.putBoolean("completedAnvil", true);
+        player.getPersistentData().put(KEY, data);
+    }
+
     public static void record(Player player, ItemStack reward) {
         if (!(player instanceof ServerPlayer)) return;
         CompoundTag data = player.getPersistentData().getCompound(KEY);

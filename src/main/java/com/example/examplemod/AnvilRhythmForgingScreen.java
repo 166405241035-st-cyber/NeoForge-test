@@ -34,6 +34,7 @@ public class AnvilRhythmForgingScreen extends Screen {
     private boolean lastHit;
     private final int[] roundGrades = new int[TOTAL_ROUNDS];
     private boolean finished;
+    private int tutorialStep; // 0: explanation, 1: approach, 2: wait for the first correct key, 3: normal play
     private ForgingResult finalResult;
     private String resultText = "Press the shown W/A/S/D key at the right time";
     private int resultColor = 0xFFFFFF;
@@ -49,16 +50,19 @@ public class AnvilRhythmForgingScreen extends Screen {
     private float greatWindow() { return Math.max(perfectWindow()+1F, GREAT_WINDOW - (difficulty-1)*2F); }
     private float goodWindow() { return Math.max(greatWindow()+1F, GOOD_WINDOW - (difficulty-1)*2F); }
 
-    @Override protected void init() { spawnTarget(); }
+    @Override protected void init() {
+        if (direction == null) spawnTarget();
+    }
     private void spawnTarget() {
         targetX=width>210?105+random.nextInt(width-210):width/2;
         targetY=height>320?170+random.nextInt(height-270):height/2+25;
+        if (tutorialStep < 3) { targetX = width / 2; targetY = height / 2; }
         direction=Direction.values()[random.nextInt(Direction.values().length)];
         approachRadius=APPROACH_START_RADIUS;
         previousApproachRadius=approachRadius;
     }
-    @Override public void tick(){if(finished)return;if(feedbackTicks>0){if(--feedbackTicks==0){if(round>=TOTAL_ROUNDS){finished=true;MinigameFeedback.complete();finish();}else spawnTarget();}return;}previousApproachRadius=approachRadius;approachRadius-=speed();if(approachRadius<TARGET_RADIUS-goodWindow())miss("TOO LATE!");}
-    private void attempt(int key){if(finished||feedbackTicks>0)return;Direction pressed=Direction.fromKey(key);if(pressed==null)return;if(pressed!=direction){miss("WRONG KEY!");return;}float d=Math.abs(approachRadius-TARGET_RADIUS);if(d<=perfectWindow())hit("PERFECT!",0xFF66FF66,100,100,0);else if(d<=greatWindow())hit("GREAT!",0xFF22CC55,75,75,1);else if(d<=goodWindow())hit("GOOD!",0xFFFFCC33,50,50,2);else miss("TOO EARLY!");}
+    @Override public void tick(){if(finished || tutorialStep == 0 || tutorialStep == 2)return;if(feedbackTicks>0){if(--feedbackTicks==0){if(round>=TOTAL_ROUNDS){finished=true;MinigameFeedback.complete();finish();}else spawnTarget();}return;}previousApproachRadius=approachRadius;approachRadius-=speed();if(tutorialStep == 1 && approachRadius <= TARGET_RADIUS){approachRadius=TARGET_RADIUS;previousApproachRadius=TARGET_RADIUS;tutorialStep=2;return;}if(approachRadius<TARGET_RADIUS-goodWindow())miss("TOO LATE!");}
+    private void attempt(int key){if(finished||feedbackTicks>0||tutorialStep<2)return;Direction pressed=Direction.fromKey(key);if(pressed==null)return;if(tutorialStep==2){if(pressed!=direction)return;tutorialStep=3;}if(pressed!=direction){miss("WRONG KEY!");return;}float d=Math.abs(approachRadius-TARGET_RADIUS);if(d<=perfectWindow())hit("PERFECT!",0xFF66FF66,100,100,0);else if(d<=greatWindow())hit("GREAT!",0xFF22CC55,75,75,1);else if(d<=goodWindow())hit("GOOD!",0xFFFFCC33,50,50,2);else miss("TOO EARLY!");}
     private void hit(String text,int color,int base,int accuracy,int grade){resultText=text+" +"+base;resultColor=color;if(grade==0)perfectCount++;else if(grade==1)greatCount++;else goodCount++;currentCombo++;maxCombo=Math.max(maxCombo,currentCombo);score+=base+Math.max(0,currentCombo-1)*5;weightedAccuracyPoints+=accuracy;roundGrades[round]=3-grade;lastHit=true;MinigameFeedback.hit(grade);next();}
     private void miss(String why){resultText=why+" MISS!";resultColor=0xFFFF5555;missCount++;currentCombo=0;roundGrades[round]=0;lastHit=false;MinigameFeedback.miss();next();}
     private void next(){round++;feedbackTicks=10;}
@@ -77,7 +81,7 @@ public class AnvilRhythmForgingScreen extends Screen {
                 ForgedBlessingRuntime.get(equipment), ForgedCurseRuntime.get(equipment), rank, chance));
     }
 
-    @Override public boolean keyPressed(int keyCode,int scanCode,int modifiers){if(Direction.fromKey(keyCode)!=null){attempt(keyCode);return true;}return super.keyPressed(keyCode,scanCode,modifiers);}
+    @Override public boolean keyPressed(int keyCode,int scanCode,int modifiers){if(tutorialStep==0 && (keyCode==GLFW.GLFW_KEY_ENTER || keyCode==GLFW.GLFW_KEY_SPACE)){tutorialStep=1;return true;}if(Direction.fromKey(keyCode)!=null){attempt(keyCode);return true;}return super.keyPressed(keyCode,scanCode,modifiers);}
     @Override public void renderBackground(GuiGraphics g,int x,int y,float p){}
     @Override public void render(GuiGraphics g,int mx,int my,float p){
         g.fill(0,0,width,height,0x88000000);
@@ -91,8 +95,27 @@ public class AnvilRhythmForgingScreen extends Screen {
         ForgingMinigameArt.progress(g,width/2,85,roundGrades,round);
         drawTarget(g,p);
         g.drawCenteredString(font,"W=UP  A=LEFT  S=DOWN  D=RIGHT",width/2,height-24,0xFFFFFF);
+        if (tutorialStep == 0 || tutorialStep == 2) drawTutorial(g);
         super.render(g,mx,my,p);
     }
+    private void drawTutorial(GuiGraphics g) {
+        int boxWidth = Math.min(300, width - 16);
+        int left = (width - boxWidth) / 2;
+        int top = tutorialStep == 0 ? Math.max(90, height / 2 - 42) : Math.max(8, height - 86);
+        g.fill(left - 2, top - 2, left + boxWidth + 2, top + 66, 0xFFFFC45E);
+        g.fill(left, top, left + boxWidth, top + 64, 0xF0171B20);
+        g.drawCenteredString(font, "GUIDED TUTORIAL", width / 2, top + 8, 0xFFFFC45E);
+        if (tutorialStep == 0) {
+            g.drawCenteredString(font, "Match the shown W / A / S / D key.", width / 2, top + 23, 0xFFFFFFFF);
+            g.drawCenteredString(font, "Press when the gold ring meets the target.", width / 2, top + 35, 0xFFFFFFFF);
+            g.drawCenteredString(font, "Press ENTER or SPACE to begin.", width / 2, top + 49, 0xFF9BE178);
+        } else {
+            g.drawCenteredString(font, "The rings match now. Press " + direction.key + "!", width / 2, top + 23, 0xFFFFFFFF);
+            g.drawCenteredString(font, "This first target waits for the correct key.", width / 2, top + 35, 0xFFFFFFFF);
+            g.drawCenteredString(font, "The remaining targets move normally.", width / 2, top + 49, 0xFF9BE178);
+        }
+    }
+
     private void drawTarget(GuiGraphics g,float partialTick){
         // Rhythm note: a shrinking approach circle around a randomly placed key target.
         int tint=switch(direction){case UP->0xFF76C6F7;case LEFT->0xFFFFB66B;case DOWN->0xFF9BE178;case RIGHT->0xFFC8A1F5;};
