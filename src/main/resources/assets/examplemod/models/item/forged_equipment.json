@@ -1,0 +1,5078 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "minecraft:item/iron_sword"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 1
+      },
+      "model": "examplemod:item/finished_sword_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 2
+      },
+      "model": "examplemod:item/finished_sword_flesh_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 3
+      },
+      "model": "examplemod:item/finished_sword_flesh_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 4
+      },
+      "model": "examplemod:item/finished_sword_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 5
+      },
+      "model": "examplemod:item/finished_sword_flesh_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 6
+      },
+      "model": "examplemod:item/finished_sword_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 7
+      },
+      "model": "examplemod:item/finished_sword_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 8
+      },
+      "model": "examplemod:item/finished_sword_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 9
+      },
+      "model": "examplemod:item/finished_sword_flesh_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 10
+      },
+      "model": "examplemod:item/finished_sword_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 11
+      },
+      "model": "examplemod:item/finished_sword_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 12
+      },
+      "model": "examplemod:item/finished_sword_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 13
+      },
+      "model": "examplemod:item/finished_sword_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 14
+      },
+      "model": "examplemod:item/finished_sword_bone_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 15
+      },
+      "model": "examplemod:item/finished_sword_bone_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 16
+      },
+      "model": "examplemod:item/finished_sword_bone_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 17
+      },
+      "model": "examplemod:item/finished_sword_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 18
+      },
+      "model": "examplemod:item/finished_sword_bone_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 19
+      },
+      "model": "examplemod:item/finished_sword_bone_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 20
+      },
+      "model": "examplemod:item/finished_sword_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 21
+      },
+      "model": "examplemod:item/finished_sword_bone_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 22
+      },
+      "model": "examplemod:item/finished_sword_bone_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 23
+      },
+      "model": "examplemod:item/finished_sword_bone_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 24
+      },
+      "model": "examplemod:item/finished_sword_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 25
+      },
+      "model": "examplemod:item/finished_sword_bone_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 26
+      },
+      "model": "examplemod:item/finished_sword_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 27
+      },
+      "model": "examplemod:item/finished_sword_string_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 28
+      },
+      "model": "examplemod:item/finished_sword_string_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 29
+      },
+      "model": "examplemod:item/finished_sword_string_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 30
+      },
+      "model": "examplemod:item/finished_sword_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 31
+      },
+      "model": "examplemod:item/finished_sword_string_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 32
+      },
+      "model": "examplemod:item/finished_sword_string_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 33
+      },
+      "model": "examplemod:item/finished_sword_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 34
+      },
+      "model": "examplemod:item/finished_sword_string_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 35
+      },
+      "model": "examplemod:item/finished_sword_string_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 36
+      },
+      "model": "examplemod:item/finished_sword_string_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 37
+      },
+      "model": "examplemod:item/finished_sword_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 38
+      },
+      "model": "examplemod:item/finished_sword_string_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 39
+      },
+      "model": "examplemod:item/finished_sword_string_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 40
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 41
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 42
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 43
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 44
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 45
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 46
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 47
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 48
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 49
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 50
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 51
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 52
+      },
+      "model": "examplemod:item/finished_sword_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 53
+      },
+      "model": "examplemod:item/finished_sword_slime_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 54
+      },
+      "model": "examplemod:item/finished_sword_slime_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 55
+      },
+      "model": "examplemod:item/finished_sword_slime_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 56
+      },
+      "model": "examplemod:item/finished_sword_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 57
+      },
+      "model": "examplemod:item/finished_sword_slime_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 58
+      },
+      "model": "examplemod:item/finished_sword_slime_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 59
+      },
+      "model": "examplemod:item/finished_sword_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 60
+      },
+      "model": "examplemod:item/finished_sword_slime_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 61
+      },
+      "model": "examplemod:item/finished_sword_slime_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 62
+      },
+      "model": "examplemod:item/finished_sword_slime_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 63
+      },
+      "model": "examplemod:item/finished_sword_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 64
+      },
+      "model": "examplemod:item/finished_sword_slime_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 65
+      },
+      "model": "examplemod:item/finished_sword_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 66
+      },
+      "model": "examplemod:item/finished_sword_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 67
+      },
+      "model": "examplemod:item/finished_sword_pearl_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 68
+      },
+      "model": "examplemod:item/finished_sword_pearl_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 69
+      },
+      "model": "examplemod:item/finished_sword_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 70
+      },
+      "model": "examplemod:item/finished_sword_pearl_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 71
+      },
+      "model": "examplemod:item/finished_sword_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 72
+      },
+      "model": "examplemod:item/finished_sword_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 73
+      },
+      "model": "examplemod:item/finished_sword_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 74
+      },
+      "model": "examplemod:item/finished_sword_pearl_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 75
+      },
+      "model": "examplemod:item/finished_sword_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 76
+      },
+      "model": "examplemod:item/finished_sword_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 77
+      },
+      "model": "examplemod:item/finished_sword_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 78
+      },
+      "model": "examplemod:item/finished_sword_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 79
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 80
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 81
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 82
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 83
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 84
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 85
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 86
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 87
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 88
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 89
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 90
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 91
+      },
+      "model": "examplemod:item/finished_sword_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 92
+      },
+      "model": "examplemod:item/finished_sword_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 93
+      },
+      "model": "examplemod:item/finished_sword_ghast_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 94
+      },
+      "model": "examplemod:item/finished_sword_ghast_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 95
+      },
+      "model": "examplemod:item/finished_sword_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 96
+      },
+      "model": "examplemod:item/finished_sword_ghast_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 97
+      },
+      "model": "examplemod:item/finished_sword_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 98
+      },
+      "model": "examplemod:item/finished_sword_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 99
+      },
+      "model": "examplemod:item/finished_sword_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 100
+      },
+      "model": "examplemod:item/finished_sword_ghast_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 101
+      },
+      "model": "examplemod:item/finished_sword_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 102
+      },
+      "model": "examplemod:item/finished_sword_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 103
+      },
+      "model": "examplemod:item/finished_sword_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 104
+      },
+      "model": "examplemod:item/finished_sword_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 105
+      },
+      "model": "examplemod:item/finished_sword_wither_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 106
+      },
+      "model": "examplemod:item/finished_sword_wither_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 107
+      },
+      "model": "examplemod:item/finished_sword_wither_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 108
+      },
+      "model": "examplemod:item/finished_sword_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 109
+      },
+      "model": "examplemod:item/finished_sword_wither_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 110
+      },
+      "model": "examplemod:item/finished_sword_wither_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 111
+      },
+      "model": "examplemod:item/finished_sword_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 112
+      },
+      "model": "examplemod:item/finished_sword_wither_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 113
+      },
+      "model": "examplemod:item/finished_sword_wither_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 114
+      },
+      "model": "examplemod:item/finished_sword_wither_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 115
+      },
+      "model": "examplemod:item/finished_sword_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 116
+      },
+      "model": "examplemod:item/finished_sword_wither_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 117
+      },
+      "model": "examplemod:item/finished_sword_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 118
+      },
+      "model": "examplemod:item/finished_sword_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 119
+      },
+      "model": "examplemod:item/finished_sword_phantom_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 120
+      },
+      "model": "examplemod:item/finished_sword_phantom_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 121
+      },
+      "model": "examplemod:item/finished_sword_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 122
+      },
+      "model": "examplemod:item/finished_sword_phantom_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 123
+      },
+      "model": "examplemod:item/finished_sword_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 124
+      },
+      "model": "examplemod:item/finished_sword_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 125
+      },
+      "model": "examplemod:item/finished_sword_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 126
+      },
+      "model": "examplemod:item/finished_sword_phantom_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 127
+      },
+      "model": "examplemod:item/finished_sword_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 128
+      },
+      "model": "examplemod:item/finished_sword_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 129
+      },
+      "model": "examplemod:item/finished_sword_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 130
+      },
+      "model": "examplemod:item/finished_sword_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 131
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 132
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 133
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 134
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 135
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 136
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 137
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 138
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 139
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 140
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 141
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 142
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 143
+      },
+      "model": "examplemod:item/finished_sword_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 144
+      },
+      "model": "examplemod:item/finished_sword_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 145
+      },
+      "model": "examplemod:item/finished_sword_shulker_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 146
+      },
+      "model": "examplemod:item/finished_sword_shulker_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 147
+      },
+      "model": "examplemod:item/finished_sword_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 148
+      },
+      "model": "examplemod:item/finished_sword_shulker_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 149
+      },
+      "model": "examplemod:item/finished_sword_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 150
+      },
+      "model": "examplemod:item/finished_sword_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 151
+      },
+      "model": "examplemod:item/finished_sword_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 152
+      },
+      "model": "examplemod:item/finished_sword_shulker_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 153
+      },
+      "model": "examplemod:item/finished_sword_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 154
+      },
+      "model": "examplemod:item/finished_sword_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 155
+      },
+      "model": "examplemod:item/finished_sword_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 156
+      },
+      "model": "examplemod:item/finished_sword_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 157
+      },
+      "model": "examplemod:item/finished_sword_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 158
+      },
+      "model": "examplemod:item/finished_sword_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 159
+      },
+      "model": "examplemod:item/finished_sword_nether_star_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 160
+      },
+      "model": "examplemod:item/finished_sword_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 161
+      },
+      "model": "examplemod:item/finished_sword_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 162
+      },
+      "model": "examplemod:item/finished_sword_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 163
+      },
+      "model": "examplemod:item/finished_sword_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 164
+      },
+      "model": "examplemod:item/finished_sword_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 165
+      },
+      "model": "examplemod:item/finished_sword_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 166
+      },
+      "model": "examplemod:item/finished_sword_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 167
+      },
+      "model": "examplemod:item/finished_sword_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 168
+      },
+      "model": "examplemod:item/finished_sword_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 169
+      },
+      "model": "examplemod:item/finished_sword_nether_star_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 170
+      },
+      "model": "examplemod:item/finished_axe_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 171
+      },
+      "model": "examplemod:item/finished_axe_flesh_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 172
+      },
+      "model": "examplemod:item/finished_axe_flesh_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 173
+      },
+      "model": "examplemod:item/finished_axe_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 174
+      },
+      "model": "examplemod:item/finished_axe_flesh_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 175
+      },
+      "model": "examplemod:item/finished_axe_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 176
+      },
+      "model": "examplemod:item/finished_axe_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 177
+      },
+      "model": "examplemod:item/finished_axe_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 178
+      },
+      "model": "examplemod:item/finished_axe_flesh_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 179
+      },
+      "model": "examplemod:item/finished_axe_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 180
+      },
+      "model": "examplemod:item/finished_axe_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 181
+      },
+      "model": "examplemod:item/finished_axe_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 182
+      },
+      "model": "examplemod:item/finished_axe_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 183
+      },
+      "model": "examplemod:item/finished_axe_bone_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 184
+      },
+      "model": "examplemod:item/finished_axe_bone_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 185
+      },
+      "model": "examplemod:item/finished_axe_bone_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 186
+      },
+      "model": "examplemod:item/finished_axe_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 187
+      },
+      "model": "examplemod:item/finished_axe_bone_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 188
+      },
+      "model": "examplemod:item/finished_axe_bone_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 189
+      },
+      "model": "examplemod:item/finished_axe_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 190
+      },
+      "model": "examplemod:item/finished_axe_bone_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 191
+      },
+      "model": "examplemod:item/finished_axe_bone_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 192
+      },
+      "model": "examplemod:item/finished_axe_bone_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 193
+      },
+      "model": "examplemod:item/finished_axe_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 194
+      },
+      "model": "examplemod:item/finished_axe_bone_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 195
+      },
+      "model": "examplemod:item/finished_axe_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 196
+      },
+      "model": "examplemod:item/finished_axe_string_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 197
+      },
+      "model": "examplemod:item/finished_axe_string_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 198
+      },
+      "model": "examplemod:item/finished_axe_string_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 199
+      },
+      "model": "examplemod:item/finished_axe_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 200
+      },
+      "model": "examplemod:item/finished_axe_string_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 201
+      },
+      "model": "examplemod:item/finished_axe_string_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 202
+      },
+      "model": "examplemod:item/finished_axe_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 203
+      },
+      "model": "examplemod:item/finished_axe_string_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 204
+      },
+      "model": "examplemod:item/finished_axe_string_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 205
+      },
+      "model": "examplemod:item/finished_axe_string_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 206
+      },
+      "model": "examplemod:item/finished_axe_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 207
+      },
+      "model": "examplemod:item/finished_axe_string_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 208
+      },
+      "model": "examplemod:item/finished_axe_string_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 209
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 210
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 211
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 212
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 213
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 214
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 215
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 216
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 217
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 218
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 219
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 220
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 221
+      },
+      "model": "examplemod:item/finished_axe_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 222
+      },
+      "model": "examplemod:item/finished_axe_slime_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 223
+      },
+      "model": "examplemod:item/finished_axe_slime_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 224
+      },
+      "model": "examplemod:item/finished_axe_slime_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 225
+      },
+      "model": "examplemod:item/finished_axe_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 226
+      },
+      "model": "examplemod:item/finished_axe_slime_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 227
+      },
+      "model": "examplemod:item/finished_axe_slime_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 228
+      },
+      "model": "examplemod:item/finished_axe_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 229
+      },
+      "model": "examplemod:item/finished_axe_slime_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 230
+      },
+      "model": "examplemod:item/finished_axe_slime_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 231
+      },
+      "model": "examplemod:item/finished_axe_slime_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 232
+      },
+      "model": "examplemod:item/finished_axe_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 233
+      },
+      "model": "examplemod:item/finished_axe_slime_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 234
+      },
+      "model": "examplemod:item/finished_axe_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 235
+      },
+      "model": "examplemod:item/finished_axe_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 236
+      },
+      "model": "examplemod:item/finished_axe_pearl_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 237
+      },
+      "model": "examplemod:item/finished_axe_pearl_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 238
+      },
+      "model": "examplemod:item/finished_axe_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 239
+      },
+      "model": "examplemod:item/finished_axe_pearl_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 240
+      },
+      "model": "examplemod:item/finished_axe_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 241
+      },
+      "model": "examplemod:item/finished_axe_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 242
+      },
+      "model": "examplemod:item/finished_axe_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 243
+      },
+      "model": "examplemod:item/finished_axe_pearl_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 244
+      },
+      "model": "examplemod:item/finished_axe_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 245
+      },
+      "model": "examplemod:item/finished_axe_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 246
+      },
+      "model": "examplemod:item/finished_axe_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 247
+      },
+      "model": "examplemod:item/finished_axe_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 248
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 249
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 250
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 251
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 252
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 253
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 254
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 255
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 256
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 257
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 258
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 259
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 260
+      },
+      "model": "examplemod:item/finished_axe_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 261
+      },
+      "model": "examplemod:item/finished_axe_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 262
+      },
+      "model": "examplemod:item/finished_axe_ghast_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 263
+      },
+      "model": "examplemod:item/finished_axe_ghast_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 264
+      },
+      "model": "examplemod:item/finished_axe_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 265
+      },
+      "model": "examplemod:item/finished_axe_ghast_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 266
+      },
+      "model": "examplemod:item/finished_axe_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 267
+      },
+      "model": "examplemod:item/finished_axe_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 268
+      },
+      "model": "examplemod:item/finished_axe_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 269
+      },
+      "model": "examplemod:item/finished_axe_ghast_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 270
+      },
+      "model": "examplemod:item/finished_axe_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 271
+      },
+      "model": "examplemod:item/finished_axe_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 272
+      },
+      "model": "examplemod:item/finished_axe_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 273
+      },
+      "model": "examplemod:item/finished_axe_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 274
+      },
+      "model": "examplemod:item/finished_axe_wither_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 275
+      },
+      "model": "examplemod:item/finished_axe_wither_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 276
+      },
+      "model": "examplemod:item/finished_axe_wither_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 277
+      },
+      "model": "examplemod:item/finished_axe_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 278
+      },
+      "model": "examplemod:item/finished_axe_wither_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 279
+      },
+      "model": "examplemod:item/finished_axe_wither_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 280
+      },
+      "model": "examplemod:item/finished_axe_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 281
+      },
+      "model": "examplemod:item/finished_axe_wither_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 282
+      },
+      "model": "examplemod:item/finished_axe_wither_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 283
+      },
+      "model": "examplemod:item/finished_axe_wither_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 284
+      },
+      "model": "examplemod:item/finished_axe_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 285
+      },
+      "model": "examplemod:item/finished_axe_wither_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 286
+      },
+      "model": "examplemod:item/finished_axe_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 287
+      },
+      "model": "examplemod:item/finished_axe_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 288
+      },
+      "model": "examplemod:item/finished_axe_phantom_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 289
+      },
+      "model": "examplemod:item/finished_axe_phantom_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 290
+      },
+      "model": "examplemod:item/finished_axe_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 291
+      },
+      "model": "examplemod:item/finished_axe_phantom_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 292
+      },
+      "model": "examplemod:item/finished_axe_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 293
+      },
+      "model": "examplemod:item/finished_axe_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 294
+      },
+      "model": "examplemod:item/finished_axe_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 295
+      },
+      "model": "examplemod:item/finished_axe_phantom_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 296
+      },
+      "model": "examplemod:item/finished_axe_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 297
+      },
+      "model": "examplemod:item/finished_axe_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 298
+      },
+      "model": "examplemod:item/finished_axe_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 299
+      },
+      "model": "examplemod:item/finished_axe_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 300
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 301
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 302
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 303
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 304
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 305
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 306
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 307
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 308
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 309
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 310
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 311
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 312
+      },
+      "model": "examplemod:item/finished_axe_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 313
+      },
+      "model": "examplemod:item/finished_axe_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 314
+      },
+      "model": "examplemod:item/finished_axe_shulker_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 315
+      },
+      "model": "examplemod:item/finished_axe_shulker_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 316
+      },
+      "model": "examplemod:item/finished_axe_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 317
+      },
+      "model": "examplemod:item/finished_axe_shulker_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 318
+      },
+      "model": "examplemod:item/finished_axe_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 319
+      },
+      "model": "examplemod:item/finished_axe_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 320
+      },
+      "model": "examplemod:item/finished_axe_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 321
+      },
+      "model": "examplemod:item/finished_axe_shulker_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 322
+      },
+      "model": "examplemod:item/finished_axe_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 323
+      },
+      "model": "examplemod:item/finished_axe_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 324
+      },
+      "model": "examplemod:item/finished_axe_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 325
+      },
+      "model": "examplemod:item/finished_axe_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 326
+      },
+      "model": "examplemod:item/finished_axe_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 327
+      },
+      "model": "examplemod:item/finished_axe_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 328
+      },
+      "model": "examplemod:item/finished_axe_nether_star_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 329
+      },
+      "model": "examplemod:item/finished_axe_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 330
+      },
+      "model": "examplemod:item/finished_axe_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 331
+      },
+      "model": "examplemod:item/finished_axe_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 332
+      },
+      "model": "examplemod:item/finished_axe_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 333
+      },
+      "model": "examplemod:item/finished_axe_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 334
+      },
+      "model": "examplemod:item/finished_axe_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 335
+      },
+      "model": "examplemod:item/finished_axe_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 336
+      },
+      "model": "examplemod:item/finished_axe_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 337
+      },
+      "model": "examplemod:item/finished_axe_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 338
+      },
+      "model": "examplemod:item/finished_axe_nether_star_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 339
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 340
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 341
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 342
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 343
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 344
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 345
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 346
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 347
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 348
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 349
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 350
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 351
+      },
+      "model": "examplemod:item/finished_pickaxe_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 352
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 353
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 354
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 355
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 356
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 357
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 358
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 359
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 360
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 361
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 362
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 363
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 364
+      },
+      "model": "examplemod:item/finished_pickaxe_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 365
+      },
+      "model": "examplemod:item/finished_pickaxe_string_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 366
+      },
+      "model": "examplemod:item/finished_pickaxe_string_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 367
+      },
+      "model": "examplemod:item/finished_pickaxe_string_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 368
+      },
+      "model": "examplemod:item/finished_pickaxe_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 369
+      },
+      "model": "examplemod:item/finished_pickaxe_string_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 370
+      },
+      "model": "examplemod:item/finished_pickaxe_string_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 371
+      },
+      "model": "examplemod:item/finished_pickaxe_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 372
+      },
+      "model": "examplemod:item/finished_pickaxe_string_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 373
+      },
+      "model": "examplemod:item/finished_pickaxe_string_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 374
+      },
+      "model": "examplemod:item/finished_pickaxe_string_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 375
+      },
+      "model": "examplemod:item/finished_pickaxe_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 376
+      },
+      "model": "examplemod:item/finished_pickaxe_string_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 377
+      },
+      "model": "examplemod:item/finished_pickaxe_string_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 378
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 379
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 380
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 381
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 382
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 383
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 384
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 385
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 386
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 387
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 388
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 389
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 390
+      },
+      "model": "examplemod:item/finished_pickaxe_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 391
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 392
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 393
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 394
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 395
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 396
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 397
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 398
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 399
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 400
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 401
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 402
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 403
+      },
+      "model": "examplemod:item/finished_pickaxe_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 404
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 405
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 406
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 407
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 408
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 409
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 410
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 411
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 412
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 413
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 414
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 415
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 416
+      },
+      "model": "examplemod:item/finished_pickaxe_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 417
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 418
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 419
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 420
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 421
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 422
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 423
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 424
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 425
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 426
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 427
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 428
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 429
+      },
+      "model": "examplemod:item/finished_pickaxe_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 430
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 431
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 432
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 433
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 434
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 435
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 436
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 437
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 438
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 439
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 440
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 441
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 442
+      },
+      "model": "examplemod:item/finished_pickaxe_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 443
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 444
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 445
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 446
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 447
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 448
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 449
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 450
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 451
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 452
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 453
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 454
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 455
+      },
+      "model": "examplemod:item/finished_pickaxe_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 456
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 457
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 458
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 459
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 460
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 461
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 462
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 463
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 464
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 465
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 466
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 467
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 468
+      },
+      "model": "examplemod:item/finished_pickaxe_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 469
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 470
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 471
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 472
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 473
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 474
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 475
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 476
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 477
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 478
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 479
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 480
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 481
+      },
+      "model": "examplemod:item/finished_pickaxe_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 482
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 483
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 484
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 485
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 486
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 487
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 488
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 489
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 490
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 491
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 492
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 493
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 494
+      },
+      "model": "examplemod:item/finished_pickaxe_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 495
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 496
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 497
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 498
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 499
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 500
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 501
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 502
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 503
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 504
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 505
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 506
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 507
+      },
+      "model": "examplemod:item/finished_pickaxe_nether_star_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 508
+      },
+      "model": "examplemod:item/finished_shovel_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 509
+      },
+      "model": "examplemod:item/finished_shovel_flesh_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 510
+      },
+      "model": "examplemod:item/finished_shovel_flesh_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 511
+      },
+      "model": "examplemod:item/finished_shovel_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 512
+      },
+      "model": "examplemod:item/finished_shovel_flesh_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 513
+      },
+      "model": "examplemod:item/finished_shovel_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 514
+      },
+      "model": "examplemod:item/finished_shovel_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 515
+      },
+      "model": "examplemod:item/finished_shovel_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 516
+      },
+      "model": "examplemod:item/finished_shovel_flesh_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 517
+      },
+      "model": "examplemod:item/finished_shovel_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 518
+      },
+      "model": "examplemod:item/finished_shovel_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 519
+      },
+      "model": "examplemod:item/finished_shovel_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 520
+      },
+      "model": "examplemod:item/finished_shovel_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 521
+      },
+      "model": "examplemod:item/finished_shovel_bone_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 522
+      },
+      "model": "examplemod:item/finished_shovel_bone_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 523
+      },
+      "model": "examplemod:item/finished_shovel_bone_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 524
+      },
+      "model": "examplemod:item/finished_shovel_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 525
+      },
+      "model": "examplemod:item/finished_shovel_bone_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 526
+      },
+      "model": "examplemod:item/finished_shovel_bone_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 527
+      },
+      "model": "examplemod:item/finished_shovel_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 528
+      },
+      "model": "examplemod:item/finished_shovel_bone_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 529
+      },
+      "model": "examplemod:item/finished_shovel_bone_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 530
+      },
+      "model": "examplemod:item/finished_shovel_bone_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 531
+      },
+      "model": "examplemod:item/finished_shovel_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 532
+      },
+      "model": "examplemod:item/finished_shovel_bone_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 533
+      },
+      "model": "examplemod:item/finished_shovel_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 534
+      },
+      "model": "examplemod:item/finished_shovel_string_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 535
+      },
+      "model": "examplemod:item/finished_shovel_string_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 536
+      },
+      "model": "examplemod:item/finished_shovel_string_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 537
+      },
+      "model": "examplemod:item/finished_shovel_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 538
+      },
+      "model": "examplemod:item/finished_shovel_string_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 539
+      },
+      "model": "examplemod:item/finished_shovel_string_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 540
+      },
+      "model": "examplemod:item/finished_shovel_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 541
+      },
+      "model": "examplemod:item/finished_shovel_string_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 542
+      },
+      "model": "examplemod:item/finished_shovel_string_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 543
+      },
+      "model": "examplemod:item/finished_shovel_string_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 544
+      },
+      "model": "examplemod:item/finished_shovel_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 545
+      },
+      "model": "examplemod:item/finished_shovel_string_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 546
+      },
+      "model": "examplemod:item/finished_shovel_string_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 547
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 548
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 549
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 550
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 551
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 552
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 553
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 554
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 555
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 556
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 557
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 558
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 559
+      },
+      "model": "examplemod:item/finished_shovel_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 560
+      },
+      "model": "examplemod:item/finished_shovel_slime_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 561
+      },
+      "model": "examplemod:item/finished_shovel_slime_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 562
+      },
+      "model": "examplemod:item/finished_shovel_slime_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 563
+      },
+      "model": "examplemod:item/finished_shovel_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 564
+      },
+      "model": "examplemod:item/finished_shovel_slime_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 565
+      },
+      "model": "examplemod:item/finished_shovel_slime_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 566
+      },
+      "model": "examplemod:item/finished_shovel_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 567
+      },
+      "model": "examplemod:item/finished_shovel_slime_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 568
+      },
+      "model": "examplemod:item/finished_shovel_slime_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 569
+      },
+      "model": "examplemod:item/finished_shovel_slime_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 570
+      },
+      "model": "examplemod:item/finished_shovel_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 571
+      },
+      "model": "examplemod:item/finished_shovel_slime_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 572
+      },
+      "model": "examplemod:item/finished_shovel_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 573
+      },
+      "model": "examplemod:item/finished_shovel_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 574
+      },
+      "model": "examplemod:item/finished_shovel_pearl_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 575
+      },
+      "model": "examplemod:item/finished_shovel_pearl_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 576
+      },
+      "model": "examplemod:item/finished_shovel_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 577
+      },
+      "model": "examplemod:item/finished_shovel_pearl_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 578
+      },
+      "model": "examplemod:item/finished_shovel_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 579
+      },
+      "model": "examplemod:item/finished_shovel_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 580
+      },
+      "model": "examplemod:item/finished_shovel_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 581
+      },
+      "model": "examplemod:item/finished_shovel_pearl_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 582
+      },
+      "model": "examplemod:item/finished_shovel_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 583
+      },
+      "model": "examplemod:item/finished_shovel_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 584
+      },
+      "model": "examplemod:item/finished_shovel_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 585
+      },
+      "model": "examplemod:item/finished_shovel_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 586
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 587
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 588
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 589
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 590
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 591
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 592
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 593
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 594
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 595
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 596
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 597
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 598
+      },
+      "model": "examplemod:item/finished_shovel_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 599
+      },
+      "model": "examplemod:item/finished_shovel_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 600
+      },
+      "model": "examplemod:item/finished_shovel_ghast_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 601
+      },
+      "model": "examplemod:item/finished_shovel_ghast_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 602
+      },
+      "model": "examplemod:item/finished_shovel_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 603
+      },
+      "model": "examplemod:item/finished_shovel_ghast_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 604
+      },
+      "model": "examplemod:item/finished_shovel_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 605
+      },
+      "model": "examplemod:item/finished_shovel_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 606
+      },
+      "model": "examplemod:item/finished_shovel_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 607
+      },
+      "model": "examplemod:item/finished_shovel_ghast_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 608
+      },
+      "model": "examplemod:item/finished_shovel_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 609
+      },
+      "model": "examplemod:item/finished_shovel_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 610
+      },
+      "model": "examplemod:item/finished_shovel_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 611
+      },
+      "model": "examplemod:item/finished_shovel_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 612
+      },
+      "model": "examplemod:item/finished_shovel_wither_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 613
+      },
+      "model": "examplemod:item/finished_shovel_wither_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 614
+      },
+      "model": "examplemod:item/finished_shovel_wither_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 615
+      },
+      "model": "examplemod:item/finished_shovel_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 616
+      },
+      "model": "examplemod:item/finished_shovel_wither_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 617
+      },
+      "model": "examplemod:item/finished_shovel_wither_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 618
+      },
+      "model": "examplemod:item/finished_shovel_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 619
+      },
+      "model": "examplemod:item/finished_shovel_wither_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 620
+      },
+      "model": "examplemod:item/finished_shovel_wither_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 621
+      },
+      "model": "examplemod:item/finished_shovel_wither_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 622
+      },
+      "model": "examplemod:item/finished_shovel_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 623
+      },
+      "model": "examplemod:item/finished_shovel_wither_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 624
+      },
+      "model": "examplemod:item/finished_shovel_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 625
+      },
+      "model": "examplemod:item/finished_shovel_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 626
+      },
+      "model": "examplemod:item/finished_shovel_phantom_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 627
+      },
+      "model": "examplemod:item/finished_shovel_phantom_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 628
+      },
+      "model": "examplemod:item/finished_shovel_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 629
+      },
+      "model": "examplemod:item/finished_shovel_phantom_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 630
+      },
+      "model": "examplemod:item/finished_shovel_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 631
+      },
+      "model": "examplemod:item/finished_shovel_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 632
+      },
+      "model": "examplemod:item/finished_shovel_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 633
+      },
+      "model": "examplemod:item/finished_shovel_phantom_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 634
+      },
+      "model": "examplemod:item/finished_shovel_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 635
+      },
+      "model": "examplemod:item/finished_shovel_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 636
+      },
+      "model": "examplemod:item/finished_shovel_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 637
+      },
+      "model": "examplemod:item/finished_shovel_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 638
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 639
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 640
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 641
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 642
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 643
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 644
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 645
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 646
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 647
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 648
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 649
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 650
+      },
+      "model": "examplemod:item/finished_shovel_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 651
+      },
+      "model": "examplemod:item/finished_shovel_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 652
+      },
+      "model": "examplemod:item/finished_shovel_shulker_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 653
+      },
+      "model": "examplemod:item/finished_shovel_shulker_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 654
+      },
+      "model": "examplemod:item/finished_shovel_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 655
+      },
+      "model": "examplemod:item/finished_shovel_shulker_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 656
+      },
+      "model": "examplemod:item/finished_shovel_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 657
+      },
+      "model": "examplemod:item/finished_shovel_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 658
+      },
+      "model": "examplemod:item/finished_shovel_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 659
+      },
+      "model": "examplemod:item/finished_shovel_shulker_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 660
+      },
+      "model": "examplemod:item/finished_shovel_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 661
+      },
+      "model": "examplemod:item/finished_shovel_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 662
+      },
+      "model": "examplemod:item/finished_shovel_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 663
+      },
+      "model": "examplemod:item/finished_shovel_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 664
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 665
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 666
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 667
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 668
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 669
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 670
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 671
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 672
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 673
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 674
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 675
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 676
+      },
+      "model": "examplemod:item/finished_shovel_nether_star_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 677
+      },
+      "model": "examplemod:item/finished_hoe_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 678
+      },
+      "model": "examplemod:item/finished_hoe_flesh_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 679
+      },
+      "model": "examplemod:item/finished_hoe_flesh_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 680
+      },
+      "model": "examplemod:item/finished_hoe_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 681
+      },
+      "model": "examplemod:item/finished_hoe_flesh_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 682
+      },
+      "model": "examplemod:item/finished_hoe_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 683
+      },
+      "model": "examplemod:item/finished_hoe_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 684
+      },
+      "model": "examplemod:item/finished_hoe_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 685
+      },
+      "model": "examplemod:item/finished_hoe_flesh_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 686
+      },
+      "model": "examplemod:item/finished_hoe_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 687
+      },
+      "model": "examplemod:item/finished_hoe_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 688
+      },
+      "model": "examplemod:item/finished_hoe_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 689
+      },
+      "model": "examplemod:item/finished_hoe_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 690
+      },
+      "model": "examplemod:item/finished_hoe_bone_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 691
+      },
+      "model": "examplemod:item/finished_hoe_bone_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 692
+      },
+      "model": "examplemod:item/finished_hoe_bone_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 693
+      },
+      "model": "examplemod:item/finished_hoe_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 694
+      },
+      "model": "examplemod:item/finished_hoe_bone_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 695
+      },
+      "model": "examplemod:item/finished_hoe_bone_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 696
+      },
+      "model": "examplemod:item/finished_hoe_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 697
+      },
+      "model": "examplemod:item/finished_hoe_bone_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 698
+      },
+      "model": "examplemod:item/finished_hoe_bone_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 699
+      },
+      "model": "examplemod:item/finished_hoe_bone_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 700
+      },
+      "model": "examplemod:item/finished_hoe_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 701
+      },
+      "model": "examplemod:item/finished_hoe_bone_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 702
+      },
+      "model": "examplemod:item/finished_hoe_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 703
+      },
+      "model": "examplemod:item/finished_hoe_string_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 704
+      },
+      "model": "examplemod:item/finished_hoe_string_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 705
+      },
+      "model": "examplemod:item/finished_hoe_string_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 706
+      },
+      "model": "examplemod:item/finished_hoe_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 707
+      },
+      "model": "examplemod:item/finished_hoe_string_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 708
+      },
+      "model": "examplemod:item/finished_hoe_string_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 709
+      },
+      "model": "examplemod:item/finished_hoe_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 710
+      },
+      "model": "examplemod:item/finished_hoe_string_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 711
+      },
+      "model": "examplemod:item/finished_hoe_string_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 712
+      },
+      "model": "examplemod:item/finished_hoe_string_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 713
+      },
+      "model": "examplemod:item/finished_hoe_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 714
+      },
+      "model": "examplemod:item/finished_hoe_string_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 715
+      },
+      "model": "examplemod:item/finished_hoe_string_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 716
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 717
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 718
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 719
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 720
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 721
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 722
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 723
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 724
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 725
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 726
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 727
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 728
+      },
+      "model": "examplemod:item/finished_hoe_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 729
+      },
+      "model": "examplemod:item/finished_hoe_slime_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 730
+      },
+      "model": "examplemod:item/finished_hoe_slime_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 731
+      },
+      "model": "examplemod:item/finished_hoe_slime_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 732
+      },
+      "model": "examplemod:item/finished_hoe_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 733
+      },
+      "model": "examplemod:item/finished_hoe_slime_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 734
+      },
+      "model": "examplemod:item/finished_hoe_slime_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 735
+      },
+      "model": "examplemod:item/finished_hoe_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 736
+      },
+      "model": "examplemod:item/finished_hoe_slime_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 737
+      },
+      "model": "examplemod:item/finished_hoe_slime_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 738
+      },
+      "model": "examplemod:item/finished_hoe_slime_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 739
+      },
+      "model": "examplemod:item/finished_hoe_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 740
+      },
+      "model": "examplemod:item/finished_hoe_slime_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 741
+      },
+      "model": "examplemod:item/finished_hoe_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 742
+      },
+      "model": "examplemod:item/finished_hoe_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 743
+      },
+      "model": "examplemod:item/finished_hoe_pearl_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 744
+      },
+      "model": "examplemod:item/finished_hoe_pearl_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 745
+      },
+      "model": "examplemod:item/finished_hoe_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 746
+      },
+      "model": "examplemod:item/finished_hoe_pearl_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 747
+      },
+      "model": "examplemod:item/finished_hoe_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 748
+      },
+      "model": "examplemod:item/finished_hoe_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 749
+      },
+      "model": "examplemod:item/finished_hoe_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 750
+      },
+      "model": "examplemod:item/finished_hoe_pearl_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 751
+      },
+      "model": "examplemod:item/finished_hoe_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 752
+      },
+      "model": "examplemod:item/finished_hoe_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 753
+      },
+      "model": "examplemod:item/finished_hoe_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 754
+      },
+      "model": "examplemod:item/finished_hoe_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 755
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 756
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 757
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 758
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 759
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 760
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 761
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 762
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 763
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 764
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 765
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 766
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 767
+      },
+      "model": "examplemod:item/finished_hoe_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 768
+      },
+      "model": "examplemod:item/finished_hoe_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 769
+      },
+      "model": "examplemod:item/finished_hoe_ghast_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 770
+      },
+      "model": "examplemod:item/finished_hoe_ghast_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 771
+      },
+      "model": "examplemod:item/finished_hoe_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 772
+      },
+      "model": "examplemod:item/finished_hoe_ghast_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 773
+      },
+      "model": "examplemod:item/finished_hoe_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 774
+      },
+      "model": "examplemod:item/finished_hoe_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 775
+      },
+      "model": "examplemod:item/finished_hoe_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 776
+      },
+      "model": "examplemod:item/finished_hoe_ghast_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 777
+      },
+      "model": "examplemod:item/finished_hoe_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 778
+      },
+      "model": "examplemod:item/finished_hoe_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 779
+      },
+      "model": "examplemod:item/finished_hoe_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 780
+      },
+      "model": "examplemod:item/finished_hoe_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 781
+      },
+      "model": "examplemod:item/finished_hoe_wither_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 782
+      },
+      "model": "examplemod:item/finished_hoe_wither_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 783
+      },
+      "model": "examplemod:item/finished_hoe_wither_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 784
+      },
+      "model": "examplemod:item/finished_hoe_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 785
+      },
+      "model": "examplemod:item/finished_hoe_wither_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 786
+      },
+      "model": "examplemod:item/finished_hoe_wither_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 787
+      },
+      "model": "examplemod:item/finished_hoe_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 788
+      },
+      "model": "examplemod:item/finished_hoe_wither_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 789
+      },
+      "model": "examplemod:item/finished_hoe_wither_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 790
+      },
+      "model": "examplemod:item/finished_hoe_wither_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 791
+      },
+      "model": "examplemod:item/finished_hoe_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 792
+      },
+      "model": "examplemod:item/finished_hoe_wither_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 793
+      },
+      "model": "examplemod:item/finished_hoe_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 794
+      },
+      "model": "examplemod:item/finished_hoe_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 795
+      },
+      "model": "examplemod:item/finished_hoe_phantom_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 796
+      },
+      "model": "examplemod:item/finished_hoe_phantom_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 797
+      },
+      "model": "examplemod:item/finished_hoe_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 798
+      },
+      "model": "examplemod:item/finished_hoe_phantom_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 799
+      },
+      "model": "examplemod:item/finished_hoe_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 800
+      },
+      "model": "examplemod:item/finished_hoe_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 801
+      },
+      "model": "examplemod:item/finished_hoe_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 802
+      },
+      "model": "examplemod:item/finished_hoe_phantom_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 803
+      },
+      "model": "examplemod:item/finished_hoe_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 804
+      },
+      "model": "examplemod:item/finished_hoe_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 805
+      },
+      "model": "examplemod:item/finished_hoe_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 806
+      },
+      "model": "examplemod:item/finished_hoe_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 807
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 808
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 809
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 810
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 811
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 812
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 813
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 814
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 815
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 816
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 817
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 818
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 819
+      },
+      "model": "examplemod:item/finished_hoe_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 820
+      },
+      "model": "examplemod:item/finished_hoe_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 821
+      },
+      "model": "examplemod:item/finished_hoe_shulker_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 822
+      },
+      "model": "examplemod:item/finished_hoe_shulker_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 823
+      },
+      "model": "examplemod:item/finished_hoe_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 824
+      },
+      "model": "examplemod:item/finished_hoe_shulker_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 825
+      },
+      "model": "examplemod:item/finished_hoe_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 826
+      },
+      "model": "examplemod:item/finished_hoe_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 827
+      },
+      "model": "examplemod:item/finished_hoe_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 828
+      },
+      "model": "examplemod:item/finished_hoe_shulker_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 829
+      },
+      "model": "examplemod:item/finished_hoe_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 830
+      },
+      "model": "examplemod:item/finished_hoe_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 831
+      },
+      "model": "examplemod:item/finished_hoe_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 832
+      },
+      "model": "examplemod:item/finished_hoe_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 833
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 834
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 835
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_string"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 836
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 837
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 838
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 839
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 840
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 841
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 842
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 843
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 844
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:equipment_variant": 845
+      },
+      "model": "examplemod:item/finished_hoe_nether_star_nether_star"
+    }
+  ]
+}

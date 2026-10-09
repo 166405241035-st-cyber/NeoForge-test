@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    " I ",
+    "BIB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:smooth_stone"
+    },
+    "I": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "id": "examplemod:forging_anvil",
+    "count": 1
+  }
+}

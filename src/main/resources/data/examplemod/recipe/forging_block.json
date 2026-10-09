@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BIB",
+    "IFI",
+    "BIB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:smooth_stone"
+    },
+    "I": {
+      "item": "minecraft:copper_ingot"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "id": "examplemod:forging_block",
+    "count": 1
+  }
+}

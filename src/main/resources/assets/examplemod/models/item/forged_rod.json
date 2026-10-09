@@ -1,0 +1,86 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "smeltingandforging:item/rode_bone"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "examplemod:variant": 1
+      },
+      "model": "examplemod:item/forged_rod_rode_flesh"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 2
+      },
+      "model": "examplemod:item/forged_rod_rode_bone"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 3
+      },
+      "model": "examplemod:item/forged_rod_rode_string"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 4
+      },
+      "model": "examplemod:item/forged_rod_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 5
+      },
+      "model": "examplemod:item/forged_rod_rode_slime"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 6
+      },
+      "model": "examplemod:item/forged_rod_rode_pearl"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 7
+      },
+      "model": "examplemod:item/forged_rod_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 8
+      },
+      "model": "examplemod:item/forged_rod_rode_ghast"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 9
+      },
+      "model": "examplemod:item/forged_rod_rode_wither"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 10
+      },
+      "model": "examplemod:item/forged_rod_rode_phantom"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 11
+      },
+      "model": "examplemod:item/forged_rod_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 12
+      },
+      "model": "examplemod:item/forged_rod_rode_shulker"
+    },
+    {
+      "predicate": {
+        "examplemod:variant": 13
+      },
+      "model": "examplemod:item/forged_rod_rode_nether_star"
+    }
+  ]
+}

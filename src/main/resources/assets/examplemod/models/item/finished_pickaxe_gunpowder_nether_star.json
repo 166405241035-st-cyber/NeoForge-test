@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "examplemod:item/finished_rod_nether_star",
+    "layer1": "examplemod:item/finished_pickaxe_head_gunpowder"
+  }
+}
