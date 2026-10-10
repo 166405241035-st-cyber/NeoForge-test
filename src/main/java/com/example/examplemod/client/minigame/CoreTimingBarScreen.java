@@ -1,5 +1,6 @@
 package com.example.examplemod.client.minigame;
 
+import com.example.examplemod.ForgingRounds;
 import com.example.examplemod.client.screen.CoreForgingResultScreen;
 import com.example.examplemod.client.ui.ForgingMinigameArt;
 import com.example.examplemod.client.ui.MinigameFeedback;
@@ -24,7 +25,6 @@ public class CoreTimingBarScreen extends Screen {
     private static final int BAR_WIDTH = 300;
     private static final int BAR_HEIGHT = 24;
     private static final int CURSOR_WIDTH = 3;
-    private static final int TOTAL_ROUNDS = 10;
     private static final float CURSOR_MIN_SPEED = 6.0F;
     private static final float CURSOR_MAX_SPEED = 12.0F;
     private static final int GREEN_MIN_WIDTH = 45;
@@ -57,7 +57,8 @@ public class CoreTimingBarScreen extends Screen {
     private int weightedAccuracyPoints;
     private boolean finished;
     private int feedbackTicks;
-    private final int[] roundGrades = new int[TOTAL_ROUNDS];
+    private final int totalRounds;
+    private final int[] roundGrades;
     private int visualTicks;
     private float hitPosition;
     private boolean lastHit;
@@ -67,6 +68,8 @@ public class CoreTimingBarScreen extends Screen {
     public CoreTimingBarScreen(ForgingMetal metal, MonsterMaterial monsterMaterial) {
         super(Component.literal("Core Timing Bar"));
         this.metal = metal;
+        this.totalRounds = ForgingRounds.forDifficulty(metal.difficulty());
+        this.roundGrades = new int[totalRounds];
         this.monsterMaterial = monsterMaterial;
         randomizeRound();
     }
@@ -89,7 +92,7 @@ public class CoreTimingBarScreen extends Screen {
         if (finished) return;
         if (feedbackTicks > 0) {
             if (--feedbackTicks == 0) {
-                if (round >= TOTAL_ROUNDS) { finished = true; MinigameFeedback.complete(); finishCore(); }
+                if (round >= totalRounds) { finished = true; MinigameFeedback.complete(); finishCore(); }
                 else randomizeRound();
             }
             return;
@@ -158,7 +161,7 @@ public class CoreTimingBarScreen extends Screen {
 
     private void finishCore() {
         if (minecraft == null) return;
-        double accuracy = weightedAccuracyPoints / (double) TOTAL_ROUNDS;
+        double accuracy = weightedAccuracyPoints / (double) totalRounds;
         EffectTier tier = EffectTierRoller.roll(accuracy, random);
         ForgedCoreResult coreResult = new ForgedCoreResult(metal, monsterMaterial, tier);
 
@@ -196,7 +199,7 @@ public class CoreTimingBarScreen extends Screen {
         ForgingMinigameArt.backdrop(guiGraphics, barX - 28, barY - 105, BAR_WIDTH + 56, 187, visualTicks);
         guiGraphics.drawCenteredString(font, "CORE FORGING - " + metal.displayName() + " [Difficulty " + metal.difficulty() + "/3]", width / 2, barY - 88, 0xFFFFFF);
         guiGraphics.drawCenteredString(font, "CORE BLUEPRINT + " + formatName(monsterMaterial.name()), width / 2, barY - 74, 0xCCCCCC);
-        guiGraphics.drawCenteredString(font, "ROUND " + Math.min(round + 1, TOTAL_ROUNDS) + " / " + TOTAL_ROUNDS, width / 2, barY - 56, 0xDDDDDD);
+        guiGraphics.drawCenteredString(font, "ROUND " + Math.min(round + 1, totalRounds) + " / " + totalRounds, width / 2, barY - 56, 0xDDDDDD);
         guiGraphics.drawCenteredString(font, resultText, width / 2, barY - 38, resultColor);
 
         ForgingMinigameArt.rail(guiGraphics, barX, barY, BAR_WIDTH, BAR_HEIGHT);

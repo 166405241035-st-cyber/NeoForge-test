@@ -43,7 +43,8 @@ public final class ForgingMinigameArt {
 
     /** 0 = miss, 1 = good, 2 = great, 3 = perfect; -1 = unplayed. */
     public static void progress(GuiGraphics g, int centerX, int y, int[] grades, int completed) {
-        int left = centerX - 77;
+        int rowWidth = grades.length * 16 - 6;
+        int left = centerX - rowWidth / 2;
         for (int i = 0; i < grades.length; i++) {
             int x = left + i * 16;
             int color = i >= completed ? 0xFF39424B : switch (grades[i]) {
@@ -52,7 +53,7 @@ public final class ForgingMinigameArt {
                 case 1 -> 0xFFFFCC53;
                 default -> 0xFFAA4845;
             };
-            g.fill(x - 1, y - 1, x + 11, y + 9, DARK);
+            g.fill(x - 1, y - 1, x + 11, y + 9, i == completed ? 0xFFFFC45E : DARK);
             g.fill(x, y, x + 10, y + 8, color);
             g.fill(x + 2, y + 1, x + 8, y + 2, 0x66FFFFFF);
         }

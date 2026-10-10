@@ -8,10 +8,10 @@
   ],
   "key": {
     "B": {
-      "item": "minecraft:stone_bricks"
+      "item": "minecraft:smooth_stone"
     },
     "I": {
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:copper_ingot"
     }
   },
   "result": {

@@ -156,14 +156,14 @@ public final class ForgingGuideScreen extends Screen {
         title(g, "Crafting Stations");
         button(g, 23, 57, 116, 22, blockRecipe == 0 ? "[ Forge ]" : "Forge", true);
         button(g, 145, 57, 116, 22, blockRecipe == 1 ? "[ Anvil ]" : "Anvil", true);
-        Item brick = Items.STONE_BRICKS, iron = Items.IRON_INGOT;
+        Item stone = Items.SMOOTH_STONE, copper = Items.COPPER_INGOT;
         Item[] cells = blockRecipe == 0
-                ? new Item[]{brick, iron, brick, iron, Items.FURNACE, iron, brick, iron, brick}
-                : new Item[]{iron, iron, iron, null, iron, null, brick, iron, brick};
+                ? new Item[]{stone, copper, stone, copper, Items.FURNACE, copper, stone, copper, stone}
+                : new Item[]{copper, copper, copper, null, copper, null, stone, copper, stone};
         grid(g, cells, 47, 92);
         item(g, blockRecipe == 0 ? ExampleMod.FORGING_BLOCK_ITEM.get() : ExampleMod.FORGING_ANVIL_ITEM.get(), 259, 126);
         label(g, 177, 125, "->", GOLD);
-        wrap(g, blockRecipe == 0 ? "Forge: make a Head, Core, or Rod." : "Anvil: assemble your forged gear.", 29, 213, 320, INK);
+        wrap(g, blockRecipe == 0 ? "Smooth Stone + Copper Ingots + Furnace." : "Smooth Stone + Copper Ingots.", 29, 213, 320, INK);
     }
     private Item blueprintItem() {
         return switch (blueprint) {
@@ -214,7 +214,8 @@ public final class ForgingGuideScreen extends Screen {
         label(g, 30, 70, "Hit the timing mark to earn a part.", INK);
         g.fill(left + 39, top + 108, left + 336, top + 123, 0xFF8C7656);
         g.fill(left + 190, top + 105, left + 206, top + 126, GOLD);
-        label(g, 36, 147, "Results have Tier I, II, or III.", GREEN);
+        label(g, 36, 140, "Difficulty 1 / 2 / 3: 5 / 6 / 7 hits.", INK);
+        label(g, 36, 156, "Results have Tier I, II, or III.", GREEN);
         wrap(g, "A Head reveals its skill right away. Core and Rod skills appear after assembly at the Anvil.", 36, 174, 310, INK);
     }
     private void anvil(GuiGraphics g) {
@@ -224,7 +225,8 @@ public final class ForgingGuideScreen extends Screen {
         item(g, ExampleMod.FORGED_ROD_ITEM.get(), 250, 73);
         label(g, 75, 111, "Head   +   Core   +   Rod", INK);
         item(g, ExampleMod.FORGED_EQUIPMENT_ITEM.get(), 174, 144);
-        wrap(g, "Matching skills combine, up to Tier III. Finish the rhythm game for a Blessing or Curse.", 29, 187, 320, INK);
+        wrap(g, "Matching skills combine up to Tier III. Finish for a Blessing or Curse.", 29, 177, 320, INK);
+        wrap(g, "5 / 6 / 7 hits: nearest level of the three metals average difficulty.", 29, 210, 320, MUTED);
     }
     private void journal(GuiGraphics g) {
         title(g, "Discovery Journal");
