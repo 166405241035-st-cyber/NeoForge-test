@@ -27,7 +27,7 @@ public final class AnvilRewardSession {
     private static final long TIMEOUT_MS = 10 * 60 * 1000L;
     private static final Map<UUID, Pending> PENDING = new ConcurrentHashMap<>();
 
-    private record Pending(AnvilAssemblyResult assembly, long createdAt) {}
+    private record Pending(AnvilAssemblyResult assembly, long createdAt, boolean tutorialRequired) {}
     private AnvilRewardSession() {}
 
     public static void begin(ServerPlayer player, ForgedHeadResult head, ForgedCoreResult core, ForgedRodResult rod) {
@@ -35,9 +35,17 @@ public final class AnvilRewardSession {
         PENDING.entrySet().removeIf(entry -> now - entry.getValue().createdAt() > TIMEOUT_MS);
         AnvilAssemblyResult assembly = AnvilAssemblyResult.roll(head, core, rod,
                 new java.util.Random(player.getRandom().nextLong()));
-        PENDING.put(player.getUUID(), new Pending(assembly, now));
+        PENDING.put(player.getUUID(), new Pending(assembly, now, !ForgingGuideJournal.hasCompletedAnvilTutorial(player)));
         PacketDistributor.sendToPlayer(player, new ForgedEffectNetwork.AnvilStartPayload(
-                ExampleMod.FORGED_EQUIPMENT_ITEM.get().createStack(assembly)));
+                ExampleMod.FORGED_EQUIPMENT_ITEM.get().createStack(assembly),
+                !ForgingGuideJournal.hasCompletedAnvilTutorial(player)));
+    }
+
+    public static void completeTutorial(ServerPlayer player) {
+        Pending pending = PENDING.get(player.getUUID());
+        if (pending == null || !pending.tutorialRequired()
+                || System.currentTimeMillis() - pending.createdAt() > TIMEOUT_MS) return;
+        ForgingGuideJournal.markAnvilTutorialCompleted(player);
     }
 
     public static void finish(ServerPlayer player, int accuracyHundredths, int maxCombo, int perfectCount, int misses) {

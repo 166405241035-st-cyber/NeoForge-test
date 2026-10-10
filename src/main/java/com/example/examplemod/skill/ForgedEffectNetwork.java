@@ -81,11 +81,22 @@ public final class ForgedEffectNetwork {
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
-    public record AnvilStartPayload(ItemStack assembly) implements CustomPacketPayload {
+    public record AnvilStartPayload(ItemStack assembly, boolean showTutorial) implements CustomPacketPayload {
         public static final Type<AnvilStartPayload> TYPE =
                 new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "anvil_start"));
         public static final StreamCodec<RegistryFriendlyByteBuf, AnvilStartPayload> STREAM_CODEC =
-                ItemStack.STREAM_CODEC.map(AnvilStartPayload::new, AnvilStartPayload::assembly);
+                StreamCodec.composite(
+                        ItemStack.STREAM_CODEC, AnvilStartPayload::assembly,
+                        ByteBufCodecs.BOOL, AnvilStartPayload::showTutorial,
+                        AnvilStartPayload::new);
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
+    public record AnvilTutorialCompletePayload() implements CustomPacketPayload {
+        public static final Type<AnvilTutorialCompletePayload> TYPE =
+                new Type<>(ResourceLocation.fromNamespaceAndPath(ExampleMod.MODID, "anvil_tutorial_complete"));
+        public static final StreamCodec<ByteBuf, AnvilTutorialCompletePayload> STREAM_CODEC =
+                StreamCodec.unit(new AnvilTutorialCompletePayload());
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
@@ -130,7 +141,7 @@ public final class ForgedEffectNetwork {
 
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("1");
+        PayloadRegistrar registrar = event.registrar("2");
         registrar.playToClient(
                 TimeStopShakePayload.TYPE,
                 TimeStopShakePayload.STREAM_CODEC,
@@ -149,12 +160,16 @@ public final class ForgedEffectNetwork {
                 (payload, context) -> context.enqueueWork(() -> {
                     AnvilAssemblyResult assembly = AnvilAssemblyResult.fromStack(payload.assembly());
                     if (assembly != null) net.minecraft.client.Minecraft.getInstance().setScreen(
-                            new AnvilRhythmForgingScreen(assembly));
+                            new AnvilRhythmForgingScreen(assembly, payload.showTutorial()));
                 }));
         registrar.playToClient(AnvilResultPayload.TYPE, AnvilResultPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (net.minecraft.client.Minecraft.getInstance().screen instanceof AnvilRhythmForgingScreen screen)
                         screen.showResult(payload.equipment(), payload.rank(), payload.chancePermille() / 1000.0D);
+                }));
+        registrar.playToServer(AnvilTutorialCompletePayload.TYPE, AnvilTutorialCompletePayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer player) AnvilRewardSession.completeTutorial(player);
                 }));
         registrar.playToServer(AnvilFinishPayload.TYPE, AnvilFinishPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
@@ -213,6 +228,10 @@ public final class ForgedEffectNetwork {
         if (stack != null && !stack.isEmpty()) {
             PacketDistributor.sendToServer(new ForgingRewardPayload(stack.copy()));
         }
+    }
+
+    public static void completeAnvilTutorial() {
+        PacketDistributor.sendToServer(new AnvilTutorialCompletePayload());
     }
 
     public static void finishAnvil(ForgingResult result) {
