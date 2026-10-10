@@ -1,18 +1,13 @@
 package com.example.examplemod.entity;
 
-import com.example.examplemod.*;
-import com.example.examplemod.block.*;
-import com.example.examplemod.entity.*;
-import com.example.examplemod.item.*;
-import com.example.examplemod.skill.*;
-import com.example.examplemod.skill.client.*;
+import com.example.examplemod.ExampleMod;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

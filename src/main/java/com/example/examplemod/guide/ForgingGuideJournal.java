@@ -1,8 +1,8 @@
 package com.example.examplemod.guide;
 
-import com.example.examplemod.AnvilAssemblyResult;
 import com.example.examplemod.ExampleMod;
-import com.example.examplemod.ForgedHeadResult;
+import com.example.examplemod.forging.result.AnvilAssemblyResult;
+import com.example.examplemod.forging.result.ForgedHeadResult;
 import com.example.examplemod.item.ForgedEquipmentItem;
 import com.example.examplemod.item.ForgedHeadItem;
 import com.example.examplemod.skill.ForgingEffect;
@@ -10,6 +10,7 @@ import com.example.examplemod.skill.blessing.ForgedBlessing;
 import com.example.examplemod.skill.blessing.ForgedBlessingRuntime;
 import com.example.examplemod.skill.curse.ForgedCurse;
 import com.example.examplemod.skill.curse.ForgedCurseRuntime;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +24,16 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 public final class ForgingGuideJournal {
     private static final String KEY = "examplemod_forging_guide";
     private ForgingGuideJournal() {}
+
+    public static boolean hasCompletedAnvilTutorial(Player player) {
+        return player.getPersistentData().getCompound(KEY).getBoolean("anvilTutorialCompleted");
+    }
+
+    public static void markAnvilTutorialCompleted(Player player) {
+        CompoundTag data = player.getPersistentData().getCompound(KEY);
+        data.putBoolean("anvilTutorialCompleted", true);
+        player.getPersistentData().put(KEY, data);
+    }
 
     public static boolean hasCompletedAnvil(Player player) {
         return player.getPersistentData().getCompound(KEY).getBoolean("completedAnvil");

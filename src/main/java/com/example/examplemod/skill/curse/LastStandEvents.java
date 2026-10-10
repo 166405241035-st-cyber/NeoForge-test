@@ -1,6 +1,7 @@
 package com.example.examplemod.skill.curse;
 
 import com.example.examplemod.ExampleMod;
+
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;

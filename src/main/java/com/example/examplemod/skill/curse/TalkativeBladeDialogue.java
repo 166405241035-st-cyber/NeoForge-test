@@ -1,8 +1,7 @@
 package com.example.examplemod.skill.curse;
 
-import net.minecraft.util.RandomSource;
-
 import java.util.List;
+import net.minecraft.util.RandomSource;
 
 /**
  * Dialogue library for Talkative Blade.

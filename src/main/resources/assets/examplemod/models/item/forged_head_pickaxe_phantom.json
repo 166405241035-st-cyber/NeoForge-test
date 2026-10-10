@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "examplemod:item/pickaxe_phantom"
+    "layer0": "examplemod:item/parts/head/pickaxe_phantom"
   }
 }

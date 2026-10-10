@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "examplemod:item/sword_dragon_breath"
+    "layer0": "examplemod:item/parts/head/sword_dragon_breath"
   }
 }

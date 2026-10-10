@@ -1,6 +1,7 @@
 package com.example.examplemod.skill;
 
-import com.example.examplemod.MonsterMaterial;
+import com.example.examplemod.forging.material.MonsterMaterial;
+
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

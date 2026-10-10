@@ -1,8 +1,8 @@
 package com.example.examplemod.guide;
 
-import com.example.examplemod.skill.ForgingEffect;
 import com.example.examplemod.skill.EffectTier;
 import com.example.examplemod.skill.ForgedSkillConfig;
+import com.example.examplemod.skill.ForgingEffect;
 import com.example.examplemod.skill.blessing.ForgedBlessing;
 import com.example.examplemod.skill.curse.ForgedCurse;
 

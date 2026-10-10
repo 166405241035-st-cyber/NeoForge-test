@@ -1,15 +1,8 @@
 package com.example.examplemod;
 
-import com.example.examplemod.block.*;
-import com.example.examplemod.entity.*;
-import com.example.examplemod.item.*;
-import com.example.examplemod.skill.*;
-import com.example.examplemod.skill.client.*;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

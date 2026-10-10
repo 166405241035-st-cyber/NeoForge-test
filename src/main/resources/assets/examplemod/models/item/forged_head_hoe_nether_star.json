@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "examplemod:item/hoe_nether_star"
+    "layer0": "examplemod:item/parts/head/hoe_nether_star"
   }
 }

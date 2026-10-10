@@ -1,5 +1,7 @@
 package com.example.examplemod.guide;
 
+import com.example.examplemod.client.guide.ForgingGuideScreen;
+
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;

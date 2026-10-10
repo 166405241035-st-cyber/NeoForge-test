@@ -1,11 +1,6 @@
 package com.example.examplemod.skill;
 
-import com.example.examplemod.*;
-import com.example.examplemod.block.*;
-import com.example.examplemod.entity.*;
-import com.example.examplemod.item.*;
-import com.example.examplemod.skill.*;
-import com.example.examplemod.skill.client.*;
+import com.example.examplemod.forging.material.MonsterMaterial;
 
 /**
  * Named effects currently defined by the project design.
