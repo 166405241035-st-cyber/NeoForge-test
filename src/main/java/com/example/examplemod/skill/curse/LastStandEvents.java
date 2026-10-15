@@ -17,7 +17,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * - The next attack deals x3 damage and starts the cooldown.
  * - Removing the item cancels READY but never clears the cooldown.
  */
-@EventBusSubscriber(modid = "examplemod")
+@EventBusSubscriber(modid = "smeltingandforging")
 public final class LastStandEvents {
     private static final float READY_HEALTH = 2.0F;
     private static final float DAMAGE_MULTIPLIER = 3.0F;

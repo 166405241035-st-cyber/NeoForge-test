@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  * - Critical hit damage +75%
  * - Non-critical hit damage -50%
  */
-@EventBusSubscriber(modid = "examplemod")
+@EventBusSubscriber(modid = "smeltingandforging")
 public final class CriticalFailureEvents {
     private static final float CRITICAL_MULTIPLIER = 1.75F;
     private static final float NORMAL_MULTIPLIER = 0.50F;

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "smeltingandforging:item/finished_rod_shulker",
+    "layer1": "smeltingandforging:item/finished_axe_head_blaze_rode"
+  }
+}

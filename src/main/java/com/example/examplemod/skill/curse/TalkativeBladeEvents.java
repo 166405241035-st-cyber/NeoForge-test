@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Context-aware chatter for Talkative Blade.
  * The curse works from anywhere in the player's inventory; it does not need to be held.
  */
-@EventBusSubscriber(modid = "examplemod")
+@EventBusSubscriber(modid = "smeltingandforging")
 public final class TalkativeBladeEvents {
     private static final String NEXT_CHAT = "TalkativeBladeNextChat";
     private static final String NEXT_EMERGENCY = "TalkativeBladeNextEmergency";

@@ -22,7 +22,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  *  - +30% attack speed
  *  - +30% incoming damage
  */
-@EventBusSubscriber(modid = "examplemod")
+@EventBusSubscriber(modid = "smeltingandforging")
 public final class BerserkerEvents {
     private static final float HEALTH_THRESHOLD = 0.50F;
     private static final float OUTGOING_DAMAGE_MULTIPLIER = 1.50F;
@@ -30,7 +30,7 @@ public final class BerserkerEvents {
     private static final double ATTACK_SPEED_BONUS = 0.30D;
 
     private static final net.minecraft.resources.ResourceLocation ATTACK_SPEED_ID =
-            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("examplemod", "berserker_attack_speed");
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("smeltingandforging", "berserker_attack_speed");
 
     private BerserkerEvents() {}
 

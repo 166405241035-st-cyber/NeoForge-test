@@ -1,0 +1,86 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "smeltingandforging:item/core_bone"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "smeltingandforging:variant": 1
+      },
+      "model": "smeltingandforging:item/forged_core_core_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 2
+      },
+      "model": "smeltingandforging:item/forged_core_core_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 3
+      },
+      "model": "smeltingandforging:item/forged_core_core_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 4
+      },
+      "model": "smeltingandforging:item/forged_core_core_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 5
+      },
+      "model": "smeltingandforging:item/forged_core_core_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 6
+      },
+      "model": "smeltingandforging:item/forged_core_core_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 7
+      },
+      "model": "smeltingandforging:item/forged_core_core_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 8
+      },
+      "model": "smeltingandforging:item/forged_core_core_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 9
+      },
+      "model": "smeltingandforging:item/forged_core_core_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 10
+      },
+      "model": "smeltingandforging:item/forged_core_core_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 11
+      },
+      "model": "smeltingandforging:item/forged_core_core_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 12
+      },
+      "model": "smeltingandforging:item/forged_core_core_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 13
+      },
+      "model": "smeltingandforging:item/forged_core_core_nether_star"
+    }
+  ]
+}

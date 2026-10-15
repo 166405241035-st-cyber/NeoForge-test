@@ -12,7 +12,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  * Life Exchange: 5% chance on weapon hit to swap the attacker's and target's current health.
  * Works on normal mobs and bosses, but never on another player.
  */
-@EventBusSubscriber(modid = "examplemod")
+@EventBusSubscriber(modid = "smeltingandforging")
 public final class LifeExchangeEvents {
     private static final double EXCHANGE_CHANCE = 0.05D;
 

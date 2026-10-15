@@ -21,7 +21,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 /** Per-player discoveries, stored in persistent player NBT. Each bit records one seen Tier. */
 @EventBusSubscriber(modid = ExampleMod.MODID)
 public final class ForgingGuideJournal {
-    private static final String KEY = "examplemod_forging_guide";
+    private static final String KEY = "smeltingandforging_forging_guide";
     private ForgingGuideJournal() {}
 
     public static void record(Player player, ItemStack reward) {

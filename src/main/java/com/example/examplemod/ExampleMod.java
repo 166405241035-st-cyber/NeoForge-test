@@ -46,7 +46,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 @Mod(ExampleMod.MODID)
 public class ExampleMod {
-    public static final String MODID = "examplemod";
+    public static final String MODID = "smeltingandforging";
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
@@ -111,7 +111,7 @@ public class ExampleMod {
 
     public ExampleMod(IEventBus modEventBus, ModContainer modContainer) {
         BLOCKS.register(modEventBus); ITEMS.register(modEventBus); MENUS.register(modEventBus); MOB_EFFECTS.register(modEventBus); ENTITY_TYPES.register(modEventBus); BLOCK_ENTITIES.register(modEventBus); CREATIVE_MODE_TABS.register(modEventBus);
-        modContainer.registerConfig(ModConfig.Type.COMMON, ForgedSkillConfig.SPEC, "examplemod-forged-skills.toml");
+        modContainer.registerConfig(ModConfig.Type.COMMON, ForgedSkillConfig.SPEC, "smeltingandforging-forged-skills.toml");
     }
 
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

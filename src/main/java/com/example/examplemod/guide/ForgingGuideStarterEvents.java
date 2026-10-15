@@ -11,7 +11,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 /** Delivers the guide after the player's inventory has loaded into the world. */
 @EventBusSubscriber(modid = ExampleMod.MODID)
 public final class ForgingGuideStarterEvents {
-    private static final String JOURNAL_KEY = "examplemod_forging_guide";
+    private static final String JOURNAL_KEY = "smeltingandforging_forging_guide";
     private static final String DELIVERED_KEY = "starterBookDeliveredV2";
     private ForgingGuideStarterEvents() {}
 

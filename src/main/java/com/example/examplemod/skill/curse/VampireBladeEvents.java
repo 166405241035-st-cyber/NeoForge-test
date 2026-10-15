@@ -16,7 +16,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * - Hitting with the cursed weapon heals 20% of the damage dealt.
  * - While any Vampire Blade is anywhere in the player's inventory, food/natural healing is halved.
  */
-@EventBusSubscriber(modid = "examplemod")
+@EventBusSubscriber(modid = "smeltingandforging")
 public final class VampireBladeEvents {
     private static final float LIFE_STEAL_RATIO = 0.20F;
 

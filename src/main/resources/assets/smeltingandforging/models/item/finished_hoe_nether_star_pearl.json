@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "smeltingandforging:item/finished_rod_pearl",
+    "layer1": "smeltingandforging:item/finished_hoe_head_nether_star"
+  }
+}

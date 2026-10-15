@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** Runtime behavior for Blessings awarded by the Rhythm Forging minigame. */
-@EventBusSubscriber(modid = "examplemod")
+@EventBusSubscriber(modid = "smeltingandforging")
 public final class ForgedBlessingEvents {
     private static final float POWER_STRIKE_MULTIPLIER = 1.20F;
     private static final double LIFE_STEAL_CHANCE = 0.20D;

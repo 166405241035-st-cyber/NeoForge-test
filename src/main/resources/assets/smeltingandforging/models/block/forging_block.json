@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "smeltingandforging:block/forge_side",
+    "down": "smeltingandforging:block/forge_bottom",
+    "up": "smeltingandforging:block/forge_top",
+    "north": "smeltingandforging:block/forge_front",
+    "south": "smeltingandforging:block/forge_side",
+    "east": "smeltingandforging:block/forge_side",
+    "west": "smeltingandforging:block/forge_side"
+  }
+}

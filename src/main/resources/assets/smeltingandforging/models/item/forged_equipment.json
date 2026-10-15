@@ -1,0 +1,5078 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "minecraft:item/iron_sword"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 1
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 2
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 3
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 4
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 5
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 6
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 7
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 8
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 9
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 10
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 11
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 12
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 13
+      },
+      "model": "smeltingandforging:item/finished_sword_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 14
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 15
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 16
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 17
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 18
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 19
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 20
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 21
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 22
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 23
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 24
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 25
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 26
+      },
+      "model": "smeltingandforging:item/finished_sword_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 27
+      },
+      "model": "smeltingandforging:item/finished_sword_string_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 28
+      },
+      "model": "smeltingandforging:item/finished_sword_string_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 29
+      },
+      "model": "smeltingandforging:item/finished_sword_string_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 30
+      },
+      "model": "smeltingandforging:item/finished_sword_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 31
+      },
+      "model": "smeltingandforging:item/finished_sword_string_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 32
+      },
+      "model": "smeltingandforging:item/finished_sword_string_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 33
+      },
+      "model": "smeltingandforging:item/finished_sword_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 34
+      },
+      "model": "smeltingandforging:item/finished_sword_string_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 35
+      },
+      "model": "smeltingandforging:item/finished_sword_string_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 36
+      },
+      "model": "smeltingandforging:item/finished_sword_string_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 37
+      },
+      "model": "smeltingandforging:item/finished_sword_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 38
+      },
+      "model": "smeltingandforging:item/finished_sword_string_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 39
+      },
+      "model": "smeltingandforging:item/finished_sword_string_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 40
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 41
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 42
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 43
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 44
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 45
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 46
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 47
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 48
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 49
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 50
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 51
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 52
+      },
+      "model": "smeltingandforging:item/finished_sword_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 53
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 54
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 55
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 56
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 57
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 58
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 59
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 60
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 61
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 62
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 63
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 64
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 65
+      },
+      "model": "smeltingandforging:item/finished_sword_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 66
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 67
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 68
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 69
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 70
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 71
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 72
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 73
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 74
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 75
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 76
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 77
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 78
+      },
+      "model": "smeltingandforging:item/finished_sword_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 79
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 80
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 81
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 82
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 83
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 84
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 85
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 86
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 87
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 88
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 89
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 90
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 91
+      },
+      "model": "smeltingandforging:item/finished_sword_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 92
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 93
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 94
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 95
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 96
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 97
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 98
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 99
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 100
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 101
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 102
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 103
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 104
+      },
+      "model": "smeltingandforging:item/finished_sword_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 105
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 106
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 107
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 108
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 109
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 110
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 111
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 112
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 113
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 114
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 115
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 116
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 117
+      },
+      "model": "smeltingandforging:item/finished_sword_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 118
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 119
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 120
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 121
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 122
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 123
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 124
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 125
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 126
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 127
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 128
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 129
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 130
+      },
+      "model": "smeltingandforging:item/finished_sword_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 131
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 132
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 133
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 134
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 135
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 136
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 137
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 138
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 139
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 140
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 141
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 142
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 143
+      },
+      "model": "smeltingandforging:item/finished_sword_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 144
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 145
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 146
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 147
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 148
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 149
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 150
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 151
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 152
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 153
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 154
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 155
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 156
+      },
+      "model": "smeltingandforging:item/finished_sword_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 157
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 158
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 159
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 160
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 161
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 162
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 163
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 164
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 165
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 166
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 167
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 168
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 169
+      },
+      "model": "smeltingandforging:item/finished_sword_nether_star_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 170
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 171
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 172
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 173
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 174
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 175
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 176
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 177
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 178
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 179
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 180
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 181
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 182
+      },
+      "model": "smeltingandforging:item/finished_axe_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 183
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 184
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 185
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 186
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 187
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 188
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 189
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 190
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 191
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 192
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 193
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 194
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 195
+      },
+      "model": "smeltingandforging:item/finished_axe_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 196
+      },
+      "model": "smeltingandforging:item/finished_axe_string_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 197
+      },
+      "model": "smeltingandforging:item/finished_axe_string_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 198
+      },
+      "model": "smeltingandforging:item/finished_axe_string_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 199
+      },
+      "model": "smeltingandforging:item/finished_axe_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 200
+      },
+      "model": "smeltingandforging:item/finished_axe_string_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 201
+      },
+      "model": "smeltingandforging:item/finished_axe_string_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 202
+      },
+      "model": "smeltingandforging:item/finished_axe_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 203
+      },
+      "model": "smeltingandforging:item/finished_axe_string_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 204
+      },
+      "model": "smeltingandforging:item/finished_axe_string_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 205
+      },
+      "model": "smeltingandforging:item/finished_axe_string_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 206
+      },
+      "model": "smeltingandforging:item/finished_axe_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 207
+      },
+      "model": "smeltingandforging:item/finished_axe_string_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 208
+      },
+      "model": "smeltingandforging:item/finished_axe_string_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 209
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 210
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 211
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 212
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 213
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 214
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 215
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 216
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 217
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 218
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 219
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 220
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 221
+      },
+      "model": "smeltingandforging:item/finished_axe_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 222
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 223
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 224
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 225
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 226
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 227
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 228
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 229
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 230
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 231
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 232
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 233
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 234
+      },
+      "model": "smeltingandforging:item/finished_axe_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 235
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 236
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 237
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 238
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 239
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 240
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 241
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 242
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 243
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 244
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 245
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 246
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 247
+      },
+      "model": "smeltingandforging:item/finished_axe_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 248
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 249
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 250
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 251
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 252
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 253
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 254
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 255
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 256
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 257
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 258
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 259
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 260
+      },
+      "model": "smeltingandforging:item/finished_axe_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 261
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 262
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 263
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 264
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 265
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 266
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 267
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 268
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 269
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 270
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 271
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 272
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 273
+      },
+      "model": "smeltingandforging:item/finished_axe_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 274
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 275
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 276
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 277
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 278
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 279
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 280
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 281
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 282
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 283
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 284
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 285
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 286
+      },
+      "model": "smeltingandforging:item/finished_axe_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 287
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 288
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 289
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 290
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 291
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 292
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 293
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 294
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 295
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 296
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 297
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 298
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 299
+      },
+      "model": "smeltingandforging:item/finished_axe_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 300
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 301
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 302
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 303
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 304
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 305
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 306
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 307
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 308
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 309
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 310
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 311
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 312
+      },
+      "model": "smeltingandforging:item/finished_axe_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 313
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 314
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 315
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 316
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 317
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 318
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 319
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 320
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 321
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 322
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 323
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 324
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 325
+      },
+      "model": "smeltingandforging:item/finished_axe_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 326
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 327
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 328
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 329
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 330
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 331
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 332
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 333
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 334
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 335
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 336
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 337
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 338
+      },
+      "model": "smeltingandforging:item/finished_axe_nether_star_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 339
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 340
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 341
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 342
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 343
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 344
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 345
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 346
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 347
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 348
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 349
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 350
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 351
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 352
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 353
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 354
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 355
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 356
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 357
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 358
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 359
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 360
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 361
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 362
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 363
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 364
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 365
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 366
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 367
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 368
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 369
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 370
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 371
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 372
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 373
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 374
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 375
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 376
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 377
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_string_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 378
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 379
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 380
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 381
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 382
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 383
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 384
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 385
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 386
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 387
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 388
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 389
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 390
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 391
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 392
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 393
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 394
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 395
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 396
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 397
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 398
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 399
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 400
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 401
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 402
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 403
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 404
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 405
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 406
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 407
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 408
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 409
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 410
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 411
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 412
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 413
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 414
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 415
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 416
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 417
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 418
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 419
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 420
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 421
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 422
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 423
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 424
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 425
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 426
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 427
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 428
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 429
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 430
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 431
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 432
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 433
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 434
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 435
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 436
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 437
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 438
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 439
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 440
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 441
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 442
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 443
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 444
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 445
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 446
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 447
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 448
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 449
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 450
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 451
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 452
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 453
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 454
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 455
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 456
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 457
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 458
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 459
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 460
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 461
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 462
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 463
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 464
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 465
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 466
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 467
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 468
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 469
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 470
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 471
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 472
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 473
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 474
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 475
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 476
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 477
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 478
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 479
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 480
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 481
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 482
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 483
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 484
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 485
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 486
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 487
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 488
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 489
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 490
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 491
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 492
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 493
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 494
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 495
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 496
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 497
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 498
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 499
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 500
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 501
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 502
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 503
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 504
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 505
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 506
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 507
+      },
+      "model": "smeltingandforging:item/finished_pickaxe_nether_star_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 508
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 509
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 510
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 511
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 512
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 513
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 514
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 515
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 516
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 517
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 518
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 519
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 520
+      },
+      "model": "smeltingandforging:item/finished_shovel_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 521
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 522
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 523
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 524
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 525
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 526
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 527
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 528
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 529
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 530
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 531
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 532
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 533
+      },
+      "model": "smeltingandforging:item/finished_shovel_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 534
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 535
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 536
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 537
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 538
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 539
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 540
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 541
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 542
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 543
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 544
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 545
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 546
+      },
+      "model": "smeltingandforging:item/finished_shovel_string_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 547
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 548
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 549
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 550
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 551
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 552
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 553
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 554
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 555
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 556
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 557
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 558
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 559
+      },
+      "model": "smeltingandforging:item/finished_shovel_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 560
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 561
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 562
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 563
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 564
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 565
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 566
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 567
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 568
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 569
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 570
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 571
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 572
+      },
+      "model": "smeltingandforging:item/finished_shovel_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 573
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 574
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 575
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 576
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 577
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 578
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 579
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 580
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 581
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 582
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 583
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 584
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 585
+      },
+      "model": "smeltingandforging:item/finished_shovel_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 586
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 587
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 588
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 589
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 590
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 591
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 592
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 593
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 594
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 595
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 596
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 597
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 598
+      },
+      "model": "smeltingandforging:item/finished_shovel_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 599
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 600
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 601
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 602
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 603
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 604
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 605
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 606
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 607
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 608
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 609
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 610
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 611
+      },
+      "model": "smeltingandforging:item/finished_shovel_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 612
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 613
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 614
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 615
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 616
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 617
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 618
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 619
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 620
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 621
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 622
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 623
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 624
+      },
+      "model": "smeltingandforging:item/finished_shovel_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 625
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 626
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 627
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 628
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 629
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 630
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 631
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 632
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 633
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 634
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 635
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 636
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 637
+      },
+      "model": "smeltingandforging:item/finished_shovel_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 638
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 639
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 640
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 641
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 642
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 643
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 644
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 645
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 646
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 647
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 648
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 649
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 650
+      },
+      "model": "smeltingandforging:item/finished_shovel_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 651
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 652
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 653
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 654
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 655
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 656
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 657
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 658
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 659
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 660
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 661
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 662
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 663
+      },
+      "model": "smeltingandforging:item/finished_shovel_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 664
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 665
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 666
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 667
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 668
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 669
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 670
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 671
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 672
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 673
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 674
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 675
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 676
+      },
+      "model": "smeltingandforging:item/finished_shovel_nether_star_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 677
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 678
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 679
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 680
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 681
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 682
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 683
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 684
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 685
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 686
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 687
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 688
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 689
+      },
+      "model": "smeltingandforging:item/finished_hoe_flesh_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 690
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 691
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 692
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 693
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 694
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 695
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 696
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 697
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 698
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 699
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 700
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 701
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 702
+      },
+      "model": "smeltingandforging:item/finished_hoe_bone_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 703
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 704
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 705
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 706
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 707
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 708
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 709
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 710
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 711
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 712
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 713
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 714
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 715
+      },
+      "model": "smeltingandforging:item/finished_hoe_string_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 716
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 717
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 718
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 719
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 720
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 721
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 722
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 723
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 724
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 725
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 726
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 727
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 728
+      },
+      "model": "smeltingandforging:item/finished_hoe_gunpowder_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 729
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 730
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 731
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 732
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 733
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 734
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 735
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 736
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 737
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 738
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 739
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 740
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 741
+      },
+      "model": "smeltingandforging:item/finished_hoe_slime_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 742
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 743
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 744
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 745
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 746
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 747
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 748
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 749
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 750
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 751
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 752
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 753
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 754
+      },
+      "model": "smeltingandforging:item/finished_hoe_pearl_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 755
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 756
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 757
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 758
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 759
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 760
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 761
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 762
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 763
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 764
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 765
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 766
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 767
+      },
+      "model": "smeltingandforging:item/finished_hoe_blaze_rode_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 768
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 769
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 770
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 771
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 772
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 773
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 774
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 775
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 776
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 777
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 778
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 779
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 780
+      },
+      "model": "smeltingandforging:item/finished_hoe_ghast_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 781
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 782
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 783
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 784
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 785
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 786
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 787
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 788
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 789
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 790
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 791
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 792
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 793
+      },
+      "model": "smeltingandforging:item/finished_hoe_wither_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 794
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 795
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 796
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 797
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 798
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 799
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 800
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 801
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 802
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 803
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 804
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 805
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 806
+      },
+      "model": "smeltingandforging:item/finished_hoe_phantom_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 807
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 808
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 809
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 810
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 811
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 812
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 813
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 814
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 815
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 816
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 817
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 818
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 819
+      },
+      "model": "smeltingandforging:item/finished_hoe_dragon_breath_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 820
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 821
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 822
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 823
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 824
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 825
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 826
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 827
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 828
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 829
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 830
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 831
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 832
+      },
+      "model": "smeltingandforging:item/finished_hoe_shulker_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 833
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 834
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 835
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 836
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 837
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 838
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 839
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 840
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 841
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 842
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 843
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 844
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:equipment_variant": 845
+      },
+      "model": "smeltingandforging:item/finished_hoe_nether_star_nether_star"
+    }
+  ]
+}

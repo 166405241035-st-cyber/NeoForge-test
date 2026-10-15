@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "examplemod:forging_block",
-    "examplemod:forging_anvil"
+    "smeltingandforging:forging_block",
+    "smeltingandforging:forging_anvil"
   ]
 }

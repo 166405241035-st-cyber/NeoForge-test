@@ -32,21 +32,21 @@ public final class ForgedEffectKeybinds {
     }
 
     public static final Lazy<KeyMapping> USE_SKILL = Lazy.of(() -> new KeyMapping(
-            "key.examplemod.use_skill",
+            "key.smeltingandforging.use_skill",
             KeyConflictContext.IN_GAME,
             KeyModifier.NONE,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
-            "key.categories.examplemod"
+            "key.categories.smeltingandforging"
     ));
 
     public static final Lazy<KeyMapping> CYCLE_SKILL = Lazy.of(() -> new KeyMapping(
-            "key.examplemod.cycle_skill",
+            "key.smeltingandforging.cycle_skill",
             KeyConflictContext.IN_GAME,
             KeyModifier.SHIFT,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
-            "key.categories.examplemod"
+            "key.categories.smeltingandforging"
     ));
 
     @SubscribeEvent
