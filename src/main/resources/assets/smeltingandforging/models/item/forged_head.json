@@ -1,0 +1,398 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "smeltingandforging:item/sword_header_bone"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "smeltingandforging:variant": 1
+      },
+      "model": "smeltingandforging:item/forged_head_sword_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 2
+      },
+      "model": "smeltingandforging:item/forged_head_sword_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 3
+      },
+      "model": "smeltingandforging:item/forged_head_sword_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 4
+      },
+      "model": "smeltingandforging:item/forged_head_sword_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 5
+      },
+      "model": "smeltingandforging:item/forged_head_sword_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 6
+      },
+      "model": "smeltingandforging:item/forged_head_sword_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 7
+      },
+      "model": "smeltingandforging:item/forged_head_sword_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 8
+      },
+      "model": "smeltingandforging:item/forged_head_sword_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 9
+      },
+      "model": "smeltingandforging:item/forged_head_sword_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 10
+      },
+      "model": "smeltingandforging:item/forged_head_sword_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 11
+      },
+      "model": "smeltingandforging:item/forged_head_sword_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 12
+      },
+      "model": "smeltingandforging:item/forged_head_sword_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 13
+      },
+      "model": "smeltingandforging:item/forged_head_sword_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 14
+      },
+      "model": "smeltingandforging:item/forged_head_axe_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 15
+      },
+      "model": "smeltingandforging:item/forged_head_axe_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 16
+      },
+      "model": "smeltingandforging:item/forged_head_axe_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 17
+      },
+      "model": "smeltingandforging:item/forged_head_axe_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 18
+      },
+      "model": "smeltingandforging:item/forged_head_axe_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 19
+      },
+      "model": "smeltingandforging:item/forged_head_axe_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 20
+      },
+      "model": "smeltingandforging:item/forged_head_axe_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 21
+      },
+      "model": "smeltingandforging:item/forged_head_axe_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 22
+      },
+      "model": "smeltingandforging:item/forged_head_axe_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 23
+      },
+      "model": "smeltingandforging:item/forged_head_axe_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 24
+      },
+      "model": "smeltingandforging:item/forged_head_axe_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 25
+      },
+      "model": "smeltingandforging:item/forged_head_axe_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 26
+      },
+      "model": "smeltingandforging:item/forged_head_axe_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 27
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 28
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 29
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 30
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 31
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 32
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 33
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 34
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 35
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 36
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 37
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 38
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 39
+      },
+      "model": "smeltingandforging:item/forged_head_pickaxe_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 40
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 41
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 42
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 43
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 44
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 45
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 46
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 47
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 48
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 49
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 50
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 51
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 52
+      },
+      "model": "smeltingandforging:item/forged_head_shovel_nether_star"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 53
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_flesh"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 54
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_bone"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 55
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_string"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 56
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_gunpowder"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 57
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_slime"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 58
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_pearl"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 59
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_blaze_rode"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 60
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_ghast"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 61
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_wither"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 62
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_phantom"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 63
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_dragon_breath"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 64
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_shulker"
+    },
+    {
+      "predicate": {
+        "smeltingandforging:variant": 65
+      },
+      "model": "smeltingandforging:item/forged_head_hoe_nether_star"
+    }
+  ]
+}

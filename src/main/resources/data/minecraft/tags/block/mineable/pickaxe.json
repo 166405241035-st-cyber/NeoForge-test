@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "smeltingandforging:forging_block",
+    "smeltingandforging:forging_anvil"
+  ]
+}

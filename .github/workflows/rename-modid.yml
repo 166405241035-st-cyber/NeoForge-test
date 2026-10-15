@@ -1,0 +1,35 @@
+name: Migrate Mod ID and build
+on:
+  push:
+    branches:
+      - feature/rename-modid-smeltingandforging
+permissions:
+  contents: write
+jobs:
+  migrate:
+    if: "!contains(github.event.head_commit.message, '[modid-migrated]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Migrate mod ID and resource namespaces
+        run: python3 scripts/rename_modid.py
+      - name: Build migrated mod
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build --no-daemon
+      - name: Commit migration to isolated branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Migrate examplemod to smeltingandforging [modid-migrated]"
+            git push origin HEAD:feature/rename-modid-smeltingandforging
+          fi

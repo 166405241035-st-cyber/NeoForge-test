@@ -1,0 +1,12 @@
+{
+  "block.smeltingandforging.forger": "Forger",
+  "gui.smeltingandforging.forger_gui.button_smith": "Smith",
+  "item.smeltingandforging.coreblueprint": "Headblueprint",
+  "item.smeltingandforging.rodeblueprint": "Headblueprint",
+  "item.smeltingandforging.pickaxeheadblueprint": "Pickaxeheadblueprint",
+  "gui.smeltingandforging.forger_gui.button_start": "Start",
+  "gui.smeltingandforging.forger_gui_mini_game.button_start": "Start",
+  "item.smeltingandforging.axeheadblueprint": "Axeheadblueprint",
+  "item.smeltingandforging.swordheadblueprint": "Swordheadblueprint",
+  "item.smeltingandforging.hoeheadblueprint": "Hoeheadblueprint"
+}
